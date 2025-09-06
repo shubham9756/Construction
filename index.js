@@ -4,10 +4,12 @@ var session = require("express-session");
 var cookieParser = require("cookie-parser");
 var upload = require("express-fileupload");
 var admin = require("./router/admin");
-
 var site = require("./router/site");
 var godown = require("./router/godown");
 var conn = require("./conn");
+// var adminroute = require("./router/admin");
+// var userroute = require("./router/user");
+var path = require("path");
 var app = express();
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -24,14 +26,12 @@ app.use(session
       saveUninitialized: true
     }));
 app.use(upload());
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
 
-app.use("/admin",admin)
-app.use("/site", site);
-app.use("/godown", godown);
+// app.use("/admin",adminroute);
+// app.use("/user",userroute);
 
-app.get("/", function(req, res){
-    res.send("Welcome To  Construction");
-});
 
 
 app.listen(1000)
