@@ -7,8 +7,7 @@ var conn = mysql.createConnection({
   password: "us2heyrjqh9uy5am",
   database: "b1fuygc9n4qhlfflu3qn"
 });
+
 var exe = util.promisify(conn.query).bind(conn);
-
-
 
 module.exports = exe;
