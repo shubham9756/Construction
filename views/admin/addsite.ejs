@@ -7,32 +7,50 @@
 			<h4 class="mb-0">Add Site</h4>
 		</div>
 		<div class="card-body">
-			<form action="/admin/addsite" method="POST">
-				<div class="mb-3">
-					<label for="siteName" class="form-label">Site Name</label>
-					<input type="text" class="form-control" id="siteName" name="siteName" required>
-				</div>
-				<div class="mb-3">
-					<label for="location" class="form-label">Location</label>
-					<input type="text" class="form-control" id="location" name="location" required>
+			<form action="/admin/addsite" method="POST" enctype="multipart/form-data">
+				<div class="row">
+					<div class="col-md-6 mb-3">
+						<label for="construction_id" class="form-label">Construction ID</label>
+						<input type="number" class="form-control" id="construction_id" name="construction_id" required>
+					</div>
+					<div class="col-md-6 mb-3">
+						<label for="site_name" class="form-label">Site Name</label>
+						<input type="text" class="form-control" id="site_name" name="site_name" maxlength="100" required>
+					</div>
 				</div>
 				<div class="row">
 					<div class="col-md-6 mb-3">
-						<label for="startDate" class="form-label">Start Date</label>
-						<input type="date" class="form-control" id="startDate" name="startDate" required>
+						<label for="site_location" class="form-label">Site Location</label>
+						<input type="text" class="form-control" id="site_location" name="site_location" maxlength="255">
 					</div>
 					<div class="col-md-6 mb-3">
-						<label for="endDate" class="form-label">End Date</label>
-						<input type="date" class="form-control" id="endDate" name="endDate">
+						<label for="site_manager_name" class="form-label">Site Manager Name</label>
+						<input type="text" class="form-control" id="site_manager_name" name="site_manager_name" maxlength="100">
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-6 mb-3">
+						<label for="site_structure_image" class="form-label">Site Structure Image</label>
+						<input type="file" class="form-control" id="site_structure_image" name="site_structure_image" accept="image/*">
+					</div>
+					<div class="col-md-6 mb-3">
+						<label for="site_3d_image" class="form-label">Site 3D Image</label>
+						<input type="file" class="form-control" id="site_3d_image" name="site_3d_image" accept="image/*">
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-6 mb-3">
+						<label for="site_start_date" class="form-label">Site Start Date</label>
+						<input type="date" class="form-control" id="site_start_date" name="site_start_date">
+					</div>
+					<div class="col-md-6 mb-3">
+						<label for="site_completed_date" class="form-label">Site Completed Date</label>
+						<input type="date" class="form-control" id="site_completed_date" name="site_completed_date">
 					</div>
 				</div>
 				<div class="mb-3">
-					<label for="siteManager" class="form-label">Site Manager</label>
-					<input type="text" class="form-control" id="siteManager" name="siteManager" required>
-				</div>
-				<div class="mb-3">
-					<label for="description" class="form-label">Description</label>
-					<textarea class="form-control" id="description" name="description" rows="3"></textarea>
+					<label for="site_area_sqft" class="form-label">Site Area (sqft)</label>
+					<input type="number" step="0.01" class="form-control" id="site_area_sqft" name="site_area_sqft" min="0">
 				</div>
 				<button type="submit" class="btn btn-success">Add Site</button>
 			</form>
