@@ -1,3 +1,11 @@
+
+var express = require('express');
+var exe = require("../conn");
+var router = express.Router();
+
+router.get("/", function(req, res){
+    res.send("Welcome To Admin Panel");
+});
 var express = require("express");
 var router = express.Router();
 var exe = require("../conn");
@@ -10,3 +18,4 @@ router.get("/addsite",function(req,res){
 });
 
 module.exports = router;
+
