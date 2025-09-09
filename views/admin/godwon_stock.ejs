@@ -1,0 +1,106 @@
+<%- include('navbar.ejs') %>
+
+
+    <div class="container mt-5">
+
+        <!-- Section Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 class="fw-bold"><i class="bi bi-warehouse me-2"></i>Godown Stock</h3>
+            <div>
+                <a href="/admin/godwon_order_stock" class="btn btn-primary me-2">
+                    <i class="bi bi-plus-circle me-1"></i> Order Stock
+                </a>
+                <a href="/admin/godwon_stock" class="btn btn-success">
+                    <i class="bi bi-box-seam me-1"></i> Godown Stock
+                </a>
+            </div>
+        </div>
+
+        <!-- Godown Stock Table -->
+    <% if (stock == 'stock') { %>
+
+        <div class="card shadow-lg">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0"><i class="bi bi-box me-2"></i>Available Stock</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover align-middle">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>#</th>
+                                <th>Company</th>
+                                <th>Product</th>
+                                <th>Material Type</th>
+                                <th>Quantity</th>
+                                <th>Location</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <%for(var i=0;i<stock.length;i++){%>
+                                <tr>
+                                    <td><%- i+ 1%></td>
+                                    <td><%-stock[i].company_name%></td>
+                                    <td><%-stock[i].product_name%></td>
+                                    <td><%-stock[i].material_type%></td>
+                                    <td><%-stock[i].quantity%></td>
+                                    <td><%-stock[i].location%></td>
+                                    <td><span class="badge bg-success"><%-stock[i].status%></span></td>
+                                    <td>
+                                            <%= stock[i].order_date.toISOString().slice(0,10) %>
+                                    </td>
+
+                                </tr>
+                                <%}%>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+<%}else{%>
+    <div class="card shadow-lg">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0"><i class="bi bi-box me-2"></i>Available Stock</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover align-middle">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>#</th>
+                                <th>Company</th>
+                                <th>Product</th>
+                                <th>Material Type</th>
+                                <th>Quantity</th>
+                                <th>Location</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <%for(var i=0;i<stock.length;i++){%>
+                                <tr>
+                                    <td><%- i+ 1%></td>
+                                    <td><%-stock[i].company_name%></td>
+                                    <td><%-stock[i].product_name%></td>
+                                    <td><%-stock[i].material_type%></td>
+                                    <td><%-stock[i].quantity%></td>
+                                    <td><%-stock[i].location%></td>
+                                    <td><span class="badge bg-success"><%-stock[i].status%></span></td>
+                                    <td>
+                                            <%= stock[i].order_date.toISOString().slice(0,10) %>
+                                    </td>
+
+                                </tr>
+                                <%}%>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    <%}%>
+    </div>
+
+    <%- include('footer.ejs') %>
