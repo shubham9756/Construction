@@ -18,7 +18,9 @@ app.use(session
     }));
 app.use(upload());
 
+app.use("/admin",adminroute);
 app.use("/",adminroute);
+app.use("/login",adminroute);
 
 
 
