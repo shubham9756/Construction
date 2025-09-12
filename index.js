@@ -5,7 +5,6 @@ var cookieParser = require("cookie-parser");
 var upload = require("express-fileupload");
 
 var adminroute = require("./router/admin");
-var userroute = require("./router/user");
 
 var app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -20,7 +19,8 @@ app.use(session
 app.use(upload());
 
 app.use("/admin",adminroute);
-app.use("/",userroute);
+app.use("/",adminroute);
+app.use("/login",adminroute);
 
 
 
