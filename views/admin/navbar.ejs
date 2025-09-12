@@ -1,42 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>Datatables - Kaiadmin Bootstrap 5 Admin Dashboard</title>
-    <meta content="width=device-width, initial-scale=1.0, shrink-to-fit=no" name="viewport" />
-    <link rel="icon" href="../assets/img/kaiadmin/favicon.ico" type="image/x-icon" />
-    <!-- Datatables CSS -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Fonts and icons -->
-    <script src="/js/plugin/webfont/webfont.min.js"></script>
-    <script>
-        WebFont.load({
-            google: { families: ["Public Sans:300,400,500,600,700"] },
-            custom: {
-                families: [
-                    "Font Awesome 5 Solid",
-                    "Font Awesome 5 Regular",
-                    "Font Awesome 5 Brands",
-                    "simple-line-icons",
-                ],
-                urls: ["/css/fonts.min.css"],
-            },
-            active: function () {
-                sessionStorage.fonts = true;
-            },
-        });
-    </script>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Construction Project</title>
+  <meta content="width=device-width, initial-scale=1.0, shrink-to-fit=no" name="viewport" />
+  <link rel="icon" href="../assets/img/kaiadmin/favicon.ico" type="image/x-icon" />
 
-    <!-- CSS Files -->
-    <link rel="stylesheet" href="/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="/css/plugins.min.css" />
-    <link rel="stylesheet" href="/css/kaiadmin.min.css" />
+  <!-- Bootstrap 5 CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- CSS Just for demo purpose, don't include it in your project -->
-    <link rel="stylesheet" href="/css/demo.css" />
+  <!-- Datatables CSS -->
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.bootstrap5.min.css">
+
+  <!-- Fonts and icons -->
+  <script src="/js/plugin/webfont/webfont.min.js"></script>
+  <script>
+    WebFont.load({
+      google: { families: ["Public Sans:300,400,500,600,700"] },
+      custom: {
+        families: [
+          "Font Awesome 5 Solid",
+          "Font Awesome 5 Regular",
+          "Font Awesome 5 Brands",
+          "simple-line-icons",
+        ],
+        urls: ["/css/fonts.min.css"],
+      },
+      active: function () {
+        sessionStorage.fonts = true;
+      },
+    });
+  </script>
+  <!-- jQuery (पहिल्यांदा load करायचं) -->
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+
+  <!-- CSS Files -->
+  <link rel="stylesheet" href="/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="/css/plugins.min.css" />
+  <link rel="stylesheet" href="/css/kaiadmin.min.css" />
+  <link rel="stylesheet" href="/css/demo.css" />
 </head>
+
 
 
 <body>
@@ -46,7 +51,7 @@
             <div class="sidebar-logo">
                 <!-- Logo Header -->
                 <div class="logo-header" data-background-color="dark">
-                    <a href="/admin" class="logo">
+                    <a href="" class="logo">
                         <img src="../assets/img/kaiadmin/logo_light.svg" alt="navbar brand" class="navbar-brand"
                             height="20" />
                     </a>
@@ -87,18 +92,15 @@
                                             <span class="sub-item">Add Site</span>
                                         </a>
                                     </li>
-                                   
-                                    
-                                   
-                                   
                                     <li>
-                                        <a href="/admin/site_list">
+                                        <a href="/site_list">
                                             <span class="sub-item">All Site List</span>
                                         </a>
                                     </li>
                                 </ul>
                             </div>
                         </li>
+
                         <li class="nav-item">
                             <a data-bs-toggle="collapse" href="#sidebarLayouts">
                                 <i class="fas fa-th-list"></i>
@@ -108,13 +110,18 @@
                             <div class="collapse" id="sidebarLayouts">
                                 <ul class="nav nav-collapse">
                                     <li>
-                                        <a href="../sidebar-style-2.html">
-                                            <span class="sub-item">Sidebar Style 2</span>
+                                        <a href="/add_selling_flat">
+                                            <span class="sub-item">New Selling Flat</span>
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="../icon-menu.html">
-                                            <span class="sub-item">Icon Menu</span>
+                                        <a href="/selling_flat_list">
+                                            <span class="sub-item">Selling Flat List</span>
+                                        </a>
+                                    </li>
+                                     <li>
+                                        <a href="/selling_flat_report">
+                                            <span class="sub-item">Selling Flat Report</span>
                                         </a>
                                     </li>
                                 </ul>
@@ -129,8 +136,18 @@
                             <div class="collapse" id="forms">
                                 <ul class="nav nav-collapse">
                                     <li>
-                                        <a href="../forms/forms.html">
-                                            <span class="sub-item">Basic Form</span>
+                                        <a href="/add_rent_flat">
+                                            <span class="sub-item">New Rent Flat</span>
+                                        </a>
+                                    </li>
+                                     <li>
+                                        <a href="/rent_flat_list">
+                                            <span class="sub-item">Rent Flat List</span>
+                                        </a>
+                                    </li>
+                                     <li>
+                                        <a href="/rent_flat_report">
+                                            <span class="sub-item">Rent Flat Reoprt</span>
                                         </a>
                                     </li>
                                 </ul>
@@ -139,19 +156,19 @@
                         <li class="nav-item  ">
                             <a data-bs-toggle="collapse" href="#tables">
                                 <i class="fas fa-table"></i>
-                                <p>Godwon</p>
+                                <p>Flat</p>
                                 <span class="caret"></span>
                             </a>
                             <div class="collapse" id="tables">
                                 <ul class="nav nav-collapse">
                                     <li>
-                                        <a href="/admin/godwon_orders">
-                                            <span class="sub-item">Godwon Orders </span>
+                                        <a href="/add_new_selling_flat">
+                                            <span class="sub-item">New Selling Flat</span>
                                         </a>
                                     </li>
                                     <li >
-                                        <a href="/admin/godwon_stock">
-                                            <span class="sub-item">Godwon Stock</span>
+                                        <a href="/new_selling_flat_list">
+                                            <span class="sub-item">Selling Flat List </span>
                                         </a>
                                     </li>
                                     
@@ -161,19 +178,19 @@
                         <li class="nav-item">
                             <a data-bs-toggle="collapse" href="#maps">
                                 <i class="fas fa-map-marker-alt"></i>
-                                <p>Maps</p>
+                                <p>Custmor</p>
                                 <span class="caret"></span>
                             </a>
                             <div class="collapse" id="maps">
                                 <ul class="nav nav-collapse">
                                     <li>
-                                        <a href="../maps/googlemaps.html">
-                                            <span class="sub-item">Google Maps</span>
+                                        <a href="/add_customor">
+                                            <span class="sub-item">Add Customor</span>
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="../maps/jsvectormap.html">
-                                            <span class="sub-item">Jsvectormap</span>
+                                        <a href="/customor_list">
+                                            <span class="sub-item">Customor List</span>
                                         </a>
                                     </li>
                                 </ul>
@@ -182,36 +199,87 @@
                         <li class="nav-item">
                             <a data-bs-toggle="collapse" href="#charts">
                                 <i class="far fa-chart-bar"></i>
-                                <p>Charts</p>
+                                <p>Material</p>
                                 <span class="caret"></span>
                             </a>
                             <div class="collapse" id="charts">
                                 <ul class="nav nav-collapse">
                                     <li>
-                                        <a href="../charts/charts.html">
-                                            <span class="sub-item">Chart Js</span>
+                                        <a href="/order_material">
+                                            <span class="sub-item">Material Order</span>
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="../charts/sparkline.html">
-                                            <span class="sub-item">Sparkline</span>
+                                        <a href="/site_order_material">
+                                            <span class="sub-item">Site Material Order</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="/stock_material">
+                                            <span class="sub-item">Stock Material</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="/add_material">
+                                            <span class="sub-item">Add Material </span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                         <li class="nav-item  ">
+                            <a data-bs-toggle="collapse" href="#employee">
+                                <i class="fas fa-table"></i>
+                                <p>Employee</p>
+                                <span class="caret"></span>
+                            </a>
+                            <div class="collapse" id="employee">
+                                <ul class="nav nav-collapse">
+                                    <li>
+                                        <a href="/add_employee">
+                                            <span class="sub-item">Add Employee</span>
+                                        </a>
+                                    </li>
+                                    <li >
+                                        <a href="/employee_list">
+                                            <span class="sub-item">Employee List </span>
+                                        </a>
+                                    </li>
+                                    
+                                </ul>
+                            </div>
+                        </li>
+                        <li class="nav-item">
+                            <a data-bs-toggle="collapse" href="#tax">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <p>All Unit,Tax</p>
+                                <span class="caret"></span>
+                            </a>
+                            <div class="collapse" id="tax">
+                                <ul class="nav nav-collapse">
+                                    <li>
+                                        <a href="/payment_type">
+                                            <span class="sub-item">Payment Type</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="/unit">
+                                            <span class="sub-item">Material Unit</span>
                                         </a>
                                     </li>
                                 </ul>
                             </div>
                         </li>
                         <li class="nav-item">
-                            <a href="../widgets.html">
+                            <a href="/payment">
                                 <i class="fas fa-desktop"></i>
-                                <p>Widgets</p>
-                                <span class="badge badge-success">4</span>
+                                <p>Payment</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="../../../documentation/index.html">
+                            <a href="/inquiry">
                                 <i class="fas fa-file"></i>
-                                <p>Documentation</p>
-                                <span class="badge badge-secondary">1</span>
+                                <p>Inquiry</p>
                             </a>
                         </li>
                         <li class="nav-item">
@@ -224,19 +292,19 @@
                                 <ul class="nav nav-collapse">
                                     <li>
                                         <a data-bs-toggle="collapse" href="#subnav1">
-                                            <span class="sub-item">Level 1</span>
+                                            <span class="sub-item">Employee</span>
                                             <span class="caret"></span>
                                         </a>
                                         <div class="collapse" id="subnav1">
                                             <ul class="nav nav-collapse subnav">
                                                 <li>
-                                                    <a href="#">
-                                                        <span class="sub-item">Level 2</span>
+                                                    <a href="/employee">
+                                                        <span class="sub-item">Add Employee</span>
                                                     </a>
                                                 </li>
                                                 <li>
-                                                    <a href="#">
-                                                        <span class="sub-item">Level 2</span>
+                                                    <a href="/employee_list">
+                                                        <span class="sub-item">Contractor</span>
                                                     </a>
                                                 </li>
                                             </ul>
@@ -244,22 +312,27 @@
                                     </li>
                                     <li>
                                         <a data-bs-toggle="collapse" href="#subnav2">
-                                            <span class="sub-item">Level 1</span>
+                                            <span class="sub-item">Bank Details</span>
                                             <span class="caret"></span>
                                         </a>
                                         <div class="collapse" id="subnav2">
                                             <ul class="nav nav-collapse subnav">
                                                 <li>
                                                     <a href="#">
-                                                        <span class="sub-item">Level 2</span>
+                                                        <span class="sub-item">Bank Details List</span>
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="#">
+                                                        <span class="sub-item">Bank Report</span>
                                                     </a>
                                                 </li>
                                             </ul>
                                         </div>
                                     </li>
                                     <li>
-                                        <a href="#">
-                                            <span class="sub-item">Level 1</span>
+                                        <a href="/admin">
+                                            <span class="sub-item">Admin</span>
                                         </a>
                                     </li>
                                 </ul>

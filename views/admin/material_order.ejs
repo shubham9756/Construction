@@ -1,0 +1,100 @@
+<%-include('navbar.ejs')%>
+    <style>
+        input,
+        select {
+            border: 1px solid black !important;
+            border-radius: 0 !important;
+        }
+
+        .card-header {
+            background-color: #303f9f;
+            color: white;
+            text-align: left;
+        }
+        textarea{
+              border: 1px solid black !important;
+            border-radius: 0 !important;
+        }
+    </style>
+    <div class="container mt-5">
+        <div class="card shadow">
+            <div class="card-header" style="background: #303f9f;">
+                <h4 class="mb-0 text-white">ADD NEW RAW MATERIAL / PRODUCT</h4>
+            </div>
+            <div class="card-body">
+                <form action="/save_raw_material" method="POST">
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">ORDER COMPANY NAME*</label>
+                            <input type="text" class="form-control" name="product_name"
+                                placeholder="Enter Raw-Material or Product Name" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">RAW MATERIAL NAME</label>
+                            <select class="form-select" name="raw_material_name" id="material_name" required>
+                                <option value="">Select</option>
+                                <%for(var i=0;i<material.length;i++){%>
+                                <option value="<%-material[i].material_id%>" data-gst="<%-material[i].gst_rate%>"><%-material[i].material_name%></option>
+                                <%}%>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">UNIT</label>
+                            <input type="text" class="form-control" name="unit_weight"
+                                placeholder="Enter Unit / Weight">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">CHOOSE UDM*</label>
+                            <select class="form-select" name="udm">
+                                <option value="">Select</option>
+                                <%for(var i=0;i<result1.length;i++){%>
+                                <option value="<%-result1[i].udm_id%>"><%-result1[i].udm_name%></option>
+                                <%}%>
+                            </select>
+                        </div>
+                    </div> 
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label fw-bold">₹ PURCHASE AMOUNT / UDM*</label>
+                            <input type="number" class="form-control" name="purchase_amount"
+                                placeholder="Enter Purchase Amount" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label fw-bold">Address</label>
+                            <textarea  class="form-control input" name="sale_address" placeholder="Enter Order Address" rows="1"
+                                required></textarea>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label fw-bold">GST %*</label>
+                             <input type="text" class="form-control" name="gst" placeholder="Enter GST %" readonly id="gst">
+                        </div>
+                    </div>
+
+                    <!-- Buttons Right Side -->
+                    <div class="d-flex justify-content-end mt-4">
+                        <button type="reset" class="btn btn-danger  me-2">Reset</button>
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+    <script>
+document.getElementById('material_name').addEventListener('change', function() {
+    const selectedOption = this.options[this.selectedIndex];
+    const gst = parseFloat(selectedOption.dataset.gst) || 0;
+
+    const cgst = gst / 2;
+    const sgst = gst / 2;
+
+    document.getElementById('gst').value = gst;
+});
+</script>
+
+    <%-include('footer.ejs')%>

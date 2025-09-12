@@ -1,0 +1,73 @@
+<%-include('navbar.ejs')%>
+<br>
+<br>
+<br>
+<br>
+<div class="table-responsive">
+  <table id="siteTable" class="table table-bordered table-striped table-hover text-center align-middle">
+    <thead class="table-light">
+      <tr>
+        <th>Action</th>
+        <th>SN</th>
+        <th>Site Name</th>
+        <th>Site Address</th>
+        <th>Site Manger </th>
+        <th>Site Start Date</th>
+        <th>Descreption</th>
+      </tr>
+    </thead>
+    <tbody>
+      <%for(var i=0;i<site.length;i++){%>
+      <tr>
+        <td>
+          <a href="/view_site/<%-site[i].site_id%>" class="btn btn-sm btn-outline-primary"><i class="fa fa-eye"></i></a>
+          <a href="/edit_site/<%-site[i].site_id%>" class="btn btn-sm btn-outline-warning"><i class="fa fa-pen"></i></a>
+        </td>
+        <td><%- i+1 %></td>
+        <td><%-site[i].site_name%></td>
+        <td><%- site[i].site_location%></td>
+        <td><%- site[i].site_manager_name%></td>
+        <td><%- site[i].site_start_date%></td>
+        <td><%- site[i].site_description%></td>
+      </tr>
+      <%}%>
+     
+    </tbody>
+   
+  </table>
+</div>
+
+<!-- jQuery + DataTables + Buttons -->
+
+
+<script>
+  $(document).ready(function () {
+    $('#siteTable').DataTable({
+      dom: 'Bfrtip',
+      buttons: [
+        {
+          extend: 'colvis',
+          text: '<i class="bi bi-layout-three-columns"></i> Columns',
+          className: 'btn btn-secondary btn-sm'
+        },
+        {
+          extend: 'csv',
+          text: '<i class="bi bi-filetype-csv"></i> CSV',
+          className: 'btn btn-success btn-sm'
+        },
+        {
+          extend: 'print',
+          text: '<i class="bi bi-printer"></i> Print',
+          className: 'btn btn-info btn-sm'
+        }
+      ],
+      paging: true,
+      searching: true,
+      ordering: true,
+      responsive: true
+    });
+  });
+</script>
+
+
+<%-include('footer.ejs')%>

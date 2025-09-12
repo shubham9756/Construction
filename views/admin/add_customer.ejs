@@ -1,0 +1,111 @@
+<%-include('navbar.ejs')%>
+<style>
+    /* Customer form container */
+    .customer-form-box {
+      background: #fff;
+      border: 1px solid #ddd; 
+      padding: 20px;
+      max-width: 1200px;
+      margin: 30px auto;
+      box-shadow: 0px 2px 6px rgba(0,0,0,0.1);
+    }
+    
+    /* Customer form header */
+    .customer-form-header {
+      background: linear-gradient(to right, #0056d2, #0d6efd); 
+      color: #fff;
+      padding: 12px 15px;
+      font-weight: bold;
+      font-size: 16px;
+      text-transform: uppercase;
+    }
+
+    /* Customer form input fields */
+    .customer-input {
+      border-radius: 0 !important; 
+      border: 1px solid #333; 
+    }
+
+    /* Customer form button */
+    .btn-customer-submit {
+      background-color: #0d2a7d; 
+      color: #fff;
+      border-radius: 0; 
+      padding: 10px 30px;
+    }
+    .btn-customer-submit:hover {
+      background-color: #0b2263;
+      color: white;
+    }
+  </style>
+<div class="container">
+  <div class="customer-form-box">
+
+    <!-- Header -->
+    <div class="customer-form-header">
+      ADD NEW CUSTOMER (APPLICATION)
+    </div>
+
+    <!-- Form -->
+   <form name="customerForm" onsubmit="checkpassword()" method="POST" class="mt-4" >
+  <div class="row g-3">
+    
+    <!-- Customer Full Name -->
+    <div class="col-12">
+      <label class="form-label fw-bold">CUSTOMER FULL NAME <span class="text-danger">*</span></label>
+      <input type="text" class="form-control customer-input" name="full_name" placeholder="ENTER CUSTOMER FULL NAME" required>
+    </div>
+
+    <!-- Mobile Number -->
+    <div class="col-lg-6 col-md-6 col-12">
+      <label class="form-label fw-bold">MOBILE NUMBER <span class="text-danger">*</span></label>
+      <input type="text" class="form-control customer-input" name="mobile" placeholder="ENTER CUSTOMER MOBILE NUMBER" required>
+    </div>
+
+    <!-- Email ID -->
+    <div class="col-lg-6 col-md-6 col-12">
+      <label class="form-label fw-bold">EMAIL ID <span class="text-danger">*</span></label>
+      <input type="email" class="form-control customer-input" name="email" placeholder="ENTER CUSTOMER EMAIL ID" required>
+    </div>
+
+    <!-- Password -->
+    <div class="col-lg-6 col-md-6 col-12">
+      <label class="form-label fw-bold">PASSWORD <span class="text-danger">*</span></label>
+      <input type="password" id="password" class="form-control customer-input" name="password" placeholder="ENTER CUSTOMER PASSWORD" required>
+    </div>
+
+    <!-- Confirm Password -->
+    <div class="col-lg-6 col-md-6 col-12">
+      <label class="form-label fw-bold">CONFIRM PASSWORD <span class="text-danger">*</span></label>
+      <input type="password" class="form-control customer-input"  id="confirm_password" name="confirm_password" placeholder="CONFIRM CUSTOMER PASSWORD" required>
+    </div>
+
+  </div>
+
+  <!-- Submit Button -->
+  <div class="text-center mt-4">
+    <button type="submit" class="btn btn-customer-submit">Add Customer</button>
+  </div>
+</form>
+
+  </div>
+</div>
+
+<script>
+  function checkpassword(){
+    event.preventDefault();
+    var password =document.getElementById("password").value
+    var confirm_password =document.getElementById("confirm_password").value
+    if(password===confirm_password){
+      document.customerForm.submit();
+    }else{
+      alert("Password and Confirm Password do not match.");
+      document.getElementById("confirm_password").style.border="2px solid red";
+    }
+  }
+  var password =document.getElementById("password").value
+  var confirm_password =document.getElementById("confirm_password").value
+  console.log(password,confirm_password)
+ 
+</script>
+<%-include('footer.ejs')%>    

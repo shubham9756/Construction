@@ -1,0 +1,134 @@
+<%-include('navbar.ejs')%>
+
+    <style>
+        body {
+            background: #f8f9fa;
+        }
+        .form-control {
+            border: 2px solid black;
+            border-radius: 0px;
+        }
+
+        .section-header {
+            background: #283593;
+            /* Dark Blue */
+            color: #fff;
+            font-weight: bold;
+            padding: 8px 12px;
+            border-left: 7px solid gold;
+        }
+
+        .btn-udm {
+            background-color: #8e24aa !important;
+            color: #fff !important;
+            border: none !important;
+        }
+
+        .btn-udm:hover {
+            background-color: #7b1fa2 !important;
+        }
+
+        .dataTables_wrapper .dataTables_filter {
+            float: left !important;
+        }
+
+        .dataTables_wrapper .dt-buttons {
+            float: right !important;
+        }
+
+        @media (max-width: 768px) {
+            .dataTables_wrapper .d-flex {
+                flex-direction: column !important;
+                align-items: stretch !important;
+            }
+
+            .dataTables_wrapper .dataTables_filter,
+            .dataTables_wrapper .dt-buttons {
+                float: none !important;
+                text-align: center !important;
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+<br>
+<br>
+        <div class="container">
+            <!-- Add New UDM -->
+            <div class="card shadow-sm mb-2">
+                <div class="section-header">ADD NEW UDM</div>
+                <div class="card-body">
+                    <form action="/save_udm" method="post" class="row g-2 align-items-center">
+                        <div class="col-md-5 col-9">
+                            <input type="text" class="form-control" name="udm_name" placeholder="Enter New UDM Name"
+                                required>
+                        </div>
+                        <div class="col-md-5 col-9">
+                            <input type="text" class="form-control" name="udm_added_name" placeholder="Enter UDM Added By"
+                                required>
+                        </div>
+                        <div class="col-md-2 col-3 d-grid">
+                            <button type="submit" class="btn btn-udm">Add UDM</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- UDM Table -->
+            <div class="card shadow-sm">
+                <div class="section-header">UDM DETAILS</div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="udmTable" class="table table-bordered table-hover align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th>SN</th>
+                                    <th>UDM NAME</th>
+                                    <th>UDM ADDED BY</th>
+                                    <th>ADDED DATE</th>
+                                    <th>ACTION</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <%for(let i=0;i<udm.length;i++){%>
+                                <tr>
+                                    <td><%- i+1 %></td>
+                                    <td><%- udm[i].udm_name %></td>
+                                    <td><%- udm[i].udm_added_name %></td>
+                                    <td><%- udm[i].created_at %></td>
+                                    <td><button class="btn btn-sm btn-warning editBtn" data-bs-toggle="modal" data-bs-target="#udmModal" data-id="<%- udm[i].udm_id %>">Edit</button></td>
+                                </tr>
+                                <%}%>
+                               
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit Modal -->
+        <div class="modal fade" id="udmModal" tabindex="-1" aria-labelledby="udmModalLabel" aria-hidden="true">>
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="section-header">UPDATE UDM</div>
+                    <div class="modal-body">
+                        <form action="/update_udm" method="post">
+                            <input type="hidden" id="editRowIndex">
+                            <div class="mb-3">
+                                <label class="form-label">UDM Name</label>
+                                <input type="text" id="editUdmName" class="form-control" required placeholder="Enter UDM Name" >
+                            </div>
+                             <div class="mb-3">
+                                <label class="form-label">UDM Added Name</label>
+                                <input type="text" id="editUdmName" class="form-control" required placeholder="Enter UDM Added By">
+                            </div>
+                            <div class="d-flex justify-content-end">
+                                <button type="submit" class="btn btn-udm">Update UDM</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <%-include('footer.ejs')%>
