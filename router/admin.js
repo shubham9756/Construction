@@ -130,6 +130,21 @@ router.get("/customor_list", async function (req, res) {
     var result = await exe(sql);
     console.log(result);
     res.render("admin/customer_list.ejs", { customer: result });
+=======
+        var result = await exe(sql, [
+            d.company_name,
+            d.product_name,
+            d.material_type,   
+            d.quantity,
+            d.order_date,
+            d.delivery_date,
+            d.location,
+            d.remarks,
+            "Pending"   
+        ]);
+        res.redirect('/admin/godwon_orders');
+    
+>>>>>>> Stashed changes
 });
 
 
@@ -211,6 +226,10 @@ router.post('/save_employee', async function (req, res) {
 
 
 
-
+router.get("/add_flat",function(req,res){
+    res.render("admin/add_flat.ejs");   
+})
+router.get("/login",function(req,res){
+    res.render("admin/login.ejs");   
+});
 module.exports = router;
-
