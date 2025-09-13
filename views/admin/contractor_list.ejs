@@ -1,222 +1,127 @@
 <%-include('navbar.ejs')%>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <style>
-        .modal-content {
-            border-radius: 8px;
-        }
+<style>
+  .form-control {
+    border: 2px solid black;
+    border-radius: 0px;
+  }
+</style>
+<br />
+<br />
+<div class="container mt-5">
+  <div class="card shadow-lg border-0 rounded-4">
+    <div class="card-header bg-primary text-white fw-bold text-uppercase">
+      Add New Contractor
+    </div>
+    <div class="card-body">
+     <form id="contractorForm" class="needs-validation" action="/add-contractor" method="POST" enctype="multipart/form-data" novalidate> 
+  <div class="row g-4">
 
-        .form-label {
-            font-weight: bold;
-            font-size: 0.85rem;
-            text-transform: uppercase;
-        }
-
-        .btn-purple {
-            background-color: #7a3eb1;
-            color: #fff;
-        }
-
-        .btn-purple:hover {
-            background-color: #622f91;
-            color: #fff;
-        }
-
-        .btn-warning {
-            background-color: #f6c344;
-            border: none;
-            color: #000;
-        }
-
-        .btn-warning:hover {
-            background-color: #e0ad2f;
-        }
-
-        .btn-grey {
-            background-color: #6c757d;
-            color: #fff;
-            font-size: 13px;
-            text-transform: uppercase;
-        }
-
-        .btn-grey:hover {
-            background-color: #5a6268;
-            color: #fff;
-        }
-    </style>
-    <!-- Main Contractor Modal -->
-    <div class="modal fade" id="contractorModal" tabindex="-1" aria-labelledby="contractorModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content shadow">
-                <div class="modal-header">
-                    <h5 class="modal-title fw-bold" id="contractorModalLabel">
-                        ADD NEW CONTRACTOR
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-
-                <div class="modal-body">
-                    <form id="contractorForm" class="needs-validation" novalidate>
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <label class="form-label">CONTRACTOR NAME*</label>
-                                <input type="text" class="form-control" placeholder="ENTER CONTRACTOR NAME" required />
-                                <div class="invalid-feedback">
-                                    Contractor Name is required.
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">CONTRACTOR ADDRESS*</label>
-                                <input type="text" class="form-control" placeholder="ENTER CONTRACTOR ADDRESS"
-                                    required />
-                                <div class="invalid-feedback">
-                                    Contractor Address is required.
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">CONTRACTOR OTHER DETAILS</label>
-                                <input type="text" class="form-control" placeholder="ENTER CONTRACTOR OTHER DETAILS" />
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">CONTRACTOR MOBILE*</label>
-                                <input type="tel" class="form-control" placeholder="ENTER CONTRACTOR MOBILE NUMBER"
-                                    required pattern="[0-9]{10}" />
-                                <div class="invalid-feedback">
-                                    Enter a valid 10-digit mobile number.
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">CONTRACTOR ADHAR CARD NO</label>
-                                <input type="text" class="form-control" placeholder="ADHAR CARD NUMBER"
-                                    pattern="[0-9]{12}" />
-                                <div class="invalid-feedback">Aadhar must be 12 digits.</div>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">CONTRACTOR PAN CARD NO</label>
-                                <input type="text" class="form-control" placeholder="PAN CARD NUMBER"
-                                    pattern="[A-Z]{5}[0-9]{4}[A-Z]{1}" />
-                                <div class="invalid-feedback">
-                                    Enter a valid PAN (ABCDE1234F).
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">CONTRACTOR IMAGE</label>
-                                <input type="file" class="form-control" />
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">CONTRACTOR TYPE</label>
-                                <div class="input-group">
-                                    <input type="text" class="form-control" id="mainContractorType"
-                                        placeholder="ENTER CONTRACTOR TYPE" />
-                                    <button class="btn btn-primary" type="button" data-bs-toggle="modal"
-                                        data-bs-target="#contractorTypeModal">
-                                        +
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="modal-footer mt-3">
-                            <button type="submit" class="btn btn-purple">
-                                ADD CONTRACTOR
-                            </button>
-                            <button type="button" class="btn btn-warning" data-bs-dismiss="modal">
-                                Close
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
+    <!-- Contractor Name -->
+    <div class="col-md-6">
+      <label class="form-label">Contractor Name*</label>
+      <input type="text" class="form-control" name="contractor_name" placeholder="Enter Contractor Name" required />
+      <div class="invalid-feedback">Contractor Name is required.</div>
     </div>
 
-    <!-- Contractor Type Modal -->
-    <div class="modal fade" id="contractorTypeModal" tabindex="-1" aria-labelledby="contractorTypeLabel"
-        aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content p-2">
-                <div class="modal-header">
-                    <h6 class="modal-title fw-bold" id="contractorTypeLabel">
-                        ADD NEW CONTRACTOR TYPE
-                    </h6>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="contractorTypeForm">
-                        <div class="mb-3">
-                            <label for="contractorType" class="form-label">CONTRACTOR TYPE*</label>
-                            <input type="text" class="form-control" id="contractorType"
-                                placeholder="ENTER CONTRACTOR TYPE" required />
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-purple" id="saveContractorType">
-                        ADD CONTRACTOR TYPE
-                    </button>
-                    <button type="button" class="btn btn-grey" data-bs-dismiss="modal">
-                        Close
-                    </button>
-                </div>
-            </div>
-        </div>
+    <!-- Contractor Address -->
+    <div class="col-md-6">
+      <label class="form-label">Contractor Address*</label>
+      <input type="text" class="form-control" name="contractor_address" placeholder="Enter Contractor Address" required />
+      <div class="invalid-feedback">Contractor Address is required.</div>
     </div>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Contractor Other Details -->
+    <div class="col-md-6">
+      <label class="form-label">Contractor Other Details</label>
+      <input type="text" class="form-control" name="contractor_details" placeholder="Enter Contractor Other Details" />
+    </div>
 
-    <script>
-        (function () {
-            "use strict";
-            const form = document.getElementById("contractorForm");
-            form.addEventListener(
-                "submit",
-                function (event) {
-                    if (!form.checkValidity()) {
-                        event.preventDefault();
-                        event.stopPropagation();
-                    }
-                    form.classList.add("was-validated");
-                },
-                false
-            );
+    <!-- Contractor Mobile -->
+    <div class="col-md-6">
+      <label class="form-label">Contractor Mobile*</label>
+      <input type="tel" class="form-control" name="contractor_mobile" placeholder="Enter Mobile Number" required pattern="[0-9]{10}" />
+      <div class="invalid-feedback">Enter a valid 10-digit mobile number.</div>
+    </div>
 
-            // Auto open main modal when page loads
-            const myModal = new bootstrap.Modal(
-                document.getElementById("contractorModal")
-            );
-            window.addEventListener("load", () => {
-                myModal.show();
-            });
-        })();
+    <!-- Contractor Aadhar -->
+    <div class="col-md-6">
+      <label class="form-label">Contractor Aadhar Card No</label>
+      <input type="text" class="form-control" name="contractor_aadhar" placeholder="Aadhar Card Number" pattern="[0-9]{12}" />
+      <div class="invalid-feedback">Aadhar must be 12 digits.</div>
+    </div>
 
-        // Save contractor type
-        document
-            .getElementById("saveContractorType")
-            .addEventListener("click", function () {
-                const typeInput = document.getElementById("contractorType");
-                const mainTypeInput = document.getElementById("mainContractorType");
+    <!-- Contractor PAN -->
+    <div class="col-md-6">
+      <label class="form-label">Contractor PAN Card No</label>
+      <input type="text" class="form-control" name="contractor_pan" placeholder="PAN Card Number" pattern="[A-Z]{5}[0-9]{4}[A-Z]{1}" />
+      <div class="invalid-feedback">Enter a valid PAN (ABCDE1234F).</div>
+    </div>
 
-                if (typeInput.value.trim() !== "") {
-                    mainTypeInput.value = typeInput.value.trim();
-                    typeInput.value = "";
-                    bootstrap.Modal.getInstance(
-                        document.getElementById("contractorTypeModal")
-                    ).hide();
-                } else {
-                    alert("Please enter a Contractor Type.");
-                }
-            });
+    <!-- Contractor Image -->
+    <div class="col-md-6">
+      <label class="form-label">Contractor Image</label>
+      <input type="file" class="form-control" name="contractor_image" />
+    </div>
 
-        // Reopen parent modal when child closes
-        document
-            .getElementById("contractorTypeModal")
-            .addEventListener("hidden.bs.modal", function () {
-                const parentModal = document.getElementById("contractorModal");
-                const parentInstance =
-                    bootstrap.Modal.getInstance(parentModal) ||
-                    new bootstrap.Modal(parentModal);
-                parentInstance.show();
-            });
-    </script>
-    <%-include('footer.ejs')%>
+    <!-- Contractor Type -->
+    <div class="col-md-6">
+      <label class="form-label">Contractor Type</label>
+      <div class="input-group">
+        <input type="text" class="form-control" name="contractor_type" id="mainContractorType" placeholder="Enter Contractor Type" />
+        <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#contractorTypeModal">+</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Buttons -->
+  <div class="text-end mt-4">
+    <button type="submit" class="btn btn-success px-4">Add Contractor</button>
+    <button type="reset" class="btn btn-secondary px-4">Reset</button>
+  </div>
+</form>
+
+    </div>
+  </div>
+</div>
+<!-- Modal for Adding Contractor Type -->
+<div class="modal fade" id="contractorTypeModal" tabindex="-1" aria-labelledby  
+="contractorTypeModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title " id="contractorTypeModalLabel">Add Contractor Type</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="contractorTypeForm" class="needs-validation" novalidate>
+          <div class="mb-3">
+            <label for="contractorTypeInput" class="form-label">Contractor Type*</label>
+            <input type="text" class="form-control" id="contractorTypeInput" placeholder="Enter Contractor Type" required />
+            <div class="invalid-feedback">Contractor Type is required.</div>
+          </div>
+          <div class="text-end">
+            <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Add Type</button>
+          </div>
+        </form>
+        </div>
+    </div>
+  </div>    
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  (function () {
+    "use strict";
+    const form = document.getElementById("contractorForm");
+    form.addEventListener("submit", function (event) {
+      if (!form.checkValidity()) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+      form.classList.add("was-validated");
+    });
+  })();
+</script>
+<%-include('footer.ejs')%>

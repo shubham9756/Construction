@@ -57,9 +57,35 @@ router.get('/new_selling_flat_list', async function (req, res) {
 
 // Rent Management
 router.get('/add_rent_flat', async function (req, res) {
-    var sql = `SELECT * FROM flats INNER JOIN site ON flats.site_id = site.site_id WHERE flats.type='Rent' AND flats.status='Available'`;
+    var sql = `SELECT * FROM flats INNER JOIN site ON flats.site_id = site.site_id WHERE flats.type='Rent' AND flats.buy='Available'`;
     var flat = await exe(sql);
+    res.render('admin/rent_flat.ejs', { flat: flat });
+})
+router.get('/rent_flat_list', async function (req, res) {
+    var sql = `SELECT * FROM flats INNER JOIN site ON flats.site_id = site.site_id WHERE flats.buy ='Sell' AND flats.type ='Rent';`;
+    var flat = await exe(sql);
+    console.log(flat);
     res.render('admin/rent_flat_list.ejs', { flat: flat });
+})
+// sell management
+router.get('/add_selling_flat', async function (req, res) {
+    var sql = `SELECT * FROM flats INNER JOIN site ON flats.site_id = site.site_id WHERE flats.type='Sell' AND flats.buy='Available'`;
+    var flat = await exe(sql);
+    res.render('admin/add_selling_flat.ejs', { flat: flat });
+})
+router.get('/selling_flat_list', async function (req, res) {
+    var sql = `SELECT * FROM flats INNER JOIN site ON flats.site_id = site.site_id WHERE flats.buy = 'Sell' AND flats.type ='Sell'`;
+    var flat = await exe(sql);
+    res.render('admin/selling_flat_list.ejs', { flat: flat });
+})
+
+router.get('/rent_flat_details/:id', async function (req, res) {
+    var id = req.params.id;
+    var sql = "SELECT * FROM flats WHERE flat_id = ?";
+    var site = await exe("SELECT * FROM site WHERE status='Sell'");
+    var result = await exe(sql, [id]);
+    console.log(result);
+    res.render('admin/flat_details.ejs', { result,site });
 })
 
 
@@ -72,13 +98,13 @@ router.get('/view/:id', async function (req, res) {
     var sql1 = "SELECT * FROM customers WHERE status='Active'";
     var customer = await exe(sql1);
     var result = await exe(sql, [id]);
-    res.render('admin/view_flat.ejs', { customer, result ,employee});
+    res.render('admin/view_flat.ejs', { customer, result, employee });
 });
 router.post('/flat-sold', async function (req, res) {
     var d = req.body;
 
     const sql = `INSERT INTO flat_sales ( customer_id,sale_date,invoice_no,deadline_date,carpet_sqft,buildup_sqft,sqfeet, rate,basic_amount,note,employee_signature,employee_id,customer_signature,customer_name,stamp_duty_percent,stamp_duty_amount,other_tax_persent,other_tax_amount,gst_percent,gst_amount,cgst_percent,cgst_amount,sgst_percent,sgst_amount,total_amount,discount_percent,discount_amount,grand_total) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`;
-    var values = await exe(sql, [d.customer_id,d.date,d.invoice_no,d.deadline_date,d.carpet,d.buildup,d.sqfeet,d.rate,d.basic_amount,d.note,d.employee_signature,d.employee_id,d.customer_signature,d.customer_name,d.stamp_duty_percent,d.stamp_duty_amount,d.other_tax_percent,d.other_tax_amount,d.gst_percent,d.gst_amount,d.cgst_percent,d.cgst_amount,d.sgst_percent,d.sgst_amount,d.total_amount,d.discount_percent,d.discount_amount,d.grand_total ]);
+    var values = await exe(sql, [d.customer_id, d.date, d.invoice_no, d.deadline_date, d.carpet, d.buildup, d.sqfeet, d.rate, d.basic_amount, d.note, d.employee_signature, d.employee_id, d.customer_signature, d.customer_name, d.stamp_duty_percent, d.stamp_duty_amount, d.other_tax_percent, d.other_tax_amount, d.gst_percent, d.gst_amount, d.cgst_percent, d.cgst_amount, d.sgst_percent, d.sgst_amount, d.total_amount, d.discount_percent, d.discount_amount, d.grand_total]);
 
     var sql1 = "UPDATE flats SET status='Inavailable' WHERE flat_id=?";
     res.redirect('/')
@@ -87,12 +113,7 @@ router.post('/flat-sold', async function (req, res) {
 
 })
 
-// sell management
-router.get('/add_selling_flat', async function (req, res) {
-    var sql = `SELECT * FROM flats INNER JOIN site ON flats.site_id = site.site_id WHERE flats.type='Sell'`;
-    var flat = await exe(sql);
-    res.render('admin/selling_flat_list.ejs', { flat: flat });
-})
+
 
 // customer management
 router.get("/add_customor", function (req, res) {
@@ -116,6 +137,7 @@ router.get("/customor_list", async function (req, res) {
 router.get('/add_material', function (req, res) {
     res.render('admin/add_material.ejs')
 })
+
 router.get('/order_material', async function (req, res) {
     var sql = "SELECT * FROM materials";
     var sql1 = "SELECT * FROM udm WHERE status='Active'";
@@ -148,14 +170,17 @@ router.post('/save_udm', async function (req, res) {
     var result = await exe(sql, [d.udm_name, d.udm_added_name]);
     res.redirect('/unit',);
 });
+router.get('/gst_unit',function(req,res){
+    res.render('admin/gst.ejs')
+})
 router.get('/employee_list', function (req, res) {
     res.render("admin/contractor_list.ejs");
 })
 
 // employee management
-router.get('/add_employee',async  function (req, res) {
+router.get('/add_employee', async function (req, res) {
     var result = await exe("SELECT * FROM employee_types WHERE status='Active'");
-    res.render("admin/add_employee.ejs",{result});
+    res.render("admin/add_employee.ejs", { result });
 });
 router.post('/save_type', async function (req, res) {
     var d = req.body;
@@ -172,7 +197,7 @@ router.post('/save_employee', async function (req, res) {
     }
     var sql = `INSERT INTO employees(employee_name,employee_email,employee_mobile,employee_address,employee_photo,employee_type_id,pan_number,aadhar_number,employee_password,employee_dob,employee_position,employee_in_time,employee_monthly_payment,employee_joining_date)VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)`;
     var result = await exe(sql, [d.employee_name, d.employee_email, d.employee_mobile, d.employee_address, filename, d.employee_type, d.pan_number, d.aadhar_number, d.employee_password, d.employee_dob, d.employee_position, d.employee_in_time, d.employee_monthly_payment, d.employee_joining_date]);
-    
+
     res.redirect('/add_employee');
 });
 

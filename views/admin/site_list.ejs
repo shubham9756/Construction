@@ -27,7 +27,7 @@
         <td><%-site[i].site_name%></td>
         <td><%- site[i].site_location%></td>
         <td><%- site[i].site_manager_name%></td>
-        <td><%- site[i].site_start_date%></td>
+        <td><%- site[i].site_start_date.toLocaleDateString()%></td>
         <td><%- site[i].site_description%></td>
       </tr>
       <%}%>
@@ -48,17 +48,17 @@
         {
           extend: 'colvis',
           text: '<i class="bi bi-layout-three-columns"></i> Columns',
-          className: 'btn btn-secondary btn-sm'
+          className: 'btn btn-secondary btn-sm m-2'
         },
         {
           extend: 'csv',
           text: '<i class="bi bi-filetype-csv"></i> CSV',
-          className: 'btn btn-success btn-sm'
+          className: 'btn btn-success btn-sm m-2'
         },
         {
           extend: 'print',
           text: '<i class="bi bi-printer"></i> Print',
-          className: 'btn btn-info btn-sm'
+          className: 'btn btn-info btn-sm m-2'
         }
       ],
       paging: true,

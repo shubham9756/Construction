@@ -42,7 +42,11 @@
   <link rel="stylesheet" href="/css/demo.css" />
 </head>
 
-
+<style>
+    button{
+        padding: 20px   ;
+    }
+</style>
 
 <body>
     <div class="wrapper">
@@ -128,16 +132,26 @@
                             </div>
                         </li>
                         <li class="nav-item">
-                            <a data-bs-toggle="collapse" href="#forms">
-                                <i class="fas fa-pen-square"></i>
-                                <p>Rent Flat</p>
+                            <a data-bs-toggle="collapse" href="#rent">
+                                <i class="fas fa-th-list"></i>
+                                <p>Rent Flats</p>
                                 <span class="caret"></span>
                             </a>
-                            <div class="collapse" id="forms">
+                            <div class="collapse" id="rent">
                                 <ul class="nav nav-collapse">
                                     <li>
-                                        <a href="../forms/forms.html">
-                                            <span class="sub-item">Basic Form</span>
+                                        <a href="/add_rent_flat">
+                                            <span class="sub-item">New Rent Flat</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="/rent_flat_list">
+                                            <span class="sub-item">Rent Flat List</span>
+                                        </a>
+                                    </li>
+                                     <li>
+                                        <a href="/rent_flat_report">
+                                            <span class="sub-item">Rent Flat Report</span>
                                         </a>
                                     </li>
                                 </ul>
@@ -227,7 +241,7 @@
                                 <ul class="nav nav-collapse">
                                     <li>
                                         <a href="/add_employee">
-                                            <span class="sub-item">Add Employee</span>
+                                            <span class="sub-item">Add Contractor</span>
                                         </a>
                                     </li>
                                     <li >
@@ -255,6 +269,11 @@
                                     <li>
                                         <a href="/unit">
                                             <span class="sub-item">Material Unit</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="/gst_unit">
+                                            <span class="sub-item">Gst</span>
                                         </a>
                                     </li>
                                 </ul>
