@@ -130,7 +130,7 @@ router.get("/customor_list", async function (req, res) {
     var result = await exe(sql);
     console.log(result);
     res.render("admin/customer_list.ejs", { customer: result });
-=======
+
         var result = await exe(sql, [
             d.company_name,
             d.product_name,
@@ -144,7 +144,7 @@ router.get("/customor_list", async function (req, res) {
         ]);
         res.redirect('/admin/godwon_orders');
     
->>>>>>> Stashed changes
+
 });
 
 
@@ -232,4 +232,72 @@ router.get("/add_flat",function(req,res){
 router.get("/login",function(req,res){
     res.render("admin/login.ejs");   
 });
+
+router.get("/bank_accounts",async function(req,res){
+    var account = await exe("SELECT * FROM bank_accounts");
+    var obj = {"account":account}
+    res.render("admin/bank_accounts_list.ejs",obj);   
+})
+
+router.get("/add_account",function(req,res){
+    res.render("admin/add_bank_account.ejs");   
+});
+router.post("/save_account",async function(req,res){
+    var d = req.body;
+    var sql = `INSERT INTO bank_accounts(bank_name,account_holder,account_number,ifsc_code,current_balance)VALUES(?,?,?,?,?)`;
+    var result = await exe(sql,[d.bank_name,d.account_holder,d.account_number,d.ifsc_code,d.current_balance]);
+    res.redirect("/admin/bank_accounts");
+    
+    
+})
+router.get("/view_account/:account_id",async function(req,res){
+    var data = await exe("SELECT * FROM bank_accounts WHERE account_id=?", [req.params.account_id]);
+   var result = await exe("SELECT * FROM transactions WHERE account_id=? ORDER BY transaction_id DESC LIMIT 10",[req.params.account_id]);
+
+       res.render("admin/view_bank_account.ejs",{"result":result,"data":data});   
+})
+router.post("/save_transaction", async function (req, res) {
+    var d = req.body;
+
+    
+    var account = await exe("SELECT current_balance FROM bank_accounts WHERE account_id=?", [d.account_id]);
+    var current_balance = parseFloat(account[0].current_balance); 
+
+    var amount = parseFloat(d.transaction_amount); 
+
+    
+    if (d.transaction_type === "Credit") {
+        current_balance += amount;
+    } else if (d.transaction_type === "Debit") {
+        current_balance -= amount;
+    }
+
+    
+    var sql = `INSERT INTO transactions (account_id, transaction_date, transaction_amount, transaction_type, payment_type, transaction_details)
+               VALUES (?, ?, ?, ?, ?, ?)`;
+
+    await exe(sql, [d.account_id, d.transaction_date, amount, d.transaction_type, d.payment_type, d.transaction_details]);
+
+    
+    await exe("UPDATE bank_accounts SET current_balance=? WHERE account_id=?", [current_balance, d.account_id]);
+
+    res.redirect("/admin/view_account/" + d.account_id);
+});
+
+
+router.get("/edit_account/:account_id",async function(req,res){
+    var data = await exe("SELECT * FROM bank_accounts WHERE account_id=?", [req.params.account_id]);
+       res.render("admin/edit_bank_account.ejs",{"data":data[0]});   
+});
+router.post("/update_account",async function(req,res){
+    var d = req.body;
+    var sql = `UPDATE bank_accounts SET bank_name=?,account_holder=?,account_number=?,ifsc_code=?,current_balance=? WHERE account_id=?`;
+    var result = await exe(sql,[d.bank_name,d.account_holder,d.account_number,d.ifsc_code,d.current_balance,d.account_id]);
+    res.redirect("/admin/bank_accounts");
+})
+router.get("/delete_account/:account_id",async function(req,res){
+    var result = await exe("DELETE FROM bank_accounts WHERE account_id=?", [req.params.account_id]);
+    res.redirect("/admin/bank_accounts");
+});
+
 module.exports = router;

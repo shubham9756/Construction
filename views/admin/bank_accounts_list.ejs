@@ -1,0 +1,159 @@
+<%-include('navbar.ejs')%>
+
+<!-- ✅ Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- ✅ DataTables CSS (Bootstrap 5 theme) -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/dataTables.bootstrap5.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.bootstrap5.min.css">
+
+<style>
+  :root {
+    --blue-header: #1a3da8;
+    --orange-accent: #ff8a00;
+    --purple-btn: #7d57c9;
+    --black-line: #111;
+  }
+
+  .top-title {
+    background: var(--blue-header);
+    color: #fff;
+    font-weight: 800;
+    padding: 12px 16px;
+    font-size: 18px;
+    letter-spacing: 0.3px;
+    display: block;
+    border-left: 6px solid var(--orange-accent);
+    margin-top: 30px;
+  }
+
+  .bott {
+    background-color: purple;
+  }
+
+  /* ✅ Row hover scale effect */
+  #bankTable.dataTable tbody tr {
+    transition: all 0.2s ease-in-out;
+  }
+
+  #bankTable.dataTable tbody tr:hover {
+    background-color: rgba(125, 87, 201, 0.1);
+    transform: scale(1.02);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  /* ✅ DataTables buttons purple */
+  .dt-buttons .btn {
+    background-color: var(--purple-btn) !important;
+    color: #fff !important;
+    border: none !important;
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-weight: 600;
+    transition: 0.2s ease;
+    margin-right: 6px;
+  }
+
+  .dt-buttons .btn:hover {
+    background-color: #5e3ca8 !important;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 6px rgba(125, 87, 201, 0.4);
+  }
+
+  /* ✅ केवल मोबाइल (max-width: 767px) के लिए fix */
+  @media (max-width: 767px) {
+    div.dt-container .d-flex {
+      flex-direction: row !important;
+      justify-content: space-between !important;
+      align-items: center !important;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+    div.dt-container .dataTables_filter {
+      flex: 1;
+    }
+    div.dt-container .dt-buttons {
+      flex-shrink: 0;
+    }
+  }
+</style>
+
+<body class="p-3">
+
+  <div class="container">
+    <!-- Banner -->
+    <span class="top-title d-flex justify-content-between align-items-center">
+      BANK ACCOUNTS
+      <a href="/admin/add_account" class="btn btn-sm bott text-white ms-2">
+        ADD New Bank Account
+      </a>
+    </span>
+
+    <!-- Table -->
+    <div class="table-responsive mt-3">
+      <table id="bankTable" class="table table-bordered align-middle text-center">
+        <thead class="table-light">
+          <tr>
+            <th>SN</th>
+            <th>BANK NAME</th>
+            <th>ACCOUNT HOLDER</th>
+            <th>ACCOUNT NUMBER</th>
+            <th>CURRENT BALANCE</th>
+            <th>ACTIONS</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% for (var i=0;i<account.length;i++) { %>
+          <tr>
+            <td><%- i+1 %></td>
+            <td><%- account[i].bank_name %></td>
+            <td><%- account[i].account_holder %></td>
+            <td><%- account[i].account_number %></td>
+            <td><%- account[i].current_balance %></td>
+            <td>
+              <a href="/admin/view_account/<%- account[i].account_id %>" class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></a>
+              <a href="/admin/edit_account/<%- account[i].account_id %>" class="btn btn-sm btn-outline-success"><i class="fas fa-edit"></i></a>
+              <a href="/admin/delete_account/<%- account[i].account_id %>" class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></a>
+            </td>
+          </tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ✅ jQuery -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+  <!-- ✅ DataTables JS -->
+  <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>
+
+  <!-- ✅ DataTables Buttons -->
+  <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+  <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.bootstrap5.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+  <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+  <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script>
+  <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.colVis.min.js"></script>
+
+  <script>
+    $(document).ready(function () {
+      $('#bankTable').DataTable({
+        paging: false,   // ❌ pagination off
+        info: false,     // ❌ info text off
+        dom: '<"d-flex flex-column flex-md-row justify-content-between align-items-center mb-2"fB>rt',
+        buttons: [
+          {
+            extend: 'colvis',
+            text: 'Column Visibility'
+          },
+          'csv', 'print'
+        ]
+      });
+    });
+  </script>
+
+<%-include('footer.ejs')%>

@@ -1,0 +1,205 @@
+<%-include("navbar.ejs")%>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    :root {
+      --blue-header: #1a3da8;
+      --orange-accent: #ff8a00;
+      --black-line: #111;
+      --purple-btn: #7d57c9;
+    }
+
+    body {
+      background:#f0f2f5;
+      font-family: "Segoe UI", Roboto, Arial, sans-serif;
+      color:#111;
+      padding: 18px;
+    }
+
+    .card-wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+      border: 1px solid #ddd;
+      background: #fff;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+
+   .top-title{
+      background:var(--blue-header);
+      color:#fff;
+      font-weight:800;
+      padding:12px 16px;
+      font-size:18px;
+      letter-spacing:0.3px;
+      display:block;
+      border-left:6px solid var(--orange-accent);
+    }
+
+    form.form-exact {
+      padding: 20px;
+    }
+
+    .form-exact .form-label {
+      font-weight: 800;
+      font-size: 12px;
+      margin-bottom: 6px;
+      display: block;
+      color: #222;
+    }
+
+    .form-exact .form-control {
+      border: 2px solid var(--black-line) !important;
+      border-radius: 0 !important;
+      height: 42px;
+      box-shadow: none;
+      padding: 6px 10px;
+      font-size: 14px;
+      position: relative;
+      z-index: 1; /* 👈 input ko neeche */
+    }
+
+    .btn-purple {
+      background: var(--purple-btn);
+      color: #fff;
+      border: none;
+      font-weight: 700;
+      padding: 10px 28px;
+      box-shadow: 0 6px 0 rgba(0,0,0,0.14);
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+    .btn-purple:hover {
+      background: var(--purple-btn) !important;
+      color:#fff !important;
+    }
+    .btn-purple:active {
+      transform: translateY(1px);
+      box-shadow:0 4px 0 rgba(0,0,0,0.12);
+    }
+
+    .icon {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #555;
+      z-index: 2;           /* 👈 icon ko input ke upar */
+      pointer-events: none; /* 👈 input typing me dikkat na ho */
+    }
+
+    .input-group {
+      position: relative;
+    }
+
+    .helper-text {
+      font-size: 12px;
+      color: #777;
+      margin-top: 4px;
+    }
+
+    .currency {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #555;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .currency-input {
+      padding-left: 28px;
+    }
+
+  </style>
+
+<body class="p-3 mt-4">
+
+<div class="card-wrap mt-4">
+  <span class="top-title">ADD NEW BANK ACCOUNT</span>
+
+  <form class="form-exact"  action="/admin/save_account" method="POST" enctype="multipart/form-data">
+    <div class="row">
+    <div class="mb-3 col-md-6">
+      <label class="form-label">BANK NAME</label>
+      <div class="input-group">
+        <input type="text" id="bankName" class="form-control" placeholder="ENTER BANK NAME" name="bank_name" required>
+        <i class="fas fa-building icon"></i>
+      </div>
+    </div>
+
+    <div class="mb-3 col-md-6">
+      <label class="form-label">ACCOUNT HOLDER NAME</label>
+      <div class="input-group">
+        <input type="text" id="accountHolder" class="form-control" value="AZZ ADMIN" name="account_holder" required>
+        <i class="fas fa-user icon"></i>
+      </div>
+    </div>
+
+    <div class="mb-3 col-md-6">
+      <label class="form-label">ACCOUNT NUMBER</label>
+      <div class="input-group">
+        <input type="text" id="accountNumber" class="form-control"  placeholder="ENTER ACCOUNT NUMBER" name="account_number" required>
+        <i class="fas fa-credit-card icon"></i>
+      </div>
+    </div>
+
+    <div class="mb-3 col-md-6">
+      <label class="form-label">IFSC CODE</label>
+      <div class="input-group">
+        <input type="text" id="ifscCode" class="form-control"  placeholder="ENTER IFSC CODE" name="ifsc_code" required>
+        <i class="fas fa-code icon"></i>
+      </div>
+      <span class="helper-text">Find your IFSC code on your cheque book or bank's website</span>
+    </div>
+
+    <div class="mb-3 col-md-6">
+      <label class="form-label">CURRENT BALANCE</label>
+      <div class="input-group">
+        <span class="currency">₹</span>
+        <input type="number" id="currentBalance" class="form-control currency-input" value="0" name="current_balance" required>
+      </div>
+    </div>
+
+    <div class="text-center mt-4">
+      <button type="submit" class="btn btn-purple">
+        <i class="fas fa-plus-circle"></i> ADD ACCOUNT
+      </button>
+    </div>
+    </div>
+  </form>
+</div>
+
+<script>
+  document.getElementById('bankAccountForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const bankName = document.getElementById('bankName').value;
+    const accountHolder = document.getElementById('accountHolder').value;
+    const currentBalance = document.getElementById('currentBalance').value;
+    
+    if (!bankName.trim()) {
+      alert('Please enter a bank name');
+      return;
+    }
+    if (!accountHolder.trim()) {
+      alert('Please enter an account holder name');
+      return;
+    }
+    if (currentBalance < 0) {
+      alert('Current balance cannot be negative');
+      return;
+    }
+    
+    alert('Bank account added successfully!');
+  });
+</script>
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script> -->
+
+
+
+<%-include("footer.ejs")%>
+
