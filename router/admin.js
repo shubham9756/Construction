@@ -115,7 +115,6 @@ router.post('/flat-sold', async function (req, res) {
 
 
 
-// customer management
 router.get("/add_customor", function (req, res) {
     res.render("admin/add_customer.ejs");
 });
@@ -144,11 +143,9 @@ router.get("/customor_list", async function (req, res) {
         ]);
         res.redirect('/admin/godwon_orders');
     
-
 });
 
 
-// material management
 router.get('/add_material', function (req, res) {
     res.render('admin/add_material.ejs')
 })
@@ -173,7 +170,6 @@ router.get('/site_order_material', async function (req, res) {
     res.render('admin/material_stock.ejs', { material });
 })
 
-// udm management
 router.get('/unit', async function (req, res) {
     var sql = "SELECT * FROM udm WHERE status='Active'";
     var udm = await exe(sql);
@@ -192,7 +188,6 @@ router.get('/employee_list', function (req, res) {
     res.render("admin/contractor_list.ejs");
 })
 
-// employee management
 router.get('/add_employee', async function (req, res) {
     var result = await exe("SELECT * FROM employee_types WHERE status='Active'");
     res.render("admin/add_employee.ejs", { result });
@@ -215,16 +210,6 @@ router.post('/save_employee', async function (req, res) {
 
     res.redirect('/add_employee');
 });
-
-
-
-
-
-
-
-
-
-
 
 router.get("/add_flat",function(req,res){
     res.render("admin/add_flat.ejs");   
