@@ -8,12 +8,7 @@ var conn = mysql.createConnection({
   database: "biraqu10fdxc8n6ny0aj"
 });
 
-// var conn = mysql.createConnection({
-//   host: "localhost",  
-//   user:'root',
-//   password:'',
-//   database:'construction'
-// });
+
 
 var exe = util.promisify(conn.query).bind(conn);
 

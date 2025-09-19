@@ -115,7 +115,6 @@ router.post('/flat-sold', async function (req, res) {
 
 
 
-// customer management
 router.get("/add_customor", function (req, res) {
     res.render("admin/add_customer.ejs");
 });
@@ -144,11 +143,9 @@ router.get("/customor_list", async function (req, res) {
         ]);
         res.redirect('/admin/godwon_orders');
     
-
 });
 
 
-// material management
 router.get('/add_material', function (req, res) {
     res.render('admin/add_material.ejs')
 })
@@ -173,7 +170,6 @@ router.get('/site_order_material', async function (req, res) {
     res.render('admin/material_stock.ejs', { material });
 })
 
-// udm management
 router.get('/unit', async function (req, res) {
     var sql = "SELECT * FROM udm WHERE status='Active'";
     var udm = await exe(sql);
@@ -192,7 +188,6 @@ router.get('/employee_list', function (req, res) {
     res.render("admin/contractor_list.ejs");
 })
 
-// employee management
 router.get('/add_employee', async function (req, res) {
     var result = await exe("SELECT * FROM employee_types WHERE status='Active'");
     res.render("admin/add_employee.ejs", { result });
@@ -215,16 +210,6 @@ router.post('/save_employee', async function (req, res) {
 
     res.redirect('/add_employee');
 });
-
-
-
-
-
-
-
-
-
-
 
 router.get("/add_flat",function(req,res){
     res.render("admin/add_flat.ejs");   
@@ -512,5 +497,53 @@ router.get("/completed_maintenance",async function(req,res){
 
     res.render("admin/completed_maintenance.ejs");
 });
+
+router.get("/add_vendor",async function(req,res){
+    var vendor = await exe("SELECT * FROM vendors");
+    res.render("admin/vendor_list.ejs",{vendors:vendor});   
+});
+
+router.post("/save_vendor",async function(req,res){
+    var d = req.body;
+    // console.log(d);
+    // res.send("ok");
+     var sql = `INSERT INTO vendors(vendor_name,vendor_address,vendor_other_details,vendor_phone,vendor_gst_no,vendor_phone2,vendor_date)VALUES(?,?,?,?,?,?,?)`;
+    var result = await exe(sql,[d.vendor_name,d.vendor_address,d.vendor_other_details,d.vendor_phone,d.vendor_gst_no,d.vendor_phone2,d.vendoe_date]);
+    res.redirect("/admin/vendor_list");
+});
+router.get("/edit_vendor/:vendor_id",async function(req,res){
+    var data = await exe("SELECT * FROM vendors WHERE vendor_id=?", [req.params.vendor_id]);
+       res.render("admin/edit_vendoe.ejs",{"data":data[0]});   
+});
+router.post("/update_vendor",async function (req,res){
+    var d = req.body;
+    var sql =`UPDATE vendors SET vendor_name=?,vendor_address=?,vendor_other_details=?,vendor_phone=?,vendor_gst_no=?,vendor_phone2=? WHERE vendor_id=?`;
+    var result = await exe(sql,[d.vendor_name,d.vendor_address,d.vendor_other_details,d.vendor_phone,d.vendor_gst_no,d.vendor_phone2,d.vendor_id]);
+    res.redirect("/admin/add_vendor"); 
+    
+});
+router.get("/PROCESSING_INQUIRIES",async function(req,res){
+    var vendor = await exe("SELECT * FROM vendors");
+    var vendors = await exe("SELECT * FROM vendors WHERE vendor_id=?",[req.params.vendor_id]);
+    res.render("admin/Processing_Inquiries.ejs",{"vendor":vendor,vendors:vendors});
+});
+router.post("/save_inquiry",async function(req,res){
+    var d = req.body;
+    
+    var sql = `INSERT INTO inquiries(vendor_id,vendor_name,purchase_date,purchase_type,raw_material,Material_qyt,udm,rate,discount,Taxable_value,gst,total,employee_sign,employee_signature,created_at)VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`;
+    var result = await exe(sql,[d.vendor_id,d.vendor_name,d.purchase_date,d.purchase_type,d.raw_material,d.Material_qyt,d.udm,d.rate,d.discount,d.Taxable_value,d.gst,d.total,d.employee_sign,d.employee_signature ,d.created_at]);
+    res.redirect("/admin/PROCESSING_INQUIRIES");
+          console.log("Form data =>", d);
+});
+router.get("/Processing_inq_list",async function(req,res){
+    var inquiry = await exe("SELECT * FROM inquiries");
+    res.render("admin/Processing_inq_list.ejs",{inquiries:inquiry});   
+});
+// router.post("/update_inquiry",async function (req,res){
+//     var d = req.body;
+//     var sql =`UPDATE inquiries SET vendor_id=?,purchase_date=?,purchase_type=?,row_material=?,Material_qyt=?,udm=?,rate=?,discount=?,Taxable_value=?,gst=?,total=?,employee_signature=? WHERE inquiry_id=?`;
+//     var result = await exe(sql,[d.vendor_id,d.purchase_date,d.purchase_type,d.row_material,d.Material_qyt,d.udm,d.rate,d.discount,d.Taxable_value,d.gst,d.total,d.employee_signature,d.inquiry_id]);
+//     res.redirect("/admin/Processing_inq_list");
+//     });
 
 module.exports = router;
