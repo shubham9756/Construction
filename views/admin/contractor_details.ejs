@@ -1,0 +1,300 @@
+<%-include('navbar.ejs')%>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        body {
+            background-color: #f0f0f0;
+            padding: 20px;
+        }
+        .main-container {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+        .header {
+            background-color: #7B68EE;
+            color: white;
+            padding: 10px;
+            border-radius: 5px 5px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header h5 {
+            margin: 0;
+            font-weight: bold;
+        }
+        .add-contract-btn {
+            background-color: #DDA0DD;
+            border: none;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 5px;
+        }
+        .left-panel .form-group {
+            margin-bottom: 10px;
+        }
+        .left-panel .form-control {
+            border: 1px solid #ced4da;
+            background-color: #e9ecef;
+            cursor: not-allowed;
+        }
+        .left-panel .form-label {
+            font-weight: bold;
+            color: #333;
+        }
+        .amount-box {
+            padding: 8px;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: bold;
+            color: #333;
+        }
+        .total-pending-amount {
+            background-color: #FFB6C1;
+        }
+        .contractor-paid-amount, .labour-paid-amount, .total-paid-amount {
+            background-color: #90EE90;
+        }
+        .total-amount {
+            background-color: #E6E6FA;
+        }
+        .right-panel .nav-tabs {
+            border-bottom: none;
+        }
+        .right-panel .nav-item {
+            flex-grow: 1;
+        }
+        .right-panel .nav-link {
+            background-color: #7B68EE;
+            color: white;
+            border-radius: 5px 5px 0 0;
+            text-align: center;
+            padding: 10px;
+            font-weight: bold;
+            border: none;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .right-panel .nav-link.active {
+            background-color: #fff;
+            color: #333;
+            border: 1px solid #dee2e6;
+            border-bottom: none;
+        }
+        .right-panel .nav-link.contract-tab {
+            background-color: #7B68EE;
+            color: white;
+        }
+        .right-panel .nav-link.payment-tab {
+            background-color: #FFD700;
+            color: white;
+        }
+        .right-panel .nav-link.labour-tab {
+            background-color: #FFA500;
+            color: white;
+        }
+        .right-panel .nav-link.pay-contractor-tab {
+            background-color: #FF6347;
+            color: white;
+        }
+        .tab-pane {
+            border: 1px solid #dee2e6;
+            border-top: none;
+            padding: 15px;
+            border-radius: 0 0 5px 5px;
+        }
+        .no-records {
+            text-align: center;
+            color: #888;
+            font-size: 1.2em;
+            padding: 50px;
+        }
+        .grid-icon-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #7B68EE;
+            color: white;
+            border-radius: 5px;
+            padding: 5px;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body>
+<div class="container main-container">
+    <div class="header">
+        <h5>CONTRACTOR DETAILS '<%=contractor.contractor_name%>'</h5>
+        <a href="/add_contract/<%= contractor.contractor_id %>" class="btn add-contract-btn">Add New Contract</a>
+    </div>
+
+    <div class="row mt-3">
+         
+        <div class="col-12 col-md-4 left-panel">
+           
+            <div class="mb-3">
+                <label for="contractorName" class="form-label">CONTRACTOR NAME</label>
+                <input type="text" class="form-control" id="contractorName" value="<%=contractor.contractor_name%>" readonly>
+            </div>
+          
+            <div class="mb-3">
+                <label for="contractorMobile" class="form-label">CONTRACTOR MOBILE</label>
+                <input type="text" class="form-control" id="contractorMobile" value="<%=contractor.contractor_mobile%>" readonly>
+            </div>
+            <div class="mb-3">
+                <label for="totalPending" class="form-label">TOTAL PENDING AMOUNT</label>
+                <div class="amount-box total-pending-amount">₹ <%- payment.next_due_amount %></div>
+            </div>
+            <div class="mb-3">
+                <label for="contractorPaid" class="form-label">CONTRACTOR PAID AMOUNT</label>
+                <div class="amount-box contractor-paid-amount">₹ <%- payment.paid_amount %></div>
+            </div>
+            <div class="mb-3">
+                <label for="labourPaid" class="form-label">LABOUR PAID AMOUNT</label>
+                <div class="amount-box labour-paid-amount">₹ 0/-</div>
+            </div>
+            <div class="mb-3">
+                <label for="totalPaid" class="form-label">TOTAL PAID AMOUNT</label>
+                <div class="amount-box total-paid-amount">₹ <%- payment.paid_amount %></div>
+            </div>
+            <div class="mb-3">
+                <label for="totalAmount" class="form-label">TOTAL AMOUNT</label>
+                <div class="amount-box total-amount">₹ <%- payment.total_amount %></div>
+            </div>
+            <div class="mb-3">
+                <label for="contractorAddress" class="form-label">CONTRACTOR ADDRESS</label>
+                <input type="text" class="form-control" id="contractorAddress" value="<%=contractor.contractor_address%>" readonly>
+            </div>
+            <div class="mb-3">
+                <label for="contractorDetails" class="form-label">CONTRACTOR DETAILS</label>
+                <input type="text" class="form-control" id="contractorDetails" value="<%=contractor.contractor_details%>" readonly>
+            </div>
+        </div>
+      
+
+        <div class="col-12 col-md-8 right-panel mt-3 mt-md-0">
+            <ul class="nav nav-tabs justify-content-between" id="myTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active contract-tab" id="contracts-tab" data-bs-toggle="tab" data-bs-target="#contracts" type="button" role="tab" aria-controls="contracts" aria-selected="true">CONTRACTS</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link payment-tab" id="payment-tab" data-bs-toggle="tab" data-bs-target="#payment" type="button" role="tab" aria-controls="payment" aria-selected="false">PAYMENT TRANSACTIONS</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link labour-tab" id="labour-tab" data-bs-toggle="tab" data-bs-target="#labour" type="button" role="tab" aria-controls="labour" aria-selected="false">LABOUR PAYMENTS</button>
+                </li>
+                <!-- Updated Pay to Contractor Tab to Link to Another Page -->
+                <li class="nav-item" role="presentation">
+                    <a href="/pay_new_contract/<%=contractor.contractor_id%>" class="nav-link pay-contractor-tab" id="pay-contractor-tab" role="tab" aria-controls="pay-contractor" aria-selected="false">PAY TO CONTRACTOR</a>
+                </li>
+            </ul>
+             
+            <div class="tab-content" id="myTabContent">
+                <div class="tab-pane fade show active" id="contracts" role="tabpanel" aria-labelledby="contracts-tab">
+                    <div class="table-responsive">
+                        <table class="table table-bordered text-center">
+                            <thead>
+                                <tr>
+                                    <th scope="col">SN</th>
+                                    <th scope="col">CONTRACT TITLE</th>
+                                    <th scope="col">CONTRACT START DATE</th>
+                                    <th scope="col">CONTRACT END DATE</th>
+                                    <th scope="col">CONTRACT TOTAL AMT</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% if (contracts.length > 0) { %>
+                                    <% contracts.forEach(function(contract, index) { %>
+                                        <tr>
+                                            <td><%= index + 1 %></td>
+                                            <td><%= contract.contract_name %></td>
+                                            <td><%= contract.contract_start_date %></td>
+                                            <td><%= contract.contract_end_date %></td>
+                                            <td><%= contract.total_amount %></td>
+                                        </tr>
+                                    <% }); %>
+                                <% } else { %>
+                                    <tr>
+                                        <td colspan="5" class="no-records">NO CONTRACTS AVAILABLE</td>
+                                    </tr>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="tab-pane fade" id="payment" role="tabpanel" aria-labelledby="payment-tab">
+                    <div class="table-responsive">
+                        <table class="table table-bordered text-center">
+                            <thead>
+                                <tr>
+                                    <th scope="col">SN</th>
+                                    <th scope="col">PAYMENT DATE</th>
+                                    <th scope="col">PAYMENT AMOUNT</th>
+                                    <th scope="col">PAYMENT REMARKS</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% if (payment2.length === 0) { %>
+                                    <tr>
+                                        <td colspan="4" class="no-records">NO PAYMENT TRANSACTIONS AVAILABLE</td>
+                                    </tr>
+                                <% } else { %>
+                                    <% payment2.forEach(function(payment, index) { %>
+                                        <tr>
+                                            <td><%= index + 1 %></td>
+                                            <td><%= payment.paid_date %></td>
+                                            <td><%= payment.paid_amount %></td>
+                                            <td><%= payment.remarks %></td>
+                                        </tr>
+                                    <% }); %>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="tab-pane fade" id="labour" role="tabpanel" aria-labelledby="labour-tab">
+                    <div class="table-responsive">
+                        <table class="table table-bordered text-center">
+                            <thead>
+                                <tr>
+                                    <th scope="col">SN</th>
+                                    <th scope="col">LABOUR TYPE</th>
+                                    <th scope="col">PAYMENT DATE</th>
+                                    <th scope="col">PAYMENT AMOUNT</th>
+                                    <th scope="col">PAYMENT REMARKS</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="5" class="no-records">NO LABOUR PAYMENTS AVAILABLE</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="tab-pane fade" id="pay-contractor" role="tabpanel" aria-labelledby="pay-contractor-tab">
+                    <div class="no-records">PAYMENT FORM GOES HERE</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script> -->
+
+
+<%-include('footer.ejs')%>
