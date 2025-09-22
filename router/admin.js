@@ -430,6 +430,7 @@ router.get("/sale_stock",function(req,res){
 });
 router.get("/sale_report",function(req,res){    
     res.render("admin/sale_report");
+})
 router.get("/contractor", async function (req, res) {
     var contractors = await exe("SELECT * FROM contractors");
     res.render("admin/contractors_list.ejs", { "contractors": contractors });
@@ -685,15 +686,6 @@ router.get("/Processing_inq_list",async function(req,res){
     var inquiry = await exe("SELECT * FROM inquiries");
     res.render("admin/Processing_inq_list.ejs",{inquiries:inquiry});   
 });
-// router.post("/update_inquiry",async function (req,res){
-//     var d = req.body;
-//     var sql =`UPDATE inquiries SET vendor_id=?,purchase_date=?,purchase_type=?,row_material=?,Material_qyt=?,udm=?,rate=?,discount=?,Taxable_value=?,gst=?,total=?,employee_signature=? WHERE inquiry_id=?`;
-//     var result = await exe(sql,[d.vendor_id,d.purchase_date,d.purchase_type,d.row_material,d.Material_qyt,d.udm,d.rate,d.discount,d.Taxable_value,d.gst,d.total,d.employee_signature,d.inquiry_id]);
-//     res.redirect("/admin/Processing_inq_list");
-//     });
-
-
-
 
 module.exports = router;
  
