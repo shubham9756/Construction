@@ -284,5 +284,137 @@ router.get("/delete_account/:account_id",async function(req,res){
     var result = await exe("DELETE FROM bank_accounts WHERE account_id=?", [req.params.account_id]);
     res.redirect("/admin/bank_accounts");
 });
+router.get("/new_bill", function(req,res){
+    res.render("admin/new_bill.ejs");
+});
+router.post("/save_bill", async function(req, res) {
+    try {
+        var d = req.body;
+        var filename = "";
+
+        if (req.files && req.files.site_image_file) {
+            let file = req.files.site_image_file;
+            filename = Date.now() + "_" + file.name;
+            await file.mv("public/image/site_image/" + filename);
+        }
+
+        var sql = `INSERT INTO bills(expense_by,expense_given_by,vendor_name,date,bill_file,employee_signature) 
+                   VALUES(?,?,?,?,?,?)`;
+
+        await exe(sql, [
+            d.expense_by,
+            d.expense_given_by,
+            d.vendor_name,
+            d.date,
+            filename,
+            d.employee_signature
+        ]);
+
+        res.redirect("/admin/new_bill");
+    } catch (err) {
+        console.error("Error in /save_bill:", err);
+        res.status(500).send("Something went wrong!");
+    }
+});
+
+router.get("/bill_report", async function (req, res) {
+     var sql = `SELECT * FROM bills`;
+    var expenses = await exe(sql);
+    var obj = {"list":expenses};
+    res.render("admin/bill_report.ejs",{expenses})
+    // res.send(obj);
+
+});
+
+router.post("/bill_report", async function(req, res) {
+    try {
+        var d = req.body;
+        var sql = "SELECT * FROM bills WHERE date BETWEEN ? AND ? ORDER BY date DESC";
+        var bills = await exe(sql, [d.from_date, d.to_date]);
+        var totalAmount = bills.reduce((sum, b) => sum + Number(b.total || 0), 0);
+
+        res.render("expense_list", { expenses: expensesData });
+
+    } catch (err) {
+        console.error("Error in /bill_report:", err);       
+        res.status(500).send("Something went wrong!");
+    }
+});
+
+router.get("/add_enquiry",function(req,res){
+    res.render("admin/add_enquiry");
+});
+router.post("/new_enquiry",async function(req,res){
+    var d = req.body;
+    var sql = `INSERT INTO enquiries(customer_name,customer_mobile,customer_email,customer_address,inquiry_about,inquiry_status,reminder_date,remark,action)VALUES(?,?,?,?,?,?,?,?,?)`;
+    var result = await exe(sql,[d.customer_name,d.customer_mobile,d.customer_email,d.customer_address,d.inquiry_about,d.inquiry_status,d.reminder_date,d.remark,d.action]);
+    res.redirect("/admin/new_enquiry");
+});
+router.get('/new_enquiry',async function(req,res){
+    var enquiry = await exe("SELECT * FROM enquiries WHERE inquiry_status='new'");
+    res.render("admin/new_enquiry.ejs",{"enquiry":enquiry});
+    // res.send({"enquiry":enquiry});
+});
+router.get("/delete_new/:id", async (req, res) => {
+  var id= req.params.id;
+  var sql = `DELETE  FROM enquiries WHERE id = ?`;
+  var data = await exe(sql,[id]);
+  // res.send("delete successfull")
+  res.redirect("/admin/new_enquiries");
+});
+
+router.get("/closed_inquiries",async function(req,res){
+    var enquiry = await exe("SELECT * FROM enquiries WHERE inquiry_status='closed'");   
+    res.render("admin/closed_inquiries",{"enquiry":enquiry});
+    // res.send({"enquiry":enquiry});
+});
+router.get("/delete_closed/:id", async (req, res) => {
+  var id= req.params.id;
+  var sql = `DELETE  FROM enquiries WHERE id = ?`;
+  var data = await exe(sql,[id]);
+  // res.send("delete successfull")
+  res.redirect("/admin/closed_enquiries");
+});
+
+router.get("/confirm_enquiries",async function(req,res){
+    var enquiry = await exe ("SELECT * FROM enquiries WHERE inquiry_status='confirmed'");
+    res.render("admin/confirm_enquiries",{"enquiry":enquiry});
+    // res.send({"enquiry":enquiry});
+})
+router.get("/delete_confirm/:id", async (req, res) => {
+  var id= req.params.id;
+  var sql = `DELETE  FROM enquiries WHERE id = ?`;
+  var data = await exe(sql,[id]);
+  // res.send("delete successfull")
+  res.redirect("/admin/confirm_enquiries");
+});
+router.get('/processing_inquiries',async function(req,res){
+    var enquiry = await exe("SELECT * FROM enquiries WHERE inquiry_status='processing'");
+    res.render("admin/processing_inquiries.ejs",{"enquiry":enquiry});
+    // res.send({"enquiry":enquiry});
+});
+router.get("/delete_processing/:id", async (req, res) => {
+  var id= req.params.id;
+  var sql = `DELETE  FROM enquiries WHERE id = ?`;
+  var data = await exe(sql,[id]);
+  // res.send("delete successfull")
+  res.redirect("/admin/processing_enquiries");
+});
+router.get("/issue_stock",function(req,res){    
+    res.render("admin/issue_stock");
+});
+router.get("/issue_report",function(req,res){    
+    res.render("admin/issue_report");
+});
+router.get("/sale_stock",function(req,res){    
+    res.render("admin/sale_stock");
+});
+router.get("/sale_report",function(req,res){    
+    res.render("admin/sale_report");
+});
+
+
+
 
 module.exports = router;
+ 
