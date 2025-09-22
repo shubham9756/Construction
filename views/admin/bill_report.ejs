@@ -1,0 +1,37 @@
+<%- include("navbar.ejs") %>
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <h1 class="mt-4">Bill Report</h1>
+      <table class="table table-bordered mt-4">
+        <thead>
+          <tr>
+            <th>Bill ID</th>
+            <th>Expense By</th>
+            <th>Expense Given By</th>
+            <th>Vendor Name</th>
+            <th>Date</th>
+            <th>Upload Bill</th>
+            <th>Employee Signature</th>
+            <th>Created at</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% expenses.forEach(function(bill,i) { %>
+            <tr>
+              <td><%= bill.id %></td>
+              <td><%= bill.expense_by%></td>
+              <td><%= bill.expense_given_by%></td>
+              <td><%= bill.vendor_name%></td>
+              <td><%= bill.date%></td>
+              <td><%= bill.bill_file%></td>
+              <td><%= bill.employee_signature%></td>
+              <td><%= bill.created_at%></td>
+              <td><%= bill.total%></td>
+            </tr>
+          <% }); %>
+        </tbody>
+  </div>
+</div>
+<%- include("footer.ejs") %>

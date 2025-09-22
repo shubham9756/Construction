@@ -1,0 +1,156 @@
+<%-include('navbar.ejs')%>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Payout / Expense</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    body {
+      background: #f9f9fc;
+      font-family: Arial, sans-serif;
+    }
+    .card {
+      border: none;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    }
+    .form-label {
+      font-weight: bold;
+      font-size: 0.9rem;
+    }
+    .upload-box {
+      background: #f1f5fa;
+      border: 1px dashed #ccc;
+      text-align: center;
+      padding: 15px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .btn-add {
+      background: #007bff;
+      color: #fff;
+      font-weight: bold;
+    }
+    .btn-add:hover {
+      background: #0056b3;
+    }
+    .table th {
+      background: #f1f5fa;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container my-5">
+  <div class="card p-4">
+    <h4 class="text-center fw-bold">ADD PAYOUT / EXPENSE</h4>
+    <p class="text-center text-muted">FILL OUT THE DETAILS BELOW TO RECORD A NEW EXPENSE</p>
+
+    <!-- Form Start -->
+    <form action="/save_bill" method="POST" enctype="multipart/form-data">
+      <div class="row g-3 mb-3">
+        <div class="col-md-3">
+          <label class="form-label">EXPENSE BY</label>
+          <input type="text" class="form-control" name="expense_by" value="A2Z ADMIN" required>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">EXPENSE GIVEN BY</label>
+          <input type="text" class="form-control" name="expense_given_by" placeholder="GIVEN BY" required>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">VENDOR NAME</label>
+          <input type="text" class="form-control" name="vendor_name" placeholder="VENDOR NAME" required>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">DATE</label>
+          <input type="date" class="form-control" name="date" value="<%= new Date().toISOString().split('T')[0] %>" required>
+        </div>
+      </div>
+
+      <div class="row g-3 mb-4">
+        <div class="col-md-6">
+          <label class="form-label">UPLOAD BILL</label>
+          <div class="upload-box">
+            <i class="fas fa-upload"></i> UPLOAD BILL
+            <input type="file" class="form-control mt-2" name="site_image_file" required>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">EMPLOYEE SIGNATURE</label>
+          <div class="upload-box">
+            <i class="fas fa-signature"></i> Add Signature
+            <input type="file" class="form-control mt-2" name="employee_signature">
+          </div>
+        </div>
+      </div>
+
+      <!-- Expense Items Table -->
+      <div class="table-responsive mb-3">
+        <table class="table align-middle" id="itemsTable">
+          <thead>
+            <tr>
+              <th>PRODUCT NAME</th>
+              <th>QUANTITY</th>
+              <th>RATE</th>
+              <th>TOTAL</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><input type="text" class="form-control" name="product_name[]" placeholder="PRODUCT NAME" required></td>
+              <td><input type="number" class="form-control qty" name="quantity[]" value="0" min="0"></td>
+              <td><input type="number" class="form-control rate" name="rate[]" value="0" min="0"></td>
+              <td><input type="number" class="form-control total" name="total[]" value="0" readonly></td>
+              <td>
+                <button type="button" class="btn btn-sm btn-success addRow">
+                  <i class="fas fa-plus"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="text-end">
+        <button type="submit" class="btn btn-add">
+          <i class="fas fa-save"></i> Add Expense
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  // Auto calculate total
+  function calcTotal(row) {
+    const qty = parseFloat(row.querySelector('.qty').value) || 0;
+    const rate = parseFloat(row.querySelector('.rate').value) || 0;
+    row.querySelector('.total').value = qty * rate;
+  }
+
+  document.addEventListener('input', (e) => {
+    if (e.target.classList.contains('qty') || e.target.classList.contains('rate')) {
+      const row = e.target.closest('tr');
+      calcTotal(row);
+    }
+  });
+
+  // Add new row
+  document.querySelector('#itemsTable').addEventListener('click', (e) => {
+    if (e.target.closest('.addRow')) {
+      const table = document.querySelector('#itemsTable tbody');
+      const newRow = table.rows[0].cloneNode(true);
+      newRow.querySelectorAll('input').forEach(input => input.value = input.classList.contains('total') ? '0' : '');
+      table.appendChild(newRow);
+    }
+  });
+</script>
+</body>
+</html>
+<%-include('footer.ejs')%>
