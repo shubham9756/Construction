@@ -98,6 +98,9 @@ router.get('/rent_flat_details/:id', async function (req, res) {
 
 
 
+
+
+
 // site flat view
 router.get('/view/:id', async function (req, res) {
     var id = req.params.id;
@@ -433,6 +436,8 @@ router.get("/sale_stock", function (req, res) {
 router.get("/sale_report", function (req, res) {
     res.render("admin/sale_report");
 
+
+
 });
 router.get("/contractor", async function (req, res) {
     var contractors = await exe("SELECT * FROM contractors");
@@ -505,6 +510,13 @@ router.get("/contractor", async function (req, res) {
 //     [req.params.contractor_id]);
 
 
+
+    // last payment for pending/next due
+    // var lastPayment = await exe(
+    // "SELECT * FROM payments WHERE contractor_id=? ORDER BY payment_id DESC LIMIT 1", 
+    // [req.params.contractor_id])
+
+
     
 //     // total paid
 //     var totalPaidRes = await exe("SELECT IFNULL(SUM(paid_amount),0) AS total_paid FROM payments WHERE contractor_id=?", [req.params.contractor_id]);
@@ -522,6 +534,18 @@ router.get("/contractor", async function (req, res) {
 //         }
 // });
 // });
+
+
+    // res.render("admin/pay_new_contract.ejs", {
+    //     contractor: contractor[0],
+    //     payment: {
+    //         paid_amount: totalPaid,
+    //         pending_to_pay: pendingToPay,
+    //         next_due_amount: nextDueAmount
+    //     }
+    //     });
+
+
 
     router.get("/contractor", async function (req, res) {
         var contractors = await exe("SELECT * FROM contractors");
@@ -752,6 +776,8 @@ router.get("/contractor", async function (req, res) {
     });
 
 
+
+
 router.post("/save_vendor",async function(req,res){
     var d = req.body;
     
@@ -770,13 +796,25 @@ router.post("/update_vendor",async function (req,res){
     res.redirect("/admin/add_vendor"); 
     
 });
-router.get("/PROCESSING_INQUIRIES",async function(req,res){
+router.get("/processing_inquiries",async function(req,res){
     var vendor = await exe("SELECT * FROM vendors");
     var vendors = await exe("SELECT * FROM vendors WHERE vendor_id=?",[req.params.vendor_id]);
+
     var employee = await exe("SELECT * FROM employees ");
     res.render("admin/Processing_Inquiries.ejs",{"vendor":vendor,"vendors":vendors, "employee": employee});
     
+
+    res.render("admin/Processing_Inquiries.ejs",{vendor,vendors:vendors});
 });
+// router.post("/save_inquiry",async function(req,res){
+//     var d = req.body;
+    
+//     var sql = `INSERT INTO inquiries(vendor_id,vendor_name,purchase_date,purchase_type,raw_material,Material_qyt,udm,rate,discount,Taxable_value,gst,total,employee_sign,employee_signature,created_at)VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`;
+//     var result = await exe(sql,[d.vendor_id,d.vendor_name,d.purchase_date,d.purchase_type,d.raw_material,d.Material_qyt,d.udm,d.rate,d.discount,d.Taxable_value,d.gst,d.total,d.employee_sign,d.employee_signature ,d.created_at]);
+//     res.redirect("/admin/processing_inquiries");
+//           console.log("Form data =>", d);
+
+// });
 
 router.post("/save_inquiries", async function (req, res) {
   try {
@@ -820,7 +858,7 @@ router.post("/save_inquiries", async function (req, res) {
     }
 
    
-    res.redirect("/admin/PROCESSING_INQUIRIES?success=1");
+    res.redirect("/admin/PROCESSING_INQUIRIES");
   } catch (err) {
     console.error(err);
     res.status(500).send("Database error");
@@ -831,6 +869,7 @@ router.get("/Processing_inq_list",async function(req,res){
     var inquiry = await exe("SELECT * FROM inquiries");
     res.render("admin/Processing_inq_list.ejs",{inquiries:inquiry});   
 });
+
 
 
 router.get("/view_bill/:inquiry_id",async function(req,res){
@@ -999,6 +1038,45 @@ router.get("/view_purchase_bill/:purchase_id",async function (req,res) {
     //     var inquiry = await exe("SELECT * FROM inquiries");
     //     res.render("admin/Processing_inq_list.ejs", { inquiries: inquiry });
     // });
+
+
+    router.post("/save_vendor", async function (req, res) {
+        var d = req.body;
+        // console.log(d);
+        // res.send("ok");
+        var sql = `INSERT INTO vendors(vendor_name,vendor_address,vendor_other_details,vendor_phone,vendor_gst_no,vendor_phone2,vendor_date)VALUES(?,?,?,?,?,?,?)`;
+        var result = await exe(sql, [d.vendor_name, d.vendor_address, d.vendor_other_details, d.vendor_phone, d.vendor_gst_no, d.vendor_phone2, d.vendoe_date]);
+        res.redirect("/admin/vendor_list");
+    });
+    router.get("/edit_vendor/:vendor_id", async function (req, res) {
+        var data = await exe("SELECT * FROM vendors WHERE vendor_id=?", [req.params.vendor_id]);
+        res.render("admin/edit_vendoe.ejs", { "data": data[0] });
+    });
+    router.post("/update_vendor", async function (req, res) {
+        var d = req.body;
+        var sql = `UPDATE vendors SET vendor_name=?,vendor_address=?,vendor_other_details=?,vendor_phone=?,vendor_gst_no=?,vendor_phone2=? WHERE vendor_id=?`;
+        var result = await exe(sql, [d.vendor_name, d.vendor_address, d.vendor_other_details, d.vendor_phone, d.vendor_gst_no, d.vendor_phone2, d.vendor_id]);
+        res.redirect("/admin/add_vendor");
+
+    });
+    router.get("/processing_inquiries", async function (req, res) {
+        var vendor = await exe("SELECT * FROM vendors");
+        var vendors = await exe("SELECT * FROM vendors WHERE vendor_id=?", [req.params.vendor_id]);
+        res.render("admin/Processing_Inquiries.ejs", { "vendor": vendor, vendors: vendors });
+    });
+    
+    router.post("/save_inquiry", async function (req, res) {
+        var d = req.body;
+
+        var sql = `INSERT INTO inquiries(vendor_id,vendor_name,purchase_date,purchase_type,raw_material,Material_qyt,udm,rate,discount,Taxable_value,gst,total,employee_sign,employee_signature,created_at)VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`;
+        var result = await exe(sql, [d.vendor_id, d.vendor_name, d.purchase_date, d.purchase_type, d.raw_material, d.Material_qyt, d.udm, d.rate, d.discount, d.Taxable_value, d.gst, d.total, d.employee_sign, d.employee_signature, d.created_at]);
+        res.redirect("/admin//processing_inquiries");
+        console.log("Form data =>", d);
+    });
+    router.get("/Processing_inq_list", async function (req, res) {
+        var inquiry = await exe("SELECT * FROM inquiries");
+        res.render("admin/Processing_inq_list.ejs", { inquiries: inquiry });
+    });
 
 
     module.exports = router;
