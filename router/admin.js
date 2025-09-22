@@ -517,12 +517,10 @@ router.get("/pay_new_contract/:contractor_id", async function(req, res) {
             paid_amount: totalPaid,
             pending_to_pay: pendingToPay,
             next_due_amount: nextDueAmount
-        }
-=======
+        });
     router.get("/contractor", async function (req, res) {
         var contractors = await exe("SELECT * FROM contractors");
         res.render("admin/contractors_list.ejs", { "contractors": contractors });
->>>>>>> Stashed changes
     });
 
     router.post("/save_contractor", async function (req, res) {
@@ -739,7 +737,6 @@ router.get("/pay_new_contract/:contractor_id", async function(req, res) {
         res.render("admin/vendor_list.ejs", { vendors: vendor });
     });
 
-<<<<<<< Updated upstream
 router.post("/save_vendor",async function(req,res){
     var d = req.body;
     // console.log(d);
@@ -776,7 +773,6 @@ router.get("/Processing_inq_list",async function(req,res){
     var inquiry = await exe("SELECT * FROM inquiries");
     res.render("admin/Processing_inq_list.ejs",{inquiries:inquiry});   
 });
-=======
     router.post("/save_vendor", async function (req, res) {
         var d = req.body;
         // console.log(d);
@@ -794,7 +790,6 @@ router.get("/Processing_inq_list",async function(req,res){
         var sql = `UPDATE vendors SET vendor_name=?,vendor_address=?,vendor_other_details=?,vendor_phone=?,vendor_gst_no=?,vendor_phone2=? WHERE vendor_id=?`;
         var result = await exe(sql, [d.vendor_name, d.vendor_address, d.vendor_other_details, d.vendor_phone, d.vendor_gst_no, d.vendor_phone2, d.vendor_id]);
         res.redirect("/admin/add_vendor");
->>>>>>> Stashed changes
 
     });
     router.get("/PROCESSING_INQUIRIES", async function (req, res) {
