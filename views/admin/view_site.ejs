@@ -1,0 +1,124 @@
+<%-include('navbar')%>
+
+    <div class="container my-5">
+
+        <!-- Site Details -->
+        <h6 class="bg-primary text-white fw-bold p-2 mb-2">SITE DETAILS 'NAYANTARA APARTMENT'</h6>
+        <div class="card p-3 mb-3">
+            <div class="row">
+                <!-- Left Table -->
+                <div class="col-md-6 mb-3">
+                    <table class="table table-bordered table-sm">
+                        <tbody>
+                            <tr>
+                                <th style="width:150px;">SITE NAME</th>
+                                <td><%-sites[0].site_name%></td>
+                            </tr>
+                            <tr>
+                                <th>SITE DETAILS</th>
+                                <td><%-sites[0].site_description%></td>
+                            </tr>
+                            <tr>
+                                <th>SITE LOCATION</th>
+                                <td><%-sites[0].site_location%></td>
+                            </tr>
+                            <tr>
+                                <th>SITE ADDED ON</th>
+                                <td><%- new Date(sites[0].created_at).toISOString().slice(0,10) %></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <button class="btn btn-primary " style="background-color:#886ab5 !important;border: none;">EDIT SITE
+                        DETAILS</button>
+                </div>
+
+                <!-- Right Table -->
+                <div class="col-md-6">
+                    <table class="table table-bordered table-sm">
+                        <thead class="table-light">
+                            <tr>
+                                <th colspan="4">
+                                    <h4 class="fw-bold">SITE CONTACTS</h4>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>SHUBHAM</td>
+                                <td>8208639756</td>
+                                <td>AHMADNAGAR</td>
+                                <td><i class="bi bi-trash text-danger"></i></td>
+                            </tr>
+                            <tr>
+                                <td colspan="4">
+                                    <div class="row g-1">
+                                        <div class="col-md-4"><input type="text" class="form-control border-black"
+                                                placeholder="Name"></div>
+                                        <div class="col-md-4"><input type="text" class="form-control border-black"
+                                                placeholder="Mobile"></div>
+                                        <div class="col-md-4"><input type="text" class="form-control border-black"
+                                                placeholder="Designation"></div>
+                                    </div>
+                                    <button class="btn btn-primary mt-3 "
+                                        style="background-color:#886ab5 !important;border: none;">Add</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Site Cameras -->
+        <h6 class="bg-primary text-white fw-bold p-2 mb-2">SITE CAMERAS</h6>
+        <div class="card p-3 mb-3">
+            <table class="table table-bordered table-sm mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>CAMERA NAME</th>
+                        <th>CAMERA LINK</th>
+                        <th>USERNAME</th>
+                        <th>PASSWORD</th>
+                        <th style="width:80px;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><input type="text" class="form-control border-black"></td>
+                        <td><input type="text" class="form-control border-black"></td>
+                        <td><input type="text" class="form-control border-black"></td>
+                        <td><input type="text" class="form-control border-black"></td>
+                        <td>
+                            <button class="btn btn-primary mt-3 "
+                                style="background-color:#886ab5 !important;border: none;">Add</button>
+                            <i class="bi bi-trash text-danger ms-2"></i>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Site Images -->
+        <h6 class="bg-primary text-white fw-bold p-2 mb-2">SITE IMAGES</h6>
+        <div class="card p-3 mb-3">
+            <div class="d-flex gap-2">
+                <img src="/image/site_image/<%-sites[0].site_structure_image%>" class="img-thumbnail flex-fill"
+                    width="10%">
+                <img src="/image/site_image/<%-sites[0].site_3d_image%>" class="img-thumbnail flex-fill" width="10%">
+            </div>
+        </div>
+
+
+        <!-- Google Location -->
+       <div class="card p-3 mb-3" style="height:300px;">
+  <iframe 
+    src="https://maps.google.com/maps?q=<%= sites[0].site_map_link %>&t=&z=14&ie=UTF8&iwloc=&output=embed" 
+    width="100%" height="100%" style="border:0;" allowfullscreen>
+  </iframe>
+</div>
+
+
+        <!-- 1757564847065Screenshot (1).png -->
+    </div>
+
+    <%-include('footer')%>

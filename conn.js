@@ -1,15 +1,15 @@
-var mysql = require('mysql');
-var util = require('util');
+const mysql = require('mysql');
+const util = require('util');
 
-var conn = mysql.createConnection({
+const pool = mysql.createPool({
   host: "biraqu10fdxc8n6ny0aj-mysql.services.clever-cloud.com",
   user: "u6jinnt8j5a1tshf",
   password: "Ri4fc5wniRPJMs3E85Cx",
-  database: "biraqu10fdxc8n6ny0aj"
+  database: "biraqu10fdxc8n6ny0aj",
+  connectionLimit: 10,   // किती connections allow करायचे
 });
 
-
-
-var exe = util.promisify(conn.query).bind(conn);
+// promisify query for async/await
+const exe = util.promisify(pool.query).bind(pool);
 
 module.exports = exe;
