@@ -1,0 +1,221 @@
+<%-include('navbar.ejs')%>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+  .form-container {
+    max-width: 950px;
+    margin: 20px auto;
+    padding: 0;
+    background: #fff;
+  }
+  .form-header {
+    background: linear-gradient(to right, #004aad, #6a82fb);
+    color: #fff;
+    padding: 8px 15px;
+    font-weight: bold;
+    font-size: 1rem;
+    border-left: 10px solid #f7c800; 
+  }
+
+  .left-panel {
+    padding: 15px;
+    background: #fff;
+    border: 1px solid #bbb;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    margin-bottom: 15px;
+  }
+  
+  .right-panel {
+    padding: 15px;
+  }
+  .form-group label {
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 3px;
+  }
+  .amount-box {
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 0.95rem;
+  }
+  .pending-amount {
+    background-color: #ffcdd2;
+  }
+  .paid-amount {
+    background-color: #c8e6c9;
+  }
+  .vendor-amount {
+    background: #f5f5f5;
+  }
+  .highlight-input {
+    background-color: #ffcdd2 !important;
+    font-weight: bold;
+  }
+  .btn-save {
+    background-color: #7c4dff;
+    color: #fff;
+    font-weight: bold;
+    padding: 6px 15px;
+    border: none;
+    border-radius: 3px;
+  }
+  .btn-save:hover {
+    background-color: #5e35d9;
+  }
+</style>
+</head>
+<body>
+  <div class="container form-container">
+    <div class="form-header">
+      PAY TO CONTRACTOR '<%= contractor.contractor_name %>'
+    </div>
+    <div class="row g-3">
+      <!-- LEFT SIDE -->
+      <div class="col-md-6">
+        <div class="left-panel">
+          <div class="form-group mb-3">
+            <label>CONTRACTOR NAME</label>
+            <input type="text" class="form-control" value="<%= contractor.contractor_name %>" readonly>
+          </div>
+          <div class="form-group mb-3">
+            <label>CONTRACTOR MOBILE</label>
+            <input type="number" class="form-control" value="<%= contractor.contractor_mobile %>" readonly>
+          </div>
+         <div class="form-group mb-3">
+    <label>TOTAL PENDING AMOUNT</label>
+    <div class="amount-box pending-amount">₹<%-payment.pending_to_pay %></div>
+</div>
+
+<div class="form-group mb-3">
+    <label>TOTAL PAID AMOUNT</label>
+    <div class="amount-box paid-amount">₹<%- payment.paid_amount %></div>
+</div>
+
+<div class="form-group mb-3">
+    <label>TOTAL NEXT DUE AMOUNT</label>
+    <div class="amount-box vendor-amount">₹<%- payment.next_due_amount %></div>
+</div>
+
+          <div class="form-group mb-3">
+            <label>VENDOR TOTAL PURCHASE AMOUNT</label>
+            <div class="amount-box vendor-amount">₹</div>
+          </div>
+          <div class="form-group mb-3">
+            <label>CONTRACTOR ADDRESS</label>
+            <input type="text" class="form-control" value="<%= contractor.contractor_address %>" readonly>
+          </div>
+          <div class="form-group mb-3">
+            <label>CONTRACTOR DETAILS</label>
+            <textarea class="form-control" rows="" readonly><%= contractor.contractor_details %></textarea>
+          </div>
+          <div class="form-group mb-3">
+            <label>CONTRACTOR GST NUMBER</label>
+            <input type="number" class="form-control" value="<%= contractor.contractor_gst %>" readonly>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT SIDE -->
+      <div class="col-md-6">
+        <div class="right-panel">
+          <!-- ✅ Form Start -->
+          <form action="/admin/save_payment" method="post" class="needs-validation" novalidate>
+             <input type="hidden" name="contractor_id" value="<%= contractor.contractor_id %>">
+            
+            <!-- Pending to Pay -->
+            <div class="row mb-3 align-items-center">
+              <div class="col-5 text-end fw-bold">PENDING TO PAY</div>
+              <div class="col-7 d-flex align-items-center">
+                <input type="number" class="form-control w-75 me-2 highlight-input" name="pending_to_pay" value="<%- payment.next_due_amount %>" readonly>
+                <span class="fw-bold">₹</span>
+              </div>
+            </div>
+
+            <!-- Paid Date -->
+            <div class="row mb-3 align-items-center">
+              <div class="col-5 text-end fw-bold">PAID DATE</div>
+              <div class="col-7">
+                <input type="date" class="form-control w-75" name="paid_date" required>
+              </div>
+            </div>
+
+            <!-- Paid By -->
+            <div class="row mb-3 align-items-center">
+              <div class="col-5 text-end fw-bold">PAID BY</div>
+              <div class="col-7">
+                <select class="form-select w-75" name="paid_by" required>
+                  <option value="UPI">UPI</option>
+                  <option value="Cash">Cash</option>
+                  <option value="Bank Transfer">Bank Transfer</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Transaction No -->
+            <div class="row mb-3 align-items-center">
+              <div class="col-5 text-end fw-bold">TRANSACTION NO</div>
+              <div class="col-7">
+                <input type="number" class="form-control w-75" name="transaction_number" placeholder="ENTER TRANSACTION NO">
+              </div>
+            </div>
+
+            <!-- Bank Name -->
+            <div class="row mb-3 align-items-center">
+              <div class="col-5 text-end fw-bold">BANK NAME</div>
+              <div class="col-7">
+                <input type="text" class="form-control w-75" name="bank_name" placeholder="ENTER BANK NAME">
+              </div>
+            </div>
+
+            <!-- Paid Amount -->
+            <div class="row mb-3 align-items-center">
+              <div class="col-5 text-end fw-bold">PAID AMOUNT</div>
+              <div class="col-7 d-flex align-items-center">
+                <input type="number" class="form-control w-75 me-2" name="paid_amount" value="0" required>
+                <span class="fw-bold">₹</span>
+              </div>
+            </div>
+
+            <!-- Next Due Amount -->
+            <div class="row mb-4 align-items-center">
+              <div class="col-5 text-end fw-bold">NEXT DUE AMOUNT</div>
+              <div class="col-7 d-flex align-items-center">
+                <input type="number" class="form-control w-75 me-2" name="next_due_amount" readonly>
+                <span class="fw-bold">₹</span>
+              </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="d-flex justify-content-center">
+              <button type="submit" class="btn-save me-2">SAVE PAID PAYMENT</button>
+            </div>
+          
+          </form>
+          <!-- ✅ Form End -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ✅ Script yaha add karo (footer include ke upar) -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      let pendingInput = document.querySelector("input[name='pending_to_pay']");
+      let paidInput = document.querySelector("input[name='paid_amount']");
+      let nextDueInput = document.querySelector("input[name='next_due_amount']");
+
+      paidInput.addEventListener("input", function () {
+        let pending = parseFloat(pendingInput.value) || 0;
+        let paid = parseFloat(paidInput.value) || 0;
+
+        let nextDue = pending - paid;
+        if (nextDue < 0) {
+          nextDue = 0;
+        }
+        nextDueInput.value = nextDue;
+      });
+    });
+  </script>
+
+  <%-include('footer.ejs')%>

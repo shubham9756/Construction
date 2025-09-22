@@ -1,0 +1,134 @@
+<%-include("navbar.ejs")%>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>New Inquiry</title>
+
+  <!-- Bootstrap & FontAwesome -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+  <style>
+    .card-header {
+      background: linear-gradient(90deg, #0052D4, #4364F7, #6FB1FC);
+      color: #fff;
+      font-weight: bold;
+      font-size: 18px;
+    }
+    .form-label {
+      font-weight: 600;
+      font-size: 14px;
+    }
+    .btn {
+      min-width: 140px;
+    }
+  </style>
+</head>
+<body class="bg-light">
+
+<div class="container mt-4">
+  <div class="card shadow-lg">
+    <div class="card-header">
+      <i class="fas fa-question-circle me-2"></i> NEW INQUIRY
+    </div>
+    <div class="card-body">
+      <form action="/new_enquiry" method="POST">
+        <div class="row g-3">
+          <!-- Customer Name -->
+          <div class="col-md-6">
+            <label class="form-label">Customer Name <span class="text-danger">*</span></label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="fas fa-user"></i></span>
+              <input type="text" name="customer_name" class="form-control" placeholder="Enter customer full name" required>
+            </div>
+          </div>
+
+          <!-- Customer Mobile -->
+          <div class="col-md-6">
+            <label class="form-label">Customer Mobile <span class="text-danger">*</span></label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="fas fa-phone"></i></span>
+              <input type="text" name="customer_mobile" class="form-control" placeholder="Enter 10 digit mobile number" required pattern="[0-9]{10}">
+            </div>
+          </div>
+
+          <!-- Customer Email -->
+          <div class="col-md-6">
+            <label class="form-label">Customer Email</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+              <input type="email" name="customer_email" class="form-control" placeholder="Enter valid email-id">
+            </div>
+          </div>
+
+          <!-- Customer Address -->
+          <div class="col-md-6">
+            <label class="form-label">Customer Address</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+              <input type="text" name="customer_address" class="form-control" placeholder="Enter customer address">
+            </div>
+          </div>
+
+          <!-- Inquiry About -->
+          <div class="col-md-6">
+            <label class="form-label">Inquiry About <span class="text-danger">*</span></label>
+            <textarea class="form-control" name="inquiry_about" rows="2" placeholder="Enter inquiry details" required></textarea>
+          </div>
+
+          <!-- Inquiry Status -->
+          <div class="col-md-6">
+            <label class="form-label">Inquiry Status <span class="text-danger">*</span></label>
+            <select class="form-select" name="inquiry_status" required>
+              <option>Select Status</option>
+              <option value="new">New</option>
+              <option value="processing">Processing</option>
+              <option value="closed">Closed</option>
+              <option value="confirmed">Confirmed</option>
+            </select>
+          </div>
+
+          <!-- Next Reminder Date -->
+          <div class="col-md-6">
+            <label class="form-label">Next Reminder Date</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
+              <input type="date" name="reminder_date" class="form-control">
+            </div>
+          </div>
+
+          <!-- Remark -->
+          <div class="col-md-6">
+            <label class="form-label">Remark</label>
+            <textarea class="form-control" name="remark" rows="2" placeholder="Enter any remarks"></textarea>
+          </div>
+        </div>
+
+        <!-- Buttons -->
+        <div class="d-flex justify-content-between mt-4">
+          <button type="reset" class="btn btn-secondary"><i class="fas fa-undo"></i> Reset</button>
+          <div>
+            <button type="submit" name="action" value="save" class="btn btn-warning text-white">
+              <i class="fas fa-save"></i> Save Inquiry
+            </button>
+            <button type="submit" name="action" value="close" class="btn btn-purple text-white" style="background:#6f42c1;">
+              <i class="fas fa-check-circle"></i> Save & Close
+            </button>
+            <button type="submit" name="action" value="confirm" class="btn btn-success">
+              <i class="fas fa-check"></i> Save & Confirm
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+
+<%-include("footer.ejs")%>
