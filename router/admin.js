@@ -430,8 +430,7 @@ router.get("/sale_stock", function (req, res) {
 });
 router.get("/sale_report", function (req, res) {
     res.render("admin/sale_report");
-<<<<<<< Updated upstream
-})
+});
 router.get("/contractor", async function (req, res) {
     var contractors = await exe("SELECT * FROM contractors");
     res.render("admin/contractors_list.ejs", { "contractors": contractors });
@@ -517,6 +516,7 @@ router.get("/pay_new_contract/:contractor_id", async function(req, res) {
             paid_amount: totalPaid,
             pending_to_pay: pendingToPay,
             next_due_amount: nextDueAmount
+        }
         });
     router.get("/contractor", async function (req, res) {
         var contractors = await exe("SELECT * FROM contractors");
@@ -810,4 +810,4 @@ router.get("/Processing_inq_list",async function(req,res){
         res.render("admin/Processing_inq_list.ejs", { inquiries: inquiry });
     });
 
-    module.exports = router
+    module.exports = router;
