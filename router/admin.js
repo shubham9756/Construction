@@ -93,7 +93,11 @@ router.get('/rent_flat_details/:id', async function (req, res) {
     var result = await exe(sql, [id]);
     console.log(result);
     res.render('admin/flat_details.ejs', { result, site });
+<<<<<<< Updated upstream
 });
+=======
+})
+>>>>>>> Stashed changes
 
 
 // site flat view
@@ -430,6 +434,7 @@ router.get("/sale_stock", function (req, res) {
 });
 router.get("/sale_report", function (req, res) {
     res.render("admin/sale_report");
+<<<<<<< Updated upstream
 });
 router.get("/contractor", async function (req, res) {
     var contractors = await exe("SELECT * FROM contractors");
@@ -518,6 +523,8 @@ router.get("/pay_new_contract/:contractor_id", async function(req, res) {
             next_due_amount: nextDueAmount
         }
         });
+=======
+>>>>>>> Stashed changes
     router.get("/contractor", async function (req, res) {
         var contractors = await exe("SELECT * FROM contractors");
         res.render("admin/contractors_list.ejs", { "contractors": contractors });
@@ -737,6 +744,7 @@ router.get("/pay_new_contract/:contractor_id", async function(req, res) {
         res.render("admin/vendor_list.ejs", { vendors: vendor });
     });
 
+<<<<<<< Updated upstream
 router.post("/save_vendor",async function(req,res){
     var d = req.body;
     // console.log(d);
@@ -773,6 +781,8 @@ router.get("/Processing_inq_list",async function(req,res){
     var inquiry = await exe("SELECT * FROM inquiries");
     res.render("admin/Processing_inq_list.ejs",{inquiries:inquiry});   
 });
+=======
+>>>>>>> Stashed changes
     router.post("/save_vendor", async function (req, res) {
         var d = req.body;
         // console.log(d);
@@ -810,4 +820,8 @@ router.get("/Processing_inq_list",async function(req,res){
         res.render("admin/Processing_inq_list.ejs", { inquiries: inquiry });
     });
 
+<<<<<<< Updated upstream
     module.exports = router;
+=======
+    module.exports = router
+>>>>>>> Stashed changes
