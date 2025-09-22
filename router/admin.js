@@ -242,72 +242,72 @@ router.get("/login", function (req, res) {
     res.render("admin/login.ejs");
 });
 
-router.get("/bank_accounts", async function (req, res) {
-    var account = await exe("SELECT * FROM bank_accounts");
-    var obj = { "account": account }
-    res.render("admin/bank_accounts_list.ejs", obj);
-})
+// router.get("/bank_accounts", async function (req, res) {
+//     var account = await exe("SELECT * FROM bank_accounts");
+//     var obj = { "account": account }
+//     res.render("admin/bank_accounts_list.ejs", obj);
+// })
 
-router.get("/add_account", function (req, res) {
-    res.render("admin/add_bank_account.ejs");
-});
-router.post("/save_account", async function (req, res) {
-    var d = req.body;
-    var sql = `INSERT INTO bank_accounts(bank_name,account_holder,account_number,ifsc_code,current_balance)VALUES(?,?,?,?,?)`;
-    var result = await exe(sql, [d.bank_name, d.account_holder, d.account_number, d.ifsc_code, d.current_balance]);
-    res.redirect("/admin/bank_accounts");
-
-
-})
-router.get("/view_account/:account_id", async function (req, res) {
-    var data = await exe("SELECT * FROM bank_accounts WHERE account_id=?", [req.params.account_id]);
-    var result = await exe("SELECT * FROM transactions WHERE account_id=? ORDER BY transaction_id DESC LIMIT 10", [req.params.account_id]);
-
-    res.render("admin/view_bank_account.ejs", { "result": result, "data": data });
-})
-router.post("/save_transaction", async function (req, res) {
-    var d = req.body;
+// router.get("/add_account", function (req, res) {
+//     res.render("admin/add_bank_account.ejs");
+// });
+// router.post("/save_account", async function (req, res) {
+//     var d = req.body;
+//     var sql = `INSERT INTO bank_accounts(bank_name,account_holder,account_number,ifsc_code,current_balance)VALUES(?,?,?,?,?)`;
+//     var result = await exe(sql, [d.bank_name, d.account_holder, d.account_number, d.ifsc_code, d.current_balance]);
+//     res.redirect("/admin/bank_accounts");
 
 
-    var account = await exe("SELECT current_balance FROM bank_accounts WHERE account_id=?", [d.account_id]);
-    var current_balance = parseFloat(account[0].current_balance);
+// })
+// router.get("/view_account/:account_id", async function (req, res) {
+//     var data = await exe("SELECT * FROM bank_accounts WHERE account_id=?", [req.params.account_id]);
+//     var result = await exe("SELECT * FROM transactions WHERE account_id=? ORDER BY transaction_id DESC LIMIT 10", [req.params.account_id]);
 
-    var amount = parseFloat(d.transaction_amount);
-
-
-    if (d.transaction_type === "Credit") {
-        current_balance += amount;
-    } else if (d.transaction_type === "Debit") {
-        current_balance -= amount;
-    }
+//     res.render("admin/view_bank_account.ejs", { "result": result, "data": data });
+// })
+// router.post("/save_transaction", async function (req, res) {
+//     var d = req.body;
 
 
-    var sql = `INSERT INTO transactions (account_id, transaction_date, transaction_amount, transaction_type, payment_type, transaction_details)
-               VALUES (?, ?, ?, ?, ?, ?)`;
+//     var account = await exe("SELECT current_balance FROM bank_accounts WHERE account_id=?", [d.account_id]);
+//     var current_balance = parseFloat(account[0].current_balance);
 
-    await exe(sql, [d.account_id, d.transaction_date, amount, d.transaction_type, d.payment_type, d.transaction_details]);
-
-
-    await exe("UPDATE bank_accounts SET current_balance=? WHERE account_id=?", [current_balance, d.account_id]);
-
-    res.redirect("/admin/view_account/" + d.account_id);
-});
+//     var amount = parseFloat(d.transaction_amount);
 
 
-router.get("/edit_account/:account_id", async function (req, res) {
-    var data = await exe("SELECT * FROM bank_accounts WHERE account_id=?", [req.params.account_id]);
-    res.render("admin/edit_bank_account.ejs", { "data": data[0] });
-});
-router.post("/update_account", async function (req, res) {
-    var d = req.body;
-    var sql = `UPDATE bank_accounts SET bank_name=?,account_holder=?,account_number=?,ifsc_code=?,current_balance=? WHERE account_id=?`;
-    var result = await exe(sql, [d.bank_name, d.account_holder, d.account_number, d.ifsc_code, d.current_balance, d.account_id]);
-    res.redirect("/admin/bank_accounts");
-})
-router.get("/delete_account/:account_id", async function (req, res) {
-    var result = await exe("DELETE FROM bank_accounts WHERE account_id=?", [req.params.account_id]);
-    res.redirect("/admin/bank_accounts");
-});
+//     if (d.transaction_type === "Credit") {
+//         current_balance += amount;
+//     } else if (d.transaction_type === "Debit") {
+//         current_balance -= amount;
+//     }
+
+
+//     var sql = `INSERT INTO transactions (account_id, transaction_date, transaction_amount, transaction_type, payment_type, transaction_details)
+//                VALUES (?, ?, ?, ?, ?, ?)`;
+
+//     await exe(sql, [d.account_id, d.transaction_date, amount, d.transaction_type, d.payment_type, d.transaction_details]);
+
+
+//     await exe("UPDATE bank_accounts SET current_balance=? WHERE account_id=?", [current_balance, d.account_id]);
+
+//     res.redirect("/admin/view_account/" + d.account_id);
+// });
+
+
+// router.get("/edit_account/:account_id", async function (req, res) {
+//     var data = await exe("SELECT * FROM bank_accounts WHERE account_id=?", [req.params.account_id]);
+//     res.render("admin/edit_bank_account.ejs", { "data": data[0] });
+// });
+// router.post("/update_account", async function (req, res) {
+//     var d = req.body;
+//     var sql = `UPDATE bank_accounts SET bank_name=?,account_holder=?,account_number=?,ifsc_code=?,current_balance=? WHERE account_id=?`;
+//     var result = await exe(sql, [d.bank_name, d.account_holder, d.account_number, d.ifsc_code, d.current_balance, d.account_id]);
+//     res.redirect("/admin/bank_accounts");
+// })
+// router.get("/delete_account/:account_id", async function (req, res) {
+//     var result = await exe("DELETE FROM bank_accounts WHERE account_id=?", [req.params.account_id]);
+//     res.redirect("/admin/bank_accounts");
+// });
 router.get("/new_bill", function (req, res) {
     res.render("admin/new_bill.ejs");
 });
@@ -439,344 +439,290 @@ router.get("/sale_report", function (req, res) {
 
 
 });
+router.get("/bank_accounts",async function(req,res){
+    var account = await exe("SELECT * FROM bank_accounts");
+    var obj = {"account":account}
+    res.render("admin/bank_accounts_list.ejs",obj);   
+})
+
+router.get("/add_account",function(req,res){
+    res.render("admin/add_bank_account.ejs");   
+});
+router.post("/save_account",async function(req,res){
+    var d = req.body;
+    var sql = `INSERT INTO bank_accounts(bank_name,account_holder,account_number,ifsc_code,current_balance)VALUES(?,?,?,?,?)`;
+    var result = await exe(sql,[d.bank_name,d.account_holder,d.account_number,d.ifsc_code,d.current_balance]);
+    res.redirect("/admin/bank_accounts");
+    
+    
+})
+router.get("/view_account/:account_id",async function(req,res){
+    var data = await exe("SELECT * FROM bank_accounts WHERE account_id=?", [req.params.account_id]);
+   var result = await exe("SELECT * FROM transactions WHERE account_id=? ORDER BY transaction_id DESC LIMIT 10",[req.params.account_id]);
+
+       res.render("admin/view_bank_account.ejs",{"result":result,"data":data});   
+})
+router.post("/save_transaction", async function (req, res) {
+    var d = req.body;
+
+    
+    var account = await exe("SELECT current_balance FROM bank_accounts WHERE account_id=?", [d.account_id]);
+    var current_balance = parseFloat(account[0].current_balance); 
+
+    var amount = parseFloat(d.transaction_amount); 
+
+    
+    if (d.transaction_type === "Credit") {
+        current_balance += amount;
+    } else if (d.transaction_type === "Debit") {
+        current_balance -= amount;
+    }
+
+    
+    var sql = `INSERT INTO transactions (account_id, transaction_date, transaction_amount, transaction_type, payment_type, transaction_details)
+               VALUES (?, ?, ?, ?, ?, ?)`;
+
+    await exe(sql, [d.account_id, d.transaction_date, amount, d.transaction_type, d.payment_type, d.transaction_details]);
+
+    
+    await exe("UPDATE bank_accounts SET current_balance=? WHERE account_id=?", [current_balance, d.account_id]);
+
+    res.redirect("/admin/view_account/" + d.account_id);
+});
+
+
+router.get("/edit_account/:account_id",async function(req,res){
+    var data = await exe("SELECT * FROM bank_accounts WHERE account_id=?", [req.params.account_id]);
+       res.render("admin/edit_bank_account.ejs",{"data":data[0]});   
+});
+router.post("/update_account",async function(req,res){
+    var d = req.body;
+    var sql = `UPDATE bank_accounts SET bank_name=?,account_holder=?,account_number=?,ifsc_code=?,current_balance=? WHERE account_id=?`;
+    var result = await exe(sql,[d.bank_name,d.account_holder,d.account_number,d.ifsc_code,d.current_balance,d.account_id]);
+    res.redirect("/admin/bank_accounts");
+})
+router.get("/delete_account/:account_id",async function(req,res){
+    var result = await exe("DELETE FROM bank_accounts WHERE account_id=?", [req.params.account_id]);
+    res.redirect("/admin/bank_accounts");
+});
 router.get("/contractor", async function (req, res) {
     var contractors = await exe("SELECT * FROM contractors");
     res.render("admin/contractors_list.ejs", { "contractors": contractors });
 });
 
-// router.post("/save_contractor",async function(req,res){
-//     var d = req.body;
+router.post("/save_contractor",async function(req,res){
+    var d = req.body;
    
-//     var filename = "";
-//     if (req.files && req.files.contractor_image) {
-//         var filename = new Date().getTime() + req.files.contractor_image.name;
-//         req.files.contractor_image.mv("public/image/" + filename);
-//     }
+    var filename = "";
+    if (req.files && req.files.contractor_image) {
+        var filename = new Date().getTime() + req.files.contractor_image.name;
+        req.files.contractor_image.mv("public/image/" + filename);
+    }
 
-//     var sql = `INSERT INTO contractors(contractor_name,contractor_address,contractor_details,contractor_mobile,contractor_aadhar,contractor_pan,contractor_type,contractor_image)VALUES(?,?,?,?,?,?,?,?)`;
-//     var result = await exe(sql,[d.contractor_name,d.contractor_address,d.contractor_details,d.contractor_mobile,d.contractor_aadhar,d.contractor_pan,d.contractor_type,filename]);
-//     res.redirect("/admin/contractor");
-// });
-// router.get("/contracts/:contractor_id",async function(req,res){
-//     var contractor = await exe("SELECT * FROM contractors WHERE contractor_id=?", [req.params.contractor_id]);
-//     var payment2 = await exe("SELECT * FROM payments WHERE contractor_id=?", [req.params.contractor_id]);
-//     var contracts = await exe("SELECT * FROM contracts WHERE contractor_id=?", [req.params.contractor_id]);
-//     // last payment for pending/next due
-//     var lastPayment = await exe(
-//     "SELECT * FROM payments WHERE contractor_id=? ORDER BY payment_id DESC LIMIT 1", 
-//     [req.params.contractor_id]);
+    var sql = `INSERT INTO contractors(contractor_name,contractor_address,contractor_details,contractor_mobile,contractor_aadhar,contractor_pan,contractor_type,contractor_image)VALUES(?,?,?,?,?,?,?,?)`;
+    var result = await exe(sql,[d.contractor_name,d.contractor_address,d.contractor_details,d.contractor_mobile,d.contractor_aadhar,d.contractor_pan,d.contractor_type,filename]);
+    res.redirect("/admin/contractor");
+});
+router.get("/contracts/:contractor_id",async function(req,res){
+    var contractor = await exe("SELECT * FROM contractors WHERE contractor_id=?", [req.params.contractor_id]);
+    var payment2 = await exe("SELECT * FROM payments WHERE contractor_id=?", [req.params.contractor_id]);
+    var contracts = await exe("SELECT * FROM contracts WHERE contractor_id=?", [req.params.contractor_id]);
+    // last payment for pending/next due
+    var lastPayment = await exe(
+    "SELECT * FROM payments WHERE contractor_id=? ORDER BY payment_id DESC LIMIT 1", 
+    [req.params.contractor_id]);
 
     
-//     // total paid
-//     var totalPaidRes = await exe("SELECT IFNULL(SUM(paid_amount),0) AS total_paid FROM payments WHERE contractor_id=?", [req.params.contractor_id]);
-//     var totalPaid = totalPaidRes[0].total_paid || 0;
+    // total paid
+    var totalPaidRes = await exe("SELECT IFNULL(SUM(paid_amount),0) AS total_paid FROM payments WHERE contractor_id=?", [req.params.contractor_id]);
+    var totalPaid = totalPaidRes[0].total_paid || 0;
 
-//     var pendingToPay = lastPayment.length > 0 ? lastPayment[0].next_due_amount : 0;
-//     var nextDueAmount = pendingToPay;
+    var pendingToPay = lastPayment.length > 0 ? lastPayment[0].next_due_amount : 0;
+    var nextDueAmount = pendingToPay;
 
-//     res.render("admin/contractor_details.ejs", { contractor: contractor[0], payment: { paid_amount: totalPaid, pending_to_pay: pendingToPay, next_due_amount: nextDueAmount  },  "payment2": payment2, "contracts": contracts });
+    res.render("admin/contractor_details.ejs", { contractor: contractor[0], payment: { paid_amount: totalPaid, pending_to_pay: pendingToPay, next_due_amount: nextDueAmount  },  "payment2": payment2, "contracts": contracts });
     
-// });
+});
    
    
   
 
-// router.get("/edit_contractor/:contractor_id",async function(req,res){
-//     var contractor = await exe("SELECT * FROM contractors WHERE contractor_id=?", [req.params.contractor_id]);
-//     res.render("admin/edit_contractor.ejs",{"contractor":contractor[0]});
-// });
-// router.post("/update_contractor",async function(req,res){
-//     var d = req.body;
-//     var filename = d.existing_image; 
-//     if (req.files && req.files.contractor_image) {
-//         filename = new Date().getTime() + req.files.contractor_image.name;
-//         req.files.contractor_image.mv("public/image/" + filename);
-//     }
+router.get("/edit_contractor/:contractor_id",async function(req,res){
+    var contractor = await exe("SELECT * FROM contractors WHERE contractor_id=?", [req.params.contractor_id]);
+    res.render("admin/edit_contractor.ejs",{"contractor":contractor[0]});
+});
+router.post("/update_contractor",async function(req,res){
+    var d = req.body;
+    var filename = d.existing_image; 
+    if (req.files && req.files.contractor_image) {
+        filename = new Date().getTime() + req.files.contractor_image.name;
+        req.files.contractor_image.mv("public/image/" + filename);
+    }
 
-//     var sql = `UPDATE contractors SET contractor_name=?, contractor_address=?, contractor_details=?, contractor_mobile=?, contractor_aadhar=?, contractor_pan=?, contractor_type=?, contractor_image=? WHERE contractor_id=?`;
-//     var result = await exe(sql,[d.contractor_name,d.contractor_address,d.contractor_details,d.contractor_mobile,d.contractor_aadhar,d.contractor_pan,d.contractor_type,filename,d.contractor_id]);
-//     res.redirect("/admin/contractor");
-// });
-// router.get("/delete_contractor/:contractor_id",async function(req,res){
-//     var result = await exe("DELETE FROM contractors WHERE contractor_id=?", [req.params.contractor_id]);
-//     res.redirect("/admin/contractor");
-// });
-// router.get("/pay_new_contract/:contractor_id", async function(req, res) {
-//     var contractor = await exe("SELECT * FROM contractors WHERE contractor_id=?", [req.params.contractor_id]);
-
-//     // last payment for pending/next due
-//     var lastPayment = await exe(
-//     "SELECT * FROM payments WHERE contractor_id=? ORDER BY payment_id DESC LIMIT 1", 
-//     [req.params.contractor_id]);
-
-
+    var sql = `UPDATE contractors SET contractor_name=?, contractor_address=?, contractor_details=?, contractor_mobile=?, contractor_aadhar=?, contractor_pan=?, contractor_type=?, contractor_image=? WHERE contractor_id=?`;
+    var result = await exe(sql,[d.contractor_name,d.contractor_address,d.contractor_details,d.contractor_mobile,d.contractor_aadhar,d.contractor_pan,d.contractor_type,filename,d.contractor_id]);
+    res.redirect("/admin/contractor");
+});
+router.get("/delete_contractor/:contractor_id",async function(req,res){
+    var result = await exe("DELETE FROM contractors WHERE contractor_id=?", [req.params.contractor_id]);
+    res.redirect("/admin/contractor");
+});
+router.get("/pay_new_contract/:contractor_id", async function(req, res) {
+    var contractor = await exe("SELECT * FROM contractors WHERE contractor_id=?", [req.params.contractor_id]);
 
     // last payment for pending/next due
-    // var lastPayment = await exe(
-    // "SELECT * FROM payments WHERE contractor_id=? ORDER BY payment_id DESC LIMIT 1", 
-    // [req.params.contractor_id])
-
+    var lastPayment = await exe(
+    "SELECT * FROM payments WHERE contractor_id=? ORDER BY payment_id DESC LIMIT 1", 
+    [req.params.contractor_id]
+);
 
     
-//     // total paid
-//     var totalPaidRes = await exe("SELECT IFNULL(SUM(paid_amount),0) AS total_paid FROM payments WHERE contractor_id=?", [req.params.contractor_id]);
-//     var totalPaid = totalPaidRes[0].total_paid || 0;
+    // total paid
+    var totalPaidRes = await exe("SELECT IFNULL(SUM(paid_amount),0) AS total_paid FROM payments WHERE contractor_id=?", [req.params.contractor_id]);
+    var totalPaid = totalPaidRes[0].total_paid || 0;
 
-//     var pendingToPay = lastPayment.length > 0 ? lastPayment[0].next_due_amount : 0;
-//     var nextDueAmount = pendingToPay;
+    var pendingToPay = lastPayment.length > 0 ? lastPayment[0].next_due_amount : 0;
+    var nextDueAmount = pendingToPay;
 
-//     res.render("admin/pay_new_contract.ejs", {
-//         contractor: contractor[0],
-//         payment: {
-//             paid_amount: totalPaid,
-//             pending_to_pay: pendingToPay,
-//             next_due_amount: nextDueAmount
-//         }
-// });
-// });
-
-
-    // res.render("admin/pay_new_contract.ejs", {
-    //     contractor: contractor[0],
-    //     payment: {
-    //         paid_amount: totalPaid,
-    //         pending_to_pay: pendingToPay,
-    //         next_due_amount: nextDueAmount
-    //     }
-    //     });
-
-
-
-    router.get("/contractor", async function (req, res) {
-        var contractors = await exe("SELECT * FROM contractors");
-        res.render("admin/contractors_list.ejs", { "contractors": contractors });
-    });
-
-    router.post("/save_contractor", async function (req, res) {
-        var d = req.body;
-
-        var filename = "";
-        if (req.files && req.files.contractor_image) {
-            var filename = new Date().getTime() + req.files.contractor_image.name;
-            req.files.contractor_image.mv("public/image/" + filename);
+    res.render("admin/pay_new_contract.ejs", {
+        contractor: contractor[0],
+        payment: {
+            paid_amount: totalPaid,
+            pending_to_pay: pendingToPay,
+            next_due_amount: nextDueAmount
         }
-
-        var sql = `INSERT INTO contractors(contractor_name,contractor_address,contractor_details,contractor_mobile,contractor_aadhar,contractor_pan,contractor_type,contractor_image)VALUES(?,?,?,?,?,?,?,?)`;
-        var result = await exe(sql, [d.contractor_name, d.contractor_address, d.contractor_details, d.contractor_mobile, d.contractor_aadhar, d.contractor_pan, d.contractor_type, filename]);
-        res.redirect("/admin/contractor");
     });
-    router.get("/contracts/:contractor_id", async function (req, res) {
-        var contractor = await exe("SELECT * FROM contractors WHERE contractor_id=?", [req.params.contractor_id]);
-        var payment2 = await exe("SELECT * FROM payments WHERE contractor_id=?", [req.params.contractor_id]);
-        var contracts = await exe("SELECT * FROM contracts WHERE contractor_id=?", [req.params.contractor_id]);
-        // last payment for pending/next due
-        var lastPayment = await exe(
-            "SELECT * FROM payments WHERE contractor_id=? ORDER BY payment_id DESC LIMIT 1",
-            [req.params.contractor_id]);
+});
 
+router.get("/add_contract/:contractor_id",async function(req,res){
+    var contractor = await exe("SELECT * FROM contractors WHERE contractor_id=?", [req.params.contractor_id]);
+    res.render("admin/add_contract.ejs", { contractor: contractor[0] });
+});
 
-        // total paid
-        var totalPaidRes = await exe("SELECT IFNULL(SUM(paid_amount),0) AS total_paid FROM payments WHERE contractor_id=?", [req.params.contractor_id]);
-        var totalPaid = totalPaidRes[0].total_paid || 0;
+router.post("/save_contract", async function(req, res) {
+    let d = req.body;
 
-        var pendingToPay = lastPayment.length > 0 ? lastPayment[0].next_due_amount : 0;
-        var nextDueAmount = pendingToPay;
-
-        res.render("admin/contractor_details.ejs", { contractor: contractor[0], payment: { paid_amount: totalPaid, pending_to_pay: pendingToPay, next_due_amount: nextDueAmount }, "payment2": payment2, "contracts": contracts });
-
-    });
-
-
-
-
-    router.get("/edit_contractor/:contractor_id", async function (req, res) {
-        var contractor = await exe("SELECT * FROM contractors WHERE contractor_id=?", [req.params.contractor_id]);
-        res.render("admin/edit_contractor.ejs", { "contractor": contractor[0] });
-    });
-    router.post("/update_contractor", async function (req, res) {
-        var d = req.body;
-        var filename = d.existing_image;
-        if (req.files && req.files.contractor_image) {
-            filename = new Date().getTime() + req.files.contractor_image.name;
-            req.files.contractor_image.mv("public/image/" + filename);
-        }
-
-        var sql = `UPDATE contractors SET contractor_name=?, contractor_address=?, contractor_details=?, contractor_mobile=?, contractor_aadhar=?, contractor_pan=?, contractor_type=?, contractor_image=? WHERE contractor_id=?`;
-        var result = await exe(sql, [d.contractor_name, d.contractor_address, d.contractor_details, d.contractor_mobile, d.contractor_aadhar, d.contractor_pan, d.contractor_type, filename, d.contractor_id]);
-        res.redirect("/admin/contractor");
-    });
-    router.get("/delete_contractor/:contractor_id", async function (req, res) {
-        var result = await exe("DELETE FROM contractors WHERE contractor_id=?", [req.params.contractor_id]);
-        res.redirect("/admin/contractor");
-    });
-    router.get("/pay_new_contract/:contractor_id", async function (req, res) {
-        var contractor = await exe("SELECT * FROM contractors WHERE contractor_id=?", [req.params.contractor_id]);
-
-        // last payment for pending/next due
-        var lastPayment = await exe(
-            "SELECT * FROM payments WHERE contractor_id=? ORDER BY payment_id DESC LIMIT 1",
-            [req.params.contractor_id]
-        );
-
-
-        // total paid
-        var totalPaidRes = await exe("SELECT IFNULL(SUM(paid_amount),0) AS total_paid FROM payments WHERE contractor_id=?", [req.params.contractor_id]);
-        var totalPaid = totalPaidRes[0].total_paid || 0;
-
-        var pendingToPay = lastPayment.length > 0 ? lastPayment[0].next_due_amount : 0;
-        var nextDueAmount = pendingToPay;
-
-        res.render("admin/pay_new_contract.ejs", {
-            contractor: contractor[0],
-            payment: {
-                paid_amount: totalPaid,
-                pending_to_pay: pendingToPay,
-                next_due_amount: nextDueAmount
-            }
-        });
-    });
-
-    router.get("/add_contract/:contractor_id", async function (req, res) {
-        var contractor = await exe("SELECT * FROM contractors WHERE contractor_id=?", [req.params.contractor_id]);
-        res.render("admin/add_contract.ejs", { contractor: contractor[0] });
-    });
-
-    router.post("/save_contract", async function (req, res) {
-        let d = req.body;
-
-        var sql = `INSERT INTO contracts 
+    var sql = `INSERT INTO contracts 
     (contractor_id, contract_name, contract_start_date, contract_end_date, contract_amount,
      cgst_per, cgst_amount, sgst_per, sgst_amount, other_tax_per, other_tax_amount, total_amount, contract_details) 
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
-        await exe(sql, [
-            d.contractor_id,
-            d.contract_name,
-            d.contract_start_date,
-            d.contract_end_date,
-            d.contract_amount,
-            d.cgst_per,
-            d.cgst_amount,
-            d.sgst_per,
-            d.sgst_amount,
-            d.other_tax_per,
-            d.other_tax_amount,
-            d.total_amount,
-            d.contract_details
-        ]);
+    await exe(sql, [
+        d.contractor_id,
+        d.contract_name,
+        d.contract_start_date,
+        d.contract_end_date,
+        d.contract_amount,
+        d.cgst_per,
+        d.cgst_amount,
+        d.sgst_per,
+        d.sgst_amount,
+        d.other_tax_per,
+        d.other_tax_amount,
+        d.total_amount,
+        d.contract_details
+    ]);
 
-        res.redirect("/admin/add_contract/" + d.contractor_id);
-    });
-
-
-    router.post("/save_payment", async function (req, res) {
-        let d = req.body;
-        const contractorId = d.contractor_id;
+    res.redirect("/admin/add_contract/" + d.contractor_id);
+});
 
 
-    
-
-        // last pending amount
-        let lastPendingRes = await exe("SELECT IFNULL(MAX(next_due_amount),0) AS last_pending FROM payments WHERE contractor_id=?", [contractorId]);
-        let lastPending = lastPendingRes[0].last_pending || 0;
-
-
-        let paid = parseFloat(d.paid_amount) || 0;
-        let nextDue = Math.max(0, lastPending - paid);  // pending reduce after payment
-
+router.post("/save_payment", async function(req, res) {
+    let d = req.body;
+    const contractorId = d.contractor_id;
 
     
-   
+    let lastPendingRes = await exe("SELECT IFNULL(MAX(next_due_amount),0) AS last_pending FROM payments WHERE contractor_id=?", [contractorId]);
+    let lastPending = lastPendingRes[0].last_pending || 0;
 
-        // insert payment
-        let sql = `INSERT INTO payments 
+    let paid = parseFloat(d.paid_amount) || 0;
+    let nextDue = Math.max(0, lastPending - paid);  // pending reduce after payment
+
+    
+    let sql = `INSERT INTO payments 
         (contractor_id, pending_to_pay, paid_date, paid_by, transaction_number, bank_name, paid_amount, next_due_amount) 
         VALUES (?,?,?,?,?,?,?,?)`;
 
-        await exe(sql, [
-            contractorId,
-            lastPending, // pending before this payment
-            d.paid_date,
-            d.paid_by,
-            d.transaction_number,
-            d.bank_name,
-            paid,
-            nextDue      // pending - paid
-        ]);
+    await exe(sql, [
+        contractorId,
+        lastPending, 
+        d.paid_date,
+        d.paid_by,
+        d.transaction_number,
+        d.bank_name,
+        paid,
+        nextDue      
+    ]);
+
+    res.redirect("/admin/pay_new_contract/" + contractorId);
+});
+
+router.get("/labours/:contractor_id",async function(req,res){
+    var contractor = await exe("SELECT * FROM contractors WHERE contractor_id=?", [req.params.contractor_id]);
+    var labours = await exe("SELECT * FROM labours WHERE contractor_id=?", [req.params.contractor_id]);
+    res.render("admin/labour_list.ejs", { contractor: contractor[0], "labours": labours });
+});
+
+router.post("/add_labour",async function(req,res){
+    var d = req.body;
+    var filename = "";
+    if (req.files && req.files.labour_photo) {
+        filename = new Date().getTime() + req.files.labour_photo.name;
+        req.files.labour_photo.mv("public/image/" + filename);
+    }
+    var sql = `INSERT INTO labours(contractor_id,labour_name,labour_address,joining_date,labour_mobile,aadhar_card,pan_card,daily_payments,other_details,labour_photo)VALUES(?,?,?,?,?,?,?,?,?,?)`;
+    var result = await exe(sql,[d.contractor_id,d.labour_name,d.labour_address,d.joining_date,d.labour_mobile,d.aadhar_card,d.pan_card,d.daily_payments,d.other_details,filename]);
+    res.redirect("/admin/labours/"+d.contractor_id);
+});
+
+router.get("/delete_labour/:labour_id", async function(req, res) {  
+    var id = req.params.labour_id;
+
+   
+    var rows = await exe("SELECT contractor_id FROM labours WHERE labour_id=?", [id]);
+    var contractorId = rows.length ? rows[0].contractor_id : null;
+
+    await exe("DELETE FROM labours WHERE labour_id=?", [id]);
+
+   
+      res.redirect("/admin/labours/" + contractorId);
+    
+});
+
+router.get("/new_maintenance", async function(req,res){
+    var sites  = await exe("SELECT * FROM site");
+    
+    res.render("admin/new_maintenance.ejs", { sites, flats: []});
+});
 
 
-        res.redirect("/admin/pay_new_contract/" + contractorId);
-    });
+router.get("/check_maintenance/:site_id", async function(req,res){
+    let site_id = req.params.site_id;
 
-    router.get("/labours/:contractor_id", async function (req, res) {
-        var contractor = await exe("SELECT * FROM contractors WHERE contractor_id=?", [req.params.contractor_id]);
-        var labours = await exe("SELECT * FROM labours WHERE contractor_id=?", [req.params.contractor_id]);
-        res.render("admin/labour_list.ejs", { contractor: contractor[0], "labours": labours });
-    });
+    var sites  = await exe("SELECT * FROM site  ");
 
-    router.post("/add_labour", async function (req, res) {
-        var d = req.body;
-        var filename = "";
-        if (req.files && req.files.labour_photo) {
-            filename = new Date().getTime() + req.files.labour_photo.name;
-            req.files.labour_photo.mv("public/image/" + filename);
-        }
-        var sql = `INSERT INTO labours(contractor_id,labour_name,labour_address,joining_date,labour_mobile,aadhar_card,pan_card,daily_payments,other_details,labour_photo)VALUES(?,?,?,?,?,?,?,?,?,?)`;
-        var result = await exe(sql, [d.contractor_id, d.labour_name, d.labour_address, d.joining_date, d.labour_mobile, d.aadhar_card, d.pan_card, d.daily_payments, d.other_details, filename]);
-        res.redirect("/admin/labours/" + d.contractor_id);
-    });
+    
+    var flats = await exe("SELECT * FROM flats WHERE site_id=?", [site_id]);
 
-    router.get("/delete_labour/:labour_id", async function (req, res) {
-        var id = req.params.labour_id;
-
-
-        var rows = await exe("SELECT contractor_id FROM labours WHERE labour_id=?", [id]);
-        var contractorId = rows.length ? rows[0].contractor_id : null;
-
-        await exe("DELETE FROM labours WHERE labour_id=?", [id]);
-
-
-        res.redirect("/admin/labours/" + contractorId);
-
-    });
-
-    router.get("/new_maintenance", async function (req, res) {
-        var sites = await exe("SELECT * FROM site");
-
-        res.render("admin/new_maintenance.ejs", { sites, flats: [] });
-    });
-
-
-    router.get("/check_maintenance/:site_id", async function (req, res) {
-        let site_id = req.params.site_id;
-
-        var sites = await exe("SELECT * FROM site  ");
-
-
-        var flats = await exe("SELECT * FROM flats WHERE site_id=?", [site_id]);
-
-        res.render("admin/new_maintenance.ejs", { sites, flats });
-    });
-
-
-
-
-    router.get("/pending_maintenance", async function (req, res) {
-        // var flats = await exe("SELECT * FROM flats WHERE status='Available'");
-        res.render("admin/pending_maintenance.ejs");
-    });
-    router.get("/completed_maintenance", async function (req, res) {
-
-        res.render("admin/completed_maintenance.ejs");
-    });
-
-    router.get("/add_vendor", async function (req, res) {
-        var vendor = await exe("SELECT * FROM vendors");
-        res.render("admin/vendor_list.ejs", { vendors: vendor });
-    });
+    res.render("admin/new_maintenance.ejs", { sites, flats });
+});
 
 
 
+
+router.get("/pending_maintenance",async function(req,res){
+    // var flats = await exe("SELECT * FROM flats WHERE status='Available'");
+    res.render("admin/pending_maintenance.ejs");
+});
+router.get("/completed_maintenance",async function(req,res){   
+
+    res.render("admin/completed_maintenance.ejs");
+});
+
+router.get("/add_vendor",async function(req,res){
+    var vendor = await exe("SELECT * FROM vendors");
+    res.render("admin/vendor_list.ejs",{vendors:vendor});   
+});
 
 router.post("/save_vendor",async function(req,res){
     var d = req.body;
@@ -796,25 +742,14 @@ router.post("/update_vendor",async function (req,res){
     res.redirect("/admin/add_vendor"); 
     
 });
-router.get("/processing_inquiries",async function(req,res){
+router.get("/pro_inq",async function(req,res){
     var vendor = await exe("SELECT * FROM vendors");
-    var vendors = await exe("SELECT * FROM vendors WHERE vendor_id=?",[req.params.vendor_id]);
-
-    var employee = await exe("SELECT * FROM employees ");
-    res.render("admin/Processing_Inquiries.ejs",{"vendor":vendor,"vendors":vendors, "employee": employee});
+    // var vendor = await exe("SELECT * FROM vendors WHERE vendor_id=?",[req.params.vendor_id]);
+    var employee = await exe("SELECT * FROM employees");
+    res.render("admin/Pro_inq.ejs",{"vendor":vendor, "employee": employee});
     
-
-    res.render("admin/Processing_Inquiries.ejs",{vendor,vendors:vendors});
 });
-// router.post("/save_inquiry",async function(req,res){
-//     var d = req.body;
-    
-//     var sql = `INSERT INTO inquiries(vendor_id,vendor_name,purchase_date,purchase_type,raw_material,Material_qyt,udm,rate,discount,Taxable_value,gst,total,employee_sign,employee_signature,created_at)VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`;
-//     var result = await exe(sql,[d.vendor_id,d.vendor_name,d.purchase_date,d.purchase_type,d.raw_material,d.Material_qyt,d.udm,d.rate,d.discount,d.Taxable_value,d.gst,d.total,d.employee_sign,d.employee_signature ,d.created_at]);
-//     res.redirect("/admin/processing_inquiries");
-//           console.log("Form data =>", d);
 
-// });
 
 router.post("/save_inquiries", async function (req, res) {
   try {
@@ -858,19 +793,22 @@ router.post("/save_inquiries", async function (req, res) {
     }
 
    
-    res.redirect("/admin/PROCESSING_INQUIRIES");
+    res.redirect("/admin//pro_inq");
   } catch (err) {
     console.error(err);
     res.status(500).send("Database error");
   }
 });
 
+
+
+
+
+
 router.get("/Processing_inq_list",async function(req,res){
     var inquiry = await exe("SELECT * FROM inquiries");
     res.render("admin/Processing_inq_list.ejs",{inquiries:inquiry});   
 });
-
-
 
 router.get("/view_bill/:inquiry_id",async function(req,res){
     const items = await exe("SELECT * FROM inquiries WHERE inquiry_id=?", [req.params.inquiry_id]);
@@ -996,87 +934,10 @@ router.get("/view_purchase_bill/:purchase_id",async function (req,res) {
  
     res.render("admin/view_purchase_bill.ejs",{"vendor":vendor,"vendors":vendors})
 })
-
-
-
-
-
-    // router.post("/save_vendor", async function (req, res) {
-    //     var d = req.body;
-    //     // console.log(d);
-    //     // res.send("ok");
-    //     var sql = `INSERT INTO vendors(vendor_name,vendor_address,vendor_other_details,vendor_phone,vendor_gst_no,vendor_phone2,vendor_date)VALUES(?,?,?,?,?,?,?)`;
-    //     var result = await exe(sql, [d.vendor_name, d.vendor_address, d.vendor_other_details, d.vendor_phone, d.vendor_gst_no, d.vendor_phone2, d.vendoe_date]);
-    //     res.redirect("/admin/vendor_list");
-    // });
-    // router.get("/edit_vendor/:vendor_id", async function (req, res) {
-    //     var data = await exe("SELECT * FROM vendors WHERE vendor_id=?", [req.params.vendor_id]);
-    //     res.render("admin/edit_vendoe.ejs", { "data": data[0] });
-    // });
-    // router.post("/update_vendor", async function (req, res) {
-    //     var d = req.body;
-    //     var sql = `UPDATE vendors SET vendor_name=?,vendor_address=?,vendor_other_details=?,vendor_phone=?,vendor_gst_no=?,vendor_phone2=? WHERE vendor_id=?`;
-    //     var result = await exe(sql, [d.vendor_name, d.vendor_address, d.vendor_other_details, d.vendor_phone, d.vendor_gst_no, d.vendor_phone2, d.vendor_id]);
-    //     res.redirect("/admin/add_vendor");
-
-
-    // });
-    // router.get("/PROCESSING_INQUIRIES", async function (req, res) {
-    //     var vendor = await exe("SELECT * FROM vendors");
-    //     var vendors = await exe("SELECT * FROM vendors WHERE vendor_id=?", [req.params.vendor_id]);
-    //     res.render("admin/Processing_Inquiries.ejs", { "vendor": vendor, vendors: vendors });
-    // });
-    // router.post("/save_inquiry", async function (req, res) {
-    //     var d = req.body;
-
-    //     var sql = `INSERT INTO inquiries(vendor_id,vendor_name,purchase_date,purchase_type,raw_material,Material_qyt,udm,rate,discount,Taxable_value,gst,total,employee_sign,employee_signature,created_at)VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`;
-    //     var result = await exe(sql, [d.vendor_id, d.vendor_name, d.purchase_date, d.purchase_type, d.raw_material, d.Material_qyt, d.udm, d.rate, d.discount, d.Taxable_value, d.gst, d.total, d.employee_sign, d.employee_signature, d.created_at]);
-    //     res.redirect("/admin/PROCESSING_INQUIRIES");
-    //     console.log("Form data =>", d);
-    // });
-    // router.get("/Processing_inq_list", async function (req, res) {
-    //     var inquiry = await exe("SELECT * FROM inquiries");
-    //     res.render("admin/Processing_inq_list.ejs", { inquiries: inquiry });
-    // });
-
-
-    router.post("/save_vendor", async function (req, res) {
-        var d = req.body;
-        // console.log(d);
-        // res.send("ok");
-        var sql = `INSERT INTO vendors(vendor_name,vendor_address,vendor_other_details,vendor_phone,vendor_gst_no,vendor_phone2,vendor_date)VALUES(?,?,?,?,?,?,?)`;
-        var result = await exe(sql, [d.vendor_name, d.vendor_address, d.vendor_other_details, d.vendor_phone, d.vendor_gst_no, d.vendor_phone2, d.vendoe_date]);
-        res.redirect("/admin/vendor_list");
-    });
-    router.get("/edit_vendor/:vendor_id", async function (req, res) {
-        var data = await exe("SELECT * FROM vendors WHERE vendor_id=?", [req.params.vendor_id]);
-        res.render("admin/edit_vendoe.ejs", { "data": data[0] });
-    });
-    router.post("/update_vendor", async function (req, res) {
-        var d = req.body;
-        var sql = `UPDATE vendors SET vendor_name=?,vendor_address=?,vendor_other_details=?,vendor_phone=?,vendor_gst_no=?,vendor_phone2=? WHERE vendor_id=?`;
-        var result = await exe(sql, [d.vendor_name, d.vendor_address, d.vendor_other_details, d.vendor_phone, d.vendor_gst_no, d.vendor_phone2, d.vendor_id]);
-        res.redirect("/admin/add_vendor");
-
-    });
-    router.get("/processing_inquiries", async function (req, res) {
-        var vendor = await exe("SELECT * FROM vendors");
-        var vendors = await exe("SELECT * FROM vendors WHERE vendor_id=?", [req.params.vendor_id]);
-        res.render("admin/Processing_Inquiries.ejs", { "vendor": vendor, vendors: vendors });
-    });
     
-    router.post("/save_inquiry", async function (req, res) {
-        var d = req.body;
-
-        var sql = `INSERT INTO inquiries(vendor_id,vendor_name,purchase_date,purchase_type,raw_material,Material_qyt,udm,rate,discount,Taxable_value,gst,total,employee_sign,employee_signature,created_at)VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`;
-        var result = await exe(sql, [d.vendor_id, d.vendor_name, d.purchase_date, d.purchase_type, d.raw_material, d.Material_qyt, d.udm, d.rate, d.discount, d.Taxable_value, d.gst, d.total, d.employee_sign, d.employee_signature, d.created_at]);
-        res.redirect("/admin//processing_inquiries");
-        console.log("Form data =>", d);
-    });
-    router.get("/Processing_inq_list", async function (req, res) {
-        var inquiry = await exe("SELECT * FROM inquiries");
-        res.render("admin/Processing_inq_list.ejs", { inquiries: inquiry });
-    });
+    
+   
+    
 
 
     module.exports = router;
