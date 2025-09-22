@@ -410,27 +410,27 @@ router.post("/save_payment", async function(req, res) {
     let d = req.body;
     const contractorId = d.contractor_id;
 
-    // last pending amount
+    
     let lastPendingRes = await exe("SELECT IFNULL(MAX(next_due_amount),0) AS last_pending FROM payments WHERE contractor_id=?", [contractorId]);
     let lastPending = lastPendingRes[0].last_pending || 0;
 
     let paid = parseFloat(d.paid_amount) || 0;
     let nextDue = Math.max(0, lastPending - paid);  // pending reduce after payment
 
-    // insert payment
+    
     let sql = `INSERT INTO payments 
         (contractor_id, pending_to_pay, paid_date, paid_by, transaction_number, bank_name, paid_amount, next_due_amount) 
         VALUES (?,?,?,?,?,?,?,?)`;
 
     await exe(sql, [
         contractorId,
-        lastPending, // pending before this payment
+        lastPending, 
         d.paid_date,
         d.paid_by,
         d.transaction_number,
         d.bank_name,
         paid,
-        nextDue      // pending - paid
+        nextDue      
     ]);
 
     res.redirect("/admin/pay_new_contract/" + contractorId);
@@ -505,8 +505,7 @@ router.get("/add_vendor",async function(req,res){
 
 router.post("/save_vendor",async function(req,res){
     var d = req.body;
-    // console.log(d);
-    // res.send("ok");
+    
      var sql = `INSERT INTO vendors(vendor_name,vendor_address,vendor_other_details,vendor_phone,vendor_gst_no,vendor_phone2,vendor_date)VALUES(?,?,?,?,?,?,?)`;
     var result = await exe(sql,[d.vendor_name,d.vendor_address,d.vendor_other_details,d.vendor_phone,d.vendor_gst_no,d.vendor_phone2,d.vendoe_date]);
     res.redirect("/admin/vendor_list");
@@ -525,25 +524,196 @@ router.post("/update_vendor",async function (req,res){
 router.get("/PROCESSING_INQUIRIES",async function(req,res){
     var vendor = await exe("SELECT * FROM vendors");
     var vendors = await exe("SELECT * FROM vendors WHERE vendor_id=?",[req.params.vendor_id]);
-    res.render("admin/Processing_Inquiries.ejs",{"vendor":vendor,vendors:vendors});
-});
-router.post("/save_inquiry",async function(req,res){
-    var d = req.body;
+    var employee = await exe("SELECT * FROM employees ");
+    res.render("admin/Processing_Inquiries.ejs",{"vendor":vendor,"vendors":vendors, "employee": employee});
     
-    var sql = `INSERT INTO inquiries(vendor_id,vendor_name,purchase_date,purchase_type,raw_material,Material_qyt,udm,rate,discount,Taxable_value,gst,total,employee_sign,employee_signature,created_at)VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`;
-    var result = await exe(sql,[d.vendor_id,d.vendor_name,d.purchase_date,d.purchase_type,d.raw_material,d.Material_qyt,d.udm,d.rate,d.discount,d.Taxable_value,d.gst,d.total,d.employee_sign,d.employee_signature ,d.created_at]);
-    res.redirect("/admin/PROCESSING_INQUIRIES");
-          console.log("Form data =>", d);
 });
+
+
+router.post("/save_inquiries", async function (req, res) {
+  try {
+    const d = req.body;
+
+    let vendor_id = null, vendor_name = null;
+    if (d.vendor_info) [vendor_id, vendor_name] = d.vendor_info.split("|");
+
+    const raw_material  = Array.isArray(d["raw_material[]"]) ? d["raw_material[]"] : [d["raw_material[]"]];
+    const Material_qyt  = Array.isArray(d["Material_qyt[]"]) ? d["Material_qyt[]"] : [d["Material_qyt[]"]];
+    const udm           = Array.isArray(d["udm[]"]) ? d["udm[]"] : [d["udm[]"]];
+    const rate          = Array.isArray(d["rate[]"]) ? d["rate[]"] : [d["rate[]"]];
+    const discount      = Array.isArray(d["discount[]"]) ? d["discount[]"] : [d["discount[]"]];
+    const Taxable_value = Array.isArray(d["Taxable_value[]"]) ? d["Taxable_value[]"] : [d["Taxable_value[]"]];
+    const gst           = Array.isArray(d["gst[]"]) ? d["gst[]"] : [d["gst[]"]];
+    const total         = Array.isArray(d["total[]"]) ? d["total[]"] : [d["total[]"]];
+
+    for (let i = 0; i < raw_material.length; i++) {
+      if (!raw_material[i]) continue;
+      await exe(
+        `INSERT INTO inquiries 
+         (vendor_id, vendor_name, purchase_date, purchase_type, raw_material, Material_qyt, udm, rate, discount, Taxable_value, gst, total, employee_sign, employee_signature) 
+         VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+        [
+          vendor_id,
+          vendor_name,       
+          d.purchase_date,
+          d.purchase_type,
+          raw_material[i],
+          Material_qyt[i] || 0,
+          udm[i] || "",
+          rate[i] || 0,
+          discount[i] || 0,
+          Taxable_value[i] || 0,
+          gst[i] || 0,
+          total[i] || 0,
+          d.employee_sign || "",
+          d.employee_signature || "",
+        ]
+      );
+    }
+
+   
+    res.redirect("/admin/PROCESSING_INQUIRIES?success=1");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Database error");
+  }
+});
+
+
+
+
+
+
 router.get("/Processing_inq_list",async function(req,res){
     var inquiry = await exe("SELECT * FROM inquiries");
     res.render("admin/Processing_inq_list.ejs",{inquiries:inquiry});   
 });
-// router.post("/update_inquiry",async function (req,res){
-//     var d = req.body;
-//     var sql =`UPDATE inquiries SET vendor_id=?,purchase_date=?,purchase_type=?,row_material=?,Material_qyt=?,udm=?,rate=?,discount=?,Taxable_value=?,gst=?,total=?,employee_signature=? WHERE inquiry_id=?`;
-//     var result = await exe(sql,[d.vendor_id,d.purchase_date,d.purchase_type,d.row_material,d.Material_qyt,d.udm,d.rate,d.discount,d.Taxable_value,d.gst,d.total,d.employee_signature,d.inquiry_id]);
-//     res.redirect("/admin/Processing_inq_list");
-//     });
+
+router.get("/view_bill/:inquiry_id",async function(req,res){
+    const items = await exe("SELECT * FROM inquiries WHERE inquiry_id=?", [req.params.inquiry_id]);
+
+if(items.length === 0) return res.send("Inquiry not found");
+
+const inquiry = {
+  vendor_id: items[0].vendor_id,
+  vendor_name: items[0].vendor_name,
+  purchase_date: items[0].purchase_date ? items[0].purchase_date.toISOString().slice(0,10) : '',
+  purchase_type: items[0].purchase_type,
+  employee_sign: items[0].employee_sign,
+  employee_signature: items[0].employee_signature,
+  items: items
+};
+
+res.render("admin/view_inquiry.ejs", { inquiry });
+});
+router.get("/delete_inquiry/:inquiry_id",async function(req,res){
+    var result = await exe("DELETE FROM inquiries WHERE inquiry_id=?", [req.params.inquiry_id]);
+    res.redirect("/admin/Processing_inq_list");
+});
+
+router.get("/Purchase_raw_material",async function(req,res) {
+    var vendor = await exe("SELECT * FROM vendors");
+    var employee = await exe("SELECT * FROM employees ");
+    res.render("admin/purchase_raw_material.ejs",{"vendor":vendor,"employee":employee})
+});
+router.post("/save_new_raw_material", async function(req, res) {
+  try {
+    const d = req.body;
+
+    // Extract vendor info
+    let vendor_id = null, vendor_name = null;
+    if (d.vendor_info) [vendor_id, vendor_name] = d.vendor_info.split("|");
+
+    // Ensure all fields are arrays
+    const raw_material  = Array.isArray(d["raw_material[]"]) ? d["raw_material[]"] : [d["raw_material[]"]];
+    const qty           = Array.isArray(d["qty[]"]) ? d["qty[]"] : [d["qty[]"]];
+    const udm           = Array.isArray(d["udm[]"]) ? d["udm[]"] : [d["udm[]"]];
+    const rate          = Array.isArray(d["rate[]"]) ? d["rate[]"] : [d["rate[]"]];
+    const discount      = Array.isArray(d["discount[]"]) ? d["discount[]"] : [d["discount[]"]];
+    const taxable       = Array.isArray(d["taxable[]"]) ? d["taxable[]"] : [d["taxable[]"]];
+    const gst           = Array.isArray(d["gst[]"]) ? d["gst[]"] : [d["gst[]"]];
+    const total         = Array.isArray(d["total[]"]) ? d["total[]"] : [d["total[]"]];
+
+
+     if (req.files && req.files.vendor_sign) {
+        var filename1 = new Date().getTime() + "_" + req.files.vendor_sign.name;
+        req.files.vendor_sign.mv("public/image/" + filename1);
+        // vendorSign = "/image/" + filename;
+    }
+
+    // Handle employee_sign file
+    // let employeeSign = "";
+    if (req.files && req.files.employee_sign) {
+        var filename = new Date().getTime() + "_" + req.files.employee_sign.name;
+        req.files.employee_sign.mv("public/image/" + filename);
+        // employeeSign = "/image/" + filename;
+    }
+    // Loop through each raw material
+    for (let i = 0; i < raw_material.length; i++) {
+        if (!raw_material[i]) continue;
+
+        await exe(
+            `INSERT INTO raw_material_purchases
+            (vendor_id, vendor_name, purchase_date, purchase_type, raw_material, qty, udm, rate, discount, taxable, gst, total, total_amount, extra_charges, grand_total, eway_bill, note, employee_name, vendor_sign, employee_sign)
+            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+            [
+                vendor_id,
+                vendor_name,
+                d.purchase_date,
+                d.purchase_type,
+                raw_material[i],
+                qty[i] || 0,
+                udm[i] || "",
+                rate[i] || 0,
+                discount[i] || 0,
+                taxable[i] || 0,
+                gst[i] || 0,
+                total[i] || 0,
+                d.total_amount || 0,
+                d.extra_charges || 0,
+                d.grand_total || 0,
+                d.eway_bill || "",
+                d.note || "",
+                d.employee_name || "",
+               filename1,
+               filename
+            ]
+        );
+    }
+
+    res.redirect("/admin/Purchase_raw_material");
+
+} catch (err) {
+    console.error(err);
+    res.status(500).send("Database error");
+}
+});
+
+
+router.get("/Purchase_report",async function(req,res) {
+    var data = await exe("SELECT * FROM raw_material_purchases")
+    res.render("admin/Purchase_report.ejs",{"data":data})
+})
+
+router.get("/purchase_report_product",async function (req,res) {
+    var data = await exe("SELECT * FROM raw_material_purchases")
+
+    res.render("admin/purchase_report_product.ejs",{"data":data})
+});
+
+router.get("/view_purchase_details/:purchase_id", async function (req,res) {
+    var data = await exe("SELECT * FROM raw_material_purchases WHERE purchase_id=?",[req.params.purchase_id])
+
+    res.render("admin/view_purchase_details.ejs",{"data":data})
+});
+
+router.get("/view_purchase_bill/:purchase_id",async function (req,res) {
+    var vendor = await exe("SELECT * FROM raw_material_purchases WHERE purchase_id=?",[req.params.purchase_id])
+        var vendors = await exe("SELECT * FROM vendors ")
+ 
+    res.render("admin/view_purchase_bill.ejs",{"vendor":vendor,"vendors":vendors})
+})
+
+
 
 module.exports = router;
