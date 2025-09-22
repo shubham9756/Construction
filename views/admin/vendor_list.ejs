@@ -1,0 +1,178 @@
+<%-include('navbar.ejs')%>
+<style>
+body {background:#f8f9fa;}
+.card {border-radius:10px;box-shadow:0 2px 10px rgba(0,0,0,0.1);}
+.card-header {
+  background:linear-gradient(to right,#FFD700 0.5%,#264db5 0.5%);
+  color:#fff;
+  font-weight:700;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:10px 15px;
+}
+.btn-add {background:#6a1b9a;color:#fff;border-radius:6px;font-weight:500;}
+.btn-add:hover {background:#4a0072;}
+.table td,.table th {vertical-align:middle;}
+.action-btn {color:#6a1b9a;cursor:pointer;font-size:18px;text-decoration:none;}
+.action-btn:hover {color:#4a0072;}
+.pagination {justify-content:end;margin-top:15px;}
+</style>
+
+<div class="container py-4">
+  <div class="card">
+    <div class="card-header">
+      <span>VENDOR / COMPANY</span>
+      <!-- Button to open modal -->
+      <button class="btn btn-add" data-bs-toggle="modal" data-bs-target="#vendorModal">
+        <i class="fa fa-plus"></i> ADD New Vendor
+      </button>
+    </div>
+
+    <div class="card-body">
+      <table id="vendorTable" class="table table-bordered table-hover">
+        <thead>
+          <tr>
+            <th>Action</th>
+            <th>SN</th>
+            <th>Vendor</th>
+            <th>Mobile</th>
+            <th>GST No</th>
+          </tr>
+        </thead>
+        <tbody>
+
+            <%for(let i=0;i<vendors.length;i++){%>  
+          <tr>
+            <td>
+                <a href="/edit_vendor/<%-vendors[i].vendor_id%>" class="action-btn">
+                    <i class="fa fa-pen"></i>
+                </a>
+              
+            </td>
+            
+            <td><%- i+1 %></td>
+            <td><%- vendors[i].vendor_name %></td>
+            <td><%- vendors[i].vendor_phone %></td>
+            <td><%- vendors[i].vendor_gst_no %></td>
+          </tr>
+
+      <%}%>
+       
+       
+        </tbody>
+      </table>
+
+      <!-- Pagination -->
+      <nav>
+        <ul id="pagination" class="pagination"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+<!-- Modal for Add New Vendor -->
+<div class="modal fade" id="vendorModal" tabindex="-1" aria-labelledby="vendorModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      
+      <!-- SAME HEADER STYLE -->
+      <div class="card-header">
+        <span>ADD NEW VENDOR / COMPANY</span>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body">
+        <form action="/save_vendor" method="POST">
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label class="form-label">VENDOR (COMPANY) NAME*</label>
+              <input type="text" class="form-control" placeholder="ENTER VENDOR OR COMPANY NAME" name="vendor_name" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">VENDOR (COMPANY) ADDRESS*</label>
+              <input type="text" class="form-control" placeholder="ENTER VENDOR OR COMPANY ADDRESS" name="vendor_address" required>
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label class="form-label">VENDOR (COMPANY) OTHER DETAILS</label>
+              <input type="text" class="form-control" placeholder="ENTER VENDOR OR COMPANY OTHER DETAILS" name="vendor_other_details" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">VENDOR MOBILE*</label>
+              <input type="text" class="form-control" placeholder="ENTER VENDOR PHONE" name="vendor_phone" required>
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label class="form-label">VENDOR GST NUMBER</label>
+              <input type="text" class="form-control" placeholder="ENTER VENDOR GST NUMBER" name="vendor_gst_no" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">VENDOR PHONE</label>
+              <input type="text" class="form-control" placeholder="ENTER VENDOR PHONE" name="vendor_phone2" required>
+            </div>
+              <div class="col-md-6">
+              <label class="form-label">VENDOR Date</label>
+              <input type="date" class="form-control" placeholder="ENTER VENDOR Date" name="date" required>
+            </div>
+          </div>
+        
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-add">Add Vendor</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+const rowsPerPage=5;
+const table=document.getElementById('vendorTable');
+const rows=Array.from(table.querySelectorAll('tbody tr'));
+const pagination=document.getElementById('pagination');
+let currentPage=1;
+const totalPages=Math.ceil(rows.length/rowsPerPage);
+
+function showPage(page){
+  currentPage=page;
+  const start=(page-1)*rowsPerPage;
+  const end=start+rowsPerPage;
+  rows.forEach((r,i)=>r.style.display=(i>=start&&i<end)?'':'none');
+  renderPagination();
+}
+
+function renderPagination(){
+  pagination.innerHTML='';
+  const prevLi=document.createElement('li');
+  prevLi.className=`page-item ${currentPage===1?'disabled':''}`;
+  prevLi.innerHTML=`<a class="page-link" href="#">Previous</a>`;
+  prevLi.onclick=()=>{if(currentPage>1) showPage(currentPage-1)};
+  pagination.appendChild(prevLi);
+
+  for(let i=1;i<=totalPages;i++){
+    const li=document.createElement('li');
+    li.className=`page-item ${i===currentPage?'active':''}`;
+    li.innerHTML=`<a class="page-link" href="#">${i}</a>`;
+    li.onclick=()=>showPage(i);
+    pagination.appendChild(li);
+  }
+
+  const nextLi=document.createElement('li');
+  nextLi.className=`page-item ${currentPage===totalPages?'disabled':''}`;
+  nextLi.innerHTML=`<a class="page-link" href="#">Next</a>`;
+  nextLi.onclick=()=>{if(currentPage<totalPages) showPage(currentPage+1)};
+  pagination.appendChild(nextLi);
+}
+
+// Initialize pagination
+showPage(1);
+</script>
+<%-include('footer.ejs')%>

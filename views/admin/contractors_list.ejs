@@ -1,0 +1,472 @@
+<%-include('navbar.ejs')%>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Contractor List — Responsive</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        background: #f6f7fb;
+        font-family: system-ui, -apple-system, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial;
+      }
+      .custom-card {
+        max-width: 1200px;
+        margin: 18px auto;
+        background: #fff;
+        border: 1px solid #dcdfe8;
+        box-shadow: 0 2px 6px rgba(20, 30, 80, 0.03);
+      }
+      .custom-header {
+        position: relative;
+        background: #214aa8;
+        color: #fff;
+        padding: 10px 16px 10px 28px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .custom-header .left-strip {
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 8px;
+        background: #ffc107;
+      }
+      .custom-header .title {
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 13px;
+        letter-spacing: 0.6px;
+      }
+      .add-btn {
+        background: linear-gradient(90deg, #9e5bc6, #7a3eb1);
+        border: none;
+        color: #fff;
+        font-weight: 600;
+        padding: 6px 12px;
+        font-size: 12px;
+        border-radius: 4px;
+        cursor: pointer;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      }
+      .label-row {
+        padding: 10px 14px 0 14px;
+      }
+      .label-test {
+        display: inline-block;
+        background: #ffc107;
+        color: #000;
+        font-weight: 700;
+        font-size: 12px;
+        padding: 4px 8px;
+        border-radius: 3px;
+        box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);
+      }
+
+      .table thead th {
+        font-size: 12.5px;
+        text-transform: uppercase;
+        background: #f4f6fb;
+        border: 1px solid #e6e9f2 !important;
+        text-align: center;
+        vertical-align: middle;
+        padding: 8px;
+      }
+      .table tbody td {
+        font-size: 13px;
+        border: 1px solid #eef0f7 !important;
+        vertical-align: middle;
+        text-align: center;
+        padding: 8px;
+        word-wrap: break-word;
+      }
+
+      .action-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-weight: 700;
+        font-size: 11.5px;
+        padding: 4px 8px;
+        border-radius: 3px;
+        border: none;
+      }
+
+      .pill-contracts {
+        background: #5a2fb1;
+        color: #fff;
+      }
+      .pill-labours {
+        background: #ffc107;
+        color: #000;
+      }
+      .pill-edit {
+        background: #5a2fb1;
+        color: #fff;
+      }
+      .pill-delete {
+        background: #ff4d4f;
+        color: #fff;
+      }
+
+      /* Modal Form Styles */
+      .modal-content {
+        border-radius: 8px;
+      }
+      .form-label {
+        font-weight: bold;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+      }
+      .btn-purple {
+        background-color: #7a3eb1 !important;
+        color: #fff !important;
+        border: none !important;
+        padding: 6px 12px;
+        border-radius: 4px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+      .btn-purple:hover {
+        background-color: #622f91 !important;
+        color: #fff !important;
+      }
+      .btn-warning {
+        background-color: #f6c344;
+        border: none;
+        color: #000;
+      }
+      .btn-warning:hover {
+        background-color: #e0ad2f;
+      }
+      .btn-grey {
+        background-color: #6c757d;
+        color: #fff;
+        font-size: 13px;
+        text-transform: uppercase;
+      }
+      .btn-grey:hover {
+        background-color: #5a6268;
+        color: #fff;
+      }
+
+      @media (max-width: 880px) {
+        .custom-card {
+          margin: 10px;
+        }
+        .table thead th {
+          font-size: 11px;
+        }
+        .table tbody td {
+          font-size: 12px;
+        }
+        .add-btn {
+          width: 100%;
+          margin-top: 5px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="custom-card">
+      <div class="custom-header">
+        <div class="left-strip"></div>
+        <div class="title">CONTRACTOR LIST</div>
+        <div>
+          <button
+            class="add-btn btn-sm"
+            data-bs-toggle="modal"
+            data-bs-target="#contractorModal"
+          >
+            ADD CONTRACTOR
+          </button>
+        </div>
+      </div>
+
+      <div class="label-row"><span class="label-test">TEST</span></div>
+
+      <div class="table-responsive p-3">
+        <table class="table mb-0 align-middle">
+          <thead>
+            <tr>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th>SN</th>
+              <th>CONTRACTOR NAME</th>
+              <th>MOBILE</th>
+              <th>CONTRACTOR TYPE</th>
+              <th>CONTRACTOR ADDRESS</th>
+              <th>OTHER DETAILS</th>
+            </tr>
+          </thead>
+          <tbody>
+          <% for (var i = 0; i < contractors.length; i++) { %>
+<tr class="data-row">
+  <td>
+    <a href="/contracts/<%- contractors[i].contractor_id %>" class="action-pill pill-contracts">CONTRACTS</a>
+  </td>
+  <td>
+    <a class="action-pill pill-labours" href="/labours/<%- contractors[i].contractor_id %>">LABOURS</a>
+  </td>
+  <td>
+    <a href="/edit_contractor/<%- contractors[i].contractor_id %>" class="action-pill pill-edit">
+      <i class="bi bi-pencil"></i>
+    </a>
+  </td>
+  <td>
+    <a href="/delete_contractor/<%- contractors[i].contractor_id %>" class="action-pill pill-delete">
+      <i class="bi bi-trash"></i>
+    </a>
+  </td>
+  <td><%- i + 1 %></td>
+  <td class="text-start"><%- contractors[i].contractor_name %></td>
+  <td><%- contractors[i].contractor_mobile %></td>
+  <td><%- contractors[i].contractor_type %></td>
+  <td><%- contractors[i].contractor_address %></td>
+  <td><%- contractors[i].contractor_details %></td>
+</tr>
+<% } %>
+
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Add Contractor Modal -->
+    <div
+      class="modal fade"
+      id="contractorModal"
+      tabindex="-1"
+      aria-labelledby="contractorModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content shadow">
+          <div class="modal-header">
+            <h5 class="modal-title fw-bold" id="contractorModalLabel">
+              ADD NEW CONTRACTOR
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form id="" action="/save_contractor" method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label class="form-label">CONTRACTOR NAME*</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="ENTER CONTRACTOR NAME"
+                    required
+                    name="contractor_name"
+                  />
+                  <div class="invalid-feedback">
+                    Contractor Name is required.
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">CONTRACTOR ADDRESS*</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="ENTER CONTRACTOR ADDRESS"
+                    required
+                    name="contractor_address"
+                  />
+                  <div class="invalid-feedback">
+                    Contractor Address is required.
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">CONTRACTOR OTHER DETAILS</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="ENTER CONTRACTOR OTHER DETAILS"
+                    name="contractor_details"
+                  />
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">CONTRACTOR MOBILE*</label>
+                  <input
+                    type="tel"
+                    class="form-control"
+                    placeholder="ENTER CONTRACTOR MOBILE NUMBER"
+                    required
+                    pattern="[0-9]{10}"
+                    name="contractor_mobile"
+                  />
+                  <div class="invalid-feedback">
+                    Enter a valid 10-digit mobile number.
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">CONTRACTOR ADHAR CARD NO</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="ADHAR CARD NUMBER"
+                    pattern="[0-9]{12}"
+                    name="contractor_aadhar"
+                  />
+                  <div class="invalid-feedback">Aadhar must be 12 digits.</div>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">CONTRACTOR PAN CARD NO</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="PAN CARD NUMBER"
+                    pattern="[A-Z]{5}[0-9]{4}[A-Z]{1}"
+                    name="contractor_pan"
+                  />
+                  <div class="invalid-feedback">
+                    Enter a valid PAN (ABCDE1234F).
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">CONTRACTOR IMAGE</label>
+                  <input type="file" class="form-control" name="contractor_image" />
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">CONTRACTOR TYPE</label>
+                  <div class="input-group">
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="mainContractorType"
+                      placeholder="ENTER CONTRACTOR TYPE"
+                      name="contractor_type"
+                    />
+                   
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer mt-3">
+                <button type="submit" class="btn btn-purple">
+                  ADD CONTRACTOR
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-warning"
+                  data-bs-dismiss="modal"
+                >
+                  Close
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contractor Type Modal -->
+    <div
+      class="modal fade"
+      id="contractorTypeModal"
+      tabindex="-1"
+      aria-labelledby="contractorTypeLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content p-2">
+          <div class="modal-header">
+            <h6 class="modal-title fw-bold" id="contractorTypeLabel">
+              ADD NEW CONTRACTOR TYPE
+            </h6>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="contractorType" class="form-label"
+                >CONTRACTOR TYPE*</label
+              >
+              <input
+                type="text"
+                class="form-control"
+                id="contractorType"
+                placeholder="ENTER CONTRACTOR TYPE"
+              />
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-purple"
+              id="saveContractorType"
+            >
+              ADD CONTRACTOR TYPE
+            </button>
+            <button type="button" class="btn btn-grey" data-bs-dismiss="modal">
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script> -->
+    <script>
+      (function () {
+        const form = document.getElementById("contractorForm");
+        form.addEventListener("submit", function (event) {
+          if (!form.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+          }
+          form.classList.add("was-validated");
+        });
+
+        document
+          .getElementById("saveContractorType")
+          .addEventListener("click", function () {
+            const typeInput = document.getElementById("contractorType");
+            const mainTypeInput = document.getElementById("mainContractorType");
+            if (typeInput.value.trim() !== "") {
+              mainTypeInput.value = typeInput.value.trim();
+              typeInput.value = "";
+              bootstrap.Modal.getInstance(
+                document.getElementById("contractorTypeModal")
+              ).hide();
+            } else {
+              alert("Please enter a Contractor Type.");
+            }
+          });
+
+        document
+          .getElementById("contractorTypeModal")
+          .addEventListener("hidden.bs.modal", function () {
+            const parentModal = document.getElementById("contractorModal");
+            const parentInstance =
+              bootstrap.Modal.getInstance(parentModal) ||
+              new bootstrap.Modal(parentModal);
+            parentInstance.show();
+          });
+      })();
+    </script>
+  </body>
+</html>
+<%-include('footer.ejs')%>
