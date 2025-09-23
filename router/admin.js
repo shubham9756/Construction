@@ -97,6 +97,7 @@ LEFT JOIN customers
     WHERE flat_sales.sale_id = ?`
     var result = await exe(sql, [id]);
     console.log(result);
+<<<<<<< HEAD
     res.render('admin/flat_details.ejs', { result });
 })
 
@@ -111,6 +112,15 @@ LEFT JOIN customers
     console.log(result)
     res.render('admin/rent_flat_report.ejs', { result })
 })
+=======
+    res.render('admin/flat_details.ejs', { result, site });
+});
+
+
+
+
+
+>>>>>>> 7263cb7cf624e431546b120c5ea94844db449171
 
 
 // site flat view
@@ -268,58 +278,59 @@ router.get("/login", function (req, res) {
     res.render("admin/login.ejs");
 });
 
-router.get("/bank_accounts", async function (req, res) {
-    var account = await exe("SELECT * FROM bank_accounts");
-    var obj = { "account": account }
-    res.render("admin/bank_accounts_list.ejs", obj);
-})
+// router.get("/bank_accounts", async function (req, res) {
+//     var account = await exe("SELECT * FROM bank_accounts");
+//     var obj = { "account": account }
+//     res.render("admin/bank_accounts_list.ejs", obj);
+// })
 
-router.get("/add_account", function (req, res) {
-    res.render("admin/add_bank_account.ejs");
-});
-router.post("/save_account", async function (req, res) {
-    var d = req.body;
-    var sql = `INSERT INTO bank_accounts(bank_name,account_holder,account_number,ifsc_code,current_balance)VALUES(?,?,?,?,?)`;
-    var result = await exe(sql, [d.bank_name, d.account_holder, d.account_number, d.ifsc_code, d.current_balance]);
-    res.redirect("/admin/bank_accounts");
-
-
-})
-router.get("/view_account/:account_id", async function (req, res) {
-    var data = await exe("SELECT * FROM bank_accounts WHERE account_id=?", [req.params.account_id]);
-    var result = await exe("SELECT * FROM transactions WHERE account_id=? ORDER BY transaction_id DESC LIMIT 10", [req.params.account_id]);
-
-    res.render("admin/view_bank_account.ejs", { "result": result, "data": data });
-})
-router.post("/save_transaction", async function (req, res) {
-    var d = req.body;
+// router.get("/add_account", function (req, res) {
+//     res.render("admin/add_bank_account.ejs");
+// });
+// router.post("/save_account", async function (req, res) {
+//     var d = req.body;
+//     var sql = `INSERT INTO bank_accounts(bank_name,account_holder,account_number,ifsc_code,current_balance)VALUES(?,?,?,?,?)`;
+//     var result = await exe(sql, [d.bank_name, d.account_holder, d.account_number, d.ifsc_code, d.current_balance]);
+//     res.redirect("/admin/bank_accounts");
 
 
-    var account = await exe("SELECT current_balance FROM bank_accounts WHERE account_id=?", [d.account_id]);
-    var current_balance = parseFloat(account[0].current_balance);
+// })
+// router.get("/view_account/:account_id", async function (req, res) {
+//     var data = await exe("SELECT * FROM bank_accounts WHERE account_id=?", [req.params.account_id]);
+//     var result = await exe("SELECT * FROM transactions WHERE account_id=? ORDER BY transaction_id DESC LIMIT 10", [req.params.account_id]);
 
-    var amount = parseFloat(d.transaction_amount);
-
-
-    if (d.transaction_type === "Credit") {
-        current_balance += amount;
-    } else if (d.transaction_type === "Debit") {
-        current_balance -= amount;
-    }
+//     res.render("admin/view_bank_account.ejs", { "result": result, "data": data });
+// })
+// router.post("/save_transaction", async function (req, res) {
+//     var d = req.body;
 
 
-    var sql = `INSERT INTO transactions (account_id, transaction_date, transaction_amount, transaction_type, payment_type, transaction_details)
-               VALUES (?, ?, ?, ?, ?, ?)`;
+//     var account = await exe("SELECT current_balance FROM bank_accounts WHERE account_id=?", [d.account_id]);
+//     var current_balance = parseFloat(account[0].current_balance);
 
-    await exe(sql, [d.account_id, d.transaction_date, amount, d.transaction_type, d.payment_type, d.transaction_details]);
-
-
-    await exe("UPDATE bank_accounts SET current_balance=? WHERE account_id=?", [current_balance, d.account_id]);
-
-    res.redirect("/admin/view_account/" + d.account_id);
-});
+//     var amount = parseFloat(d.transaction_amount);
 
 
+//     if (d.transaction_type === "Credit") {
+//         current_balance += amount;
+//     } else if (d.transaction_type === "Debit") {
+//         current_balance -= amount;
+//     }
+
+
+//     var sql = `INSERT INTO transactions (account_id, transaction_date, transaction_amount, transaction_type, payment_type, transaction_details)
+//                VALUES (?, ?, ?, ?, ?, ?)`;
+
+//     await exe(sql, [d.account_id, d.transaction_date, amount, d.transaction_type, d.payment_type, d.transaction_details]);
+
+
+//     await exe("UPDATE bank_accounts SET current_balance=? WHERE account_id=?", [current_balance, d.account_id]);
+
+//     res.redirect("/admin/view_account/" + d.account_id);
+// });
+
+
+<<<<<<< HEAD
 router.get("/edit_account/:account_id", async function (req, res) {
     var data = await exe("SELECT * FROM bank_accounts WHERE account_id=?", [req.params.account_id]);
     res.render("admin/edit_bank_account.ejs", { "data": data[0] });
@@ -334,6 +345,22 @@ router.get("/delete_account/:account_id", async function (req, res) {
     var result = await exe("DELETE FROM bank_accounts WHERE account_id=?", [req.params.account_id]);
     res.redirect("/admin/bank_accounts");
 });
+=======
+// router.get("/edit_account/:account_id", async function (req, res) {
+//     var data = await exe("SELECT * FROM bank_accounts WHERE account_id=?", [req.params.account_id]);
+//     res.render("admin/edit_bank_account.ejs", { "data": data[0] });
+// });
+// router.post("/update_account", async function (req, res) {
+//     var d = req.body;
+//     var sql = `UPDATE bank_accounts SET bank_name=?,account_holder=?,account_number=?,ifsc_code=?,current_balance=? WHERE account_id=?`;
+//     var result = await exe(sql, [d.bank_name, d.account_holder, d.account_number, d.ifsc_code, d.current_balance, d.account_id]);
+//     res.redirect("/admin/bank_accounts");
+// })
+// router.get("/delete_account/:account_id", async function (req, res) {
+//     var result = await exe("DELETE FROM bank_accounts WHERE account_id=?", [req.params.account_id]);
+//     res.redirect("/admin/bank_accounts");
+// });
+>>>>>>> 7263cb7cf624e431546b120c5ea94844db449171
 router.get("/new_bill", function (req, res) {
     res.render("admin/new_bill.ejs");
 });
@@ -461,7 +488,76 @@ router.get("/sale_stock", function (req, res) {
 });
 router.get("/sale_report", function (req, res) {
     res.render("admin/sale_report");
+
+
+
+});
+router.get("/bank_accounts",async function(req,res){
+    var account = await exe("SELECT * FROM bank_accounts");
+    var obj = {"account":account}
+    res.render("admin/bank_accounts_list.ejs",obj);   
 })
+
+router.get("/add_account",function(req,res){
+    res.render("admin/add_bank_account.ejs");   
+});
+router.post("/save_account",async function(req,res){
+    var d = req.body;
+    var sql = `INSERT INTO bank_accounts(bank_name,account_holder,account_number,ifsc_code,current_balance)VALUES(?,?,?,?,?)`;
+    var result = await exe(sql,[d.bank_name,d.account_holder,d.account_number,d.ifsc_code,d.current_balance]);
+    res.redirect("/admin/bank_accounts");
+    
+    
+})
+router.get("/view_account/:account_id",async function(req,res){
+    var data = await exe("SELECT * FROM bank_accounts WHERE account_id=?", [req.params.account_id]);
+   var result = await exe("SELECT * FROM transactions WHERE account_id=? ORDER BY transaction_id DESC LIMIT 10",[req.params.account_id]);
+
+       res.render("admin/view_bank_account.ejs",{"result":result,"data":data});   
+})
+router.post("/save_transaction", async function (req, res) {
+    var d = req.body;
+
+    
+    var account = await exe("SELECT current_balance FROM bank_accounts WHERE account_id=?", [d.account_id]);
+    var current_balance = parseFloat(account[0].current_balance); 
+
+    var amount = parseFloat(d.transaction_amount); 
+
+    
+    if (d.transaction_type === "Credit") {
+        current_balance += amount;
+    } else if (d.transaction_type === "Debit") {
+        current_balance -= amount;
+    }
+
+    
+    var sql = `INSERT INTO transactions (account_id, transaction_date, transaction_amount, transaction_type, payment_type, transaction_details)
+               VALUES (?, ?, ?, ?, ?, ?)`;
+
+    await exe(sql, [d.account_id, d.transaction_date, amount, d.transaction_type, d.payment_type, d.transaction_details]);
+
+    
+    await exe("UPDATE bank_accounts SET current_balance=? WHERE account_id=?", [current_balance, d.account_id]);
+
+    res.redirect("/admin/view_account/" + d.account_id);
+});
+
+
+router.get("/edit_account/:account_id",async function(req,res){
+    var data = await exe("SELECT * FROM bank_accounts WHERE account_id=?", [req.params.account_id]);
+       res.render("admin/edit_bank_account.ejs",{"data":data[0]});   
+});
+router.post("/update_account",async function(req,res){
+    var d = req.body;
+    var sql = `UPDATE bank_accounts SET bank_name=?,account_holder=?,account_number=?,ifsc_code=?,current_balance=? WHERE account_id=?`;
+    var result = await exe(sql,[d.bank_name,d.account_holder,d.account_number,d.ifsc_code,d.current_balance,d.account_id]);
+    res.redirect("/admin/bank_accounts");
+})
+router.get("/delete_account/:account_id",async function(req,res){
+    var result = await exe("DELETE FROM bank_accounts WHERE account_id=?", [req.params.account_id]);
+    res.redirect("/admin/bank_accounts");
+});
 router.get("/contractor", async function (req, res) {
     var contractors = await exe("SELECT * FROM contractors");
     res.render("admin/contractors_list.ejs", { "contractors": contractors });
@@ -588,27 +684,27 @@ router.post("/save_payment", async function (req, res) {
     let d = req.body;
     const contractorId = d.contractor_id;
 
-    // last pending amount
+    
     let lastPendingRes = await exe("SELECT IFNULL(MAX(next_due_amount),0) AS last_pending FROM payments WHERE contractor_id=?", [contractorId]);
     let lastPending = lastPendingRes[0].last_pending || 0;
 
     let paid = parseFloat(d.paid_amount) || 0;
     let nextDue = Math.max(0, lastPending - paid);  // pending reduce after payment
 
-    // insert payment
+    
     let sql = `INSERT INTO payments 
         (contractor_id, pending_to_pay, paid_date, paid_by, transaction_number, bank_name, paid_amount, next_due_amount) 
         VALUES (?,?,?,?,?,?,?,?)`;
 
     await exe(sql, [
         contractorId,
-        lastPending, // pending before this payment
+        lastPending, 
         d.paid_date,
         d.paid_by,
         d.transaction_number,
         d.bank_name,
         paid,
-        nextDue      // pending - paid
+        nextDue      
     ]);
 
     res.redirect("/admin/pay_new_contract/" + contractorId);
@@ -687,6 +783,9 @@ router.post("/save_vendor", async function (req, res) {
     // res.send("ok");
     var sql = `INSERT INTO vendors(vendor_name,vendor_address,vendor_other_details,vendor_phone,vendor_gst_no,vendor_phone2,vendor_date)VALUES(?,?,?,?,?,?,?)`;
     var result = await exe(sql, [d.vendor_name, d.vendor_address, d.vendor_other_details, d.vendor_phone, d.vendor_gst_no, d.vendor_phone2, d.vendoe_date]);
+    
+     var sql = `INSERT INTO vendors(vendor_name,vendor_address,vendor_other_details,vendor_phone,vendor_gst_no,vendor_phone2,vendor_date)VALUES(?,?,?,?,?,?,?)`;
+    var result = await exe(sql,[d.vendor_name,d.vendor_address,d.vendor_other_details,d.vendor_phone,d.vendor_gst_no,d.vendor_phone2,d.vendoe_date]);
     res.redirect("/admin/vendor_list");
 });
 router.get("/edit_vendor/:vendor_id", async function (req, res) {
@@ -713,7 +812,70 @@ router.post("/save_inquiry", async function (req, res) {
     res.redirect("/admin/PROCESSING_INQUIRIES");
     console.log("Form data =>", d);
 });
-router.get("/Processing_inq_list", async function (req, res) {
+router.get("/pro_inq",async function(req,res){
+    var vendor = await exe("SELECT * FROM vendors");
+    // var vendor = await exe("SELECT * FROM vendors WHERE vendor_id=?",[req.params.vendor_id]);
+    var employee = await exe("SELECT * FROM employees");
+    res.render("admin/Pro_inq.ejs",{"vendor":vendor, "employee": employee});
+    
+});
+
+
+router.post("/save_inquiries", async function (req, res) {
+  try {
+    const d = req.body;
+
+    let vendor_id = null, vendor_name = null;
+    if (d.vendor_info) [vendor_id, vendor_name] = d.vendor_info.split("|");
+
+    const raw_material  = Array.isArray(d["raw_material[]"]) ? d["raw_material[]"] : [d["raw_material[]"]];
+    const Material_qyt  = Array.isArray(d["Material_qyt[]"]) ? d["Material_qyt[]"] : [d["Material_qyt[]"]];
+    const udm           = Array.isArray(d["udm[]"]) ? d["udm[]"] : [d["udm[]"]];
+    const rate          = Array.isArray(d["rate[]"]) ? d["rate[]"] : [d["rate[]"]];
+    const discount      = Array.isArray(d["discount[]"]) ? d["discount[]"] : [d["discount[]"]];
+    const Taxable_value = Array.isArray(d["Taxable_value[]"]) ? d["Taxable_value[]"] : [d["Taxable_value[]"]];
+    const gst           = Array.isArray(d["gst[]"]) ? d["gst[]"] : [d["gst[]"]];
+    const total         = Array.isArray(d["total[]"]) ? d["total[]"] : [d["total[]"]];
+
+    for (let i = 0; i < raw_material.length; i++) {
+      if (!raw_material[i]) continue;
+      await exe(
+        `INSERT INTO inquiries 
+         (vendor_id, vendor_name, purchase_date, purchase_type, raw_material, Material_qyt, udm, rate, discount, Taxable_value, gst, total, employee_sign, employee_signature) 
+         VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+        [
+          vendor_id,
+          vendor_name,       
+          d.purchase_date,
+          d.purchase_type,
+          raw_material[i],
+          Material_qyt[i] || 0,
+          udm[i] || "",
+          rate[i] || 0,
+          discount[i] || 0,
+          Taxable_value[i] || 0,
+          gst[i] || 0,
+          total[i] || 0,
+          d.employee_sign || "",
+          d.employee_signature || "",
+        ]
+      );
+    }
+
+   
+    res.redirect("/admin//pro_inq");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Database error");
+  }
+});
+
+
+
+
+
+
+router.get("/Processing_inq_list",async function(req,res){
     var inquiry = await exe("SELECT * FROM inquiries");
     res.render("admin/Processing_inq_list.ejs", { inquiries: inquiry });
 });
@@ -769,7 +931,6 @@ router.post("/save_payment_recvied", async function (req, res) {
         ];
 
         const result = await exe(sql, values);
-g
        res.redirect('//new_payment/:')
     } catch (err) {
         console.error(err);
@@ -779,3 +940,134 @@ g
 
 
 module.exports = router;
+router.get("/view_bill/:inquiry_id",async function(req,res){
+    const items = await exe("SELECT * FROM inquiries WHERE inquiry_id=?", [req.params.inquiry_id]);
+
+if(items.length === 0) return res.send("Inquiry not found");
+
+const inquiry = {
+  vendor_id: items[0].vendor_id,
+  vendor_name: items[0].vendor_name,
+  purchase_date: items[0].purchase_date ? items[0].purchase_date.toISOString().slice(0,10) : '',
+  purchase_type: items[0].purchase_type,
+  employee_sign: items[0].employee_sign,
+  employee_signature: items[0].employee_signature,
+  items: items
+};
+
+res.render("admin/view_inquiry.ejs", { inquiry });
+});
+router.get("/delete_inquiry/:inquiry_id",async function(req,res){
+    var result = await exe("DELETE FROM inquiries WHERE inquiry_id=?", [req.params.inquiry_id]);
+    res.redirect("/admin/Processing_inq_list");
+});
+
+router.get("/Purchase_raw_material",async function(req,res) {
+    var vendor = await exe("SELECT * FROM vendors");
+    var employee = await exe("SELECT * FROM employees ");
+    res.render("admin/purchase_raw_material.ejs",{"vendor":vendor,"employee":employee})
+});
+router.post("/save_new_raw_material", async function(req, res) {
+  try {
+    const d = req.body;
+
+    // Extract vendor info
+    let vendor_id = null, vendor_name = null;
+    if (d.vendor_info) [vendor_id, vendor_name] = d.vendor_info.split("|");
+
+    // Ensure all fields are arrays
+    const raw_material  = Array.isArray(d["raw_material[]"]) ? d["raw_material[]"] : [d["raw_material[]"]];
+    const qty           = Array.isArray(d["qty[]"]) ? d["qty[]"] : [d["qty[]"]];
+    const udm           = Array.isArray(d["udm[]"]) ? d["udm[]"] : [d["udm[]"]];
+    const rate          = Array.isArray(d["rate[]"]) ? d["rate[]"] : [d["rate[]"]];
+    const discount      = Array.isArray(d["discount[]"]) ? d["discount[]"] : [d["discount[]"]];
+    const taxable       = Array.isArray(d["taxable[]"]) ? d["taxable[]"] : [d["taxable[]"]];
+    const gst           = Array.isArray(d["gst[]"]) ? d["gst[]"] : [d["gst[]"]];
+    const total         = Array.isArray(d["total[]"]) ? d["total[]"] : [d["total[]"]];
+
+
+     if (req.files && req.files.vendor_sign) {
+        var filename1 = new Date().getTime() + "_" + req.files.vendor_sign.name;
+        req.files.vendor_sign.mv("public/image/" + filename1);
+        // vendorSign = "/image/" + filename;
+    }
+
+    // Handle employee_sign file
+    // let employeeSign = "";
+    if (req.files && req.files.employee_sign) {
+        var filename = new Date().getTime() + "_" + req.files.employee_sign.name;
+        req.files.employee_sign.mv("public/image/" + filename);
+        // employeeSign = "/image/" + filename;
+    }
+    // Loop through each raw material
+    for (let i = 0; i < raw_material.length; i++) {
+        if (!raw_material[i]) continue;
+
+        await exe(
+            `INSERT INTO raw_material_purchases
+            (vendor_id, vendor_name, purchase_date, purchase_type, raw_material, qty, udm, rate, discount, taxable, gst, total, total_amount, extra_charges, grand_total, eway_bill, note, employee_name, vendor_sign, employee_sign)
+            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+            [
+                vendor_id,
+                vendor_name,
+                d.purchase_date,
+                d.purchase_type,
+                raw_material[i],
+                qty[i] || 0,
+                udm[i] || "",
+                rate[i] || 0,
+                discount[i] || 0,
+                taxable[i] || 0,
+                gst[i] || 0,
+                total[i] || 0,
+                d.total_amount || 0,
+                d.extra_charges || 0,
+                d.grand_total || 0,
+                d.eway_bill || "",
+                d.note || "",
+                d.employee_name || "",
+               filename1,
+               filename
+            ]
+        );
+    }
+
+    res.redirect("/admin/Purchase_raw_material");
+
+} catch (err) {
+    console.error(err);
+    res.status(500).send("Database error");
+}
+});
+
+
+router.get("/Purchase_report",async function(req,res) {
+    var data = await exe("SELECT * FROM raw_material_purchases")
+    res.render("admin/Purchase_report.ejs",{"data":data})
+})
+
+router.get("/purchase_report_product",async function (req,res) {
+    var data = await exe("SELECT * FROM raw_material_purchases")
+
+    res.render("admin/purchase_report_product.ejs",{"data":data})
+});
+
+router.get("/view_purchase_details/:purchase_id", async function (req,res) {
+    var data = await exe("SELECT * FROM raw_material_purchases WHERE purchase_id=?",[req.params.purchase_id])
+
+    res.render("admin/view_purchase_details.ejs",{"data":data})
+});
+
+router.get("/view_purchase_bill/:purchase_id",async function (req,res) {
+    var vendor = await exe("SELECT * FROM raw_material_purchases WHERE purchase_id=?",[req.params.purchase_id])
+        var vendors = await exe("SELECT * FROM vendors ")
+ 
+    res.render("admin/view_purchase_bill.ejs",{"vendor":vendor,"vendors":vendors})
+})
+    
+    
+   
+    
+
+
+    module.exports = router;

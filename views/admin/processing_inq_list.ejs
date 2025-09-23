@@ -55,7 +55,7 @@ body {
     <table class="table table-bordered table-striped vp-table">
       <thead class="table-light">
         <tr>
-          <th>#</th>
+          <th>SrNo</th>
           <th>Vendor Name</th>
           <th>Purchase Date</th>
           <th>Purchase Type</th>
@@ -72,17 +72,9 @@ body {
             <td><%= inquiries[i].purchase_type %></td>
             <td>₹ <%= inquiries[i].total %></td>
             <td>
-              <a href="#" class="vp-action-btn view"><i class="fa fa-eye"></i></a>
-              <a href="#" class="vp-action-btn edit" 
-                 data-bs-toggle="modal" data-bs-target="#editModal"
-                 data-id="<%= inquiries[i].inquiry_id %>"
-                 data-vendor="<%= inquiries[i].vendor_name %>"
-                 data-date="<%= inquiries[i].purchase_date.toISOString().slice(0,10) %>"
-                 data-type="<%= inquiries[i].purchase_type %>"
-                 data-total="<%= inquiries[i].total %>">
-                 <i class="fa fa-pen"></i>
-              </a>
-              <a href="#" class="vp-action-btn delete"><i class="fa fa-trash"></i></a>
+              <a href="/view_bill/<%= inquiries[i].inquiry_id %>" class="vp-action-btn view"><i class="fa fa-eye"></i></a>
+              
+              <a href="/delete_inquiry/<%= inquiries[i].inquiry_id %>" class="vp-action-btn delete"><i class="fa fa-trash"></i></a>
             </td>
           </tr>
         <% } %>
@@ -133,7 +125,7 @@ body {
 </div>
 
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script> -->
 <script>
   // Fill modal with data from table row
   document.querySelectorAll('.vp-action-btn.edit').forEach(btn => {
