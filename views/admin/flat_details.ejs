@@ -251,22 +251,21 @@
     <div class="card">
       <div class="card-header bg-dark">
         SALE FLAT/STORE/HOUSE BILL DETAILS
-        <div class="invoice-box">INVOICE: 2 | 12 AUG 2025</div>
+        <div class="invoice-box">INVOICE: <%-result[0].invoice_no%></div>
       </div>
       <div class="card-body">
         <div class="row">
           <div class="col-md-6">
             <div class="info-block">
-              <p><span>SITE:</span> PRATHMESH ELITE</p>
+              <p><span>SITE:</span>  <%-result[0].site_name%></p>
               <p>
-                <span>FLAT / HOUSE / STORE NO.:</span> FLAT : P145 (1200/1000
-                SQFT)
-              </p>
-              <p><span>CUSTOMER NAME:</span> BHAVESH GAWALI</p>
-              <p><span>DEADLINE DATE:</span> 31 AUG 2025</p>
-              <p><span>SALE DESCRIPTION:</span> TESTR</p>
-              <p><span>SQUARE FEET:</span> -</p>
-              <p><span>RATE:</span> ₹ 0</p>
+                <span>FLAT / HOUSE / STORE NO.:</span> FLAT :<%-result[0].flat_name%> 
+              <p><span>CUSTOMER NAME:</span><%-result[0].customer_name%></p>
+              <p><span>DEADLINE DATE:</span><%-result[0].deadline_date.toISOString().slice(0,10)%></p>
+              <p><span>SALE DESCRIPTION:</span><%-result[0].description%> </p>
+              <p><span>SQUARE FEET:</span> -(<%-result[0].sqfeet%>)</p>
+              <p><span>RATE:</span> ₹ <%-result[0].rate%> </p>
+              <p><span>Basic Amount:</span> ₹ <%-result[0].basic_amount%> </p>
               <p><span>PAYMENT RECEIVED:</span> ₹ 0</p>
             </div>
             <div class="signature-block">
@@ -274,14 +273,14 @@
                 <p>EMPLOYEE SIGNATURE</p>
 
                 <img
-                  src="https://via.placeholder.com/150x50.png?text=Signature"
+                  src="/image/employee/<%-result[0].employee_signature%>"
                   alt="Employee Signature"
                 />
               </div>
               <div class="signature-box">
                 <p>CUSTOMER SIGNATURE</p>
                 <img
-                  src="https://via.placeholder.com/150x50.png?text=Signature"
+                  src="/image/employee/<%-result[0].customer_signature%>"
                   alt="Customer Signature"
                 />
               </div>
@@ -300,42 +299,42 @@
                 <tr>
                   <td>BASIC AMOUNT</td>
                   <td>-</td>
-                  <td>₹ 25,49,500 <i class="fas fa-edit"></i></td>
+                  <td>₹ <%-result[0].basic_amount%> </td>
                 </tr>
                 <tr>
                   <td>STAMP DUTY</td>
-                  <td>1%</td>
-                  <td>₹ 25,495</td>
+                  <td><%-result[0].stamp_duty_percent%>%</td>
+                  <td><%-result[0].stamp_duty_amount%></td>
                 </tr>
                 <tr>
                   <td>OTHER TAX</td>
-                  <td>0.8%</td>
-                  <td>₹ 20,396</td>
+                  <td><%-result[0].other_tax_percent%>%</td>
+                  <td>₹ <%-result[0].other_tax_amount%></td>
                 </tr>
                 <tr>
                   <td>CGST</td>
-                  <td>9%</td>
-                  <td>₹ 2,29,455</td>
+                  <td><%-result[0].cgst_percent%>%</td>
+                  <td>₹ <%-result[0].cgst_amount%></td>
                 </tr>
                 <tr>
                   <td>SGST</td>
-                  <td>9%</td>
-                  <td>₹ 2,29,455</td>
+                  <td><%-result[0].sgst_percent%>%</td>
+                  <td>₹ <%-result[0].sgst_amount%></td>
                 </tr>
                 <tr class="highlight">
                   <td>TOTAL</td>
                   <td>-</td>
-                  <td>₹ 30,54,301</td>
+                  <td>₹ <%-result[0].total_amount%></td>
                 </tr>
                 <tr>
                   <td>DISCOUNT</td>
-                  <td>5%</td>
-                  <td>₹ 1,52,715</td>
+                  <td><%-result[0].discount_percent%>%</td>
+                  <td>₹ <%-result[0].discount_amount%></td>
                 </tr>
                 <tr class="highlight">
                   <td>GRAND TOTAL</td>
                   <td>-</td>
-                  <td>₹ 29,01,585</td>
+                  <td>₹ <%-result[0].grand_total%></td>
                 </tr>
               </tbody>
             </table>
@@ -361,7 +360,7 @@
               </table>
             </div>
             <a
-              href="print_payment.html"
+              href="/print_all"
               class="btn-print-all"
               id="printAllBtn"
               role="button"
@@ -372,7 +371,7 @@
         </div>
         <div class="btn-footer" id="initialButtons">
           <a
-            href="new_payment.html"
+            href="/new_payment/<%-result[0].sale_id%>"
             class="btn-new"
             id="newPaymentBtn"
             role="button"
@@ -386,7 +385,7 @@
             <i class="fas fa-print"></i> PRINT
           </a>
           <a
-            href="return_payment.html"
+            href="/return_payment"
             class="btn-return"
             id="returnPaymentBtn"
             role="button"

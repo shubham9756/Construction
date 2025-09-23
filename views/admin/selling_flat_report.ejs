@@ -174,21 +174,36 @@
         </thead>
         <tbody>
           <%for(var i=0;i<result.length;i++){%>
-            <tr class="status-overdue">
-              <td>
-                <a href="sale_flat_bill_details.html" class="btn-view">
-                  <i class="bi bi-eye"></i>
-                </a>
-              </td>
-              <td><%-result[i].customr_name%></td>
-              <td>Flat : TAT2001 <a href="edit_property.html" class="edit-link"><i class="bi bi-pencil-square"></i></a>
-              </td>
-              <td>Nayantara Apartment</td>
-              <td>₹0</td>
-              <td>30 JAN 2025</td>
-              <td><span class="badge-overdue">Overdue</span></td>
-            </tr>
-            <%}%>
+            <% if (result[i].type === 'Sell' ) { %>
+              <tr class="status-overdue">
+                <td>
+                  <a href="/rent_flat_details/<%-result[i].sale_id%>" class="btn-view">
+                    <i class="fa fa-eye"></i>
+                  </a>
+                </td>
+                <td><%-result[i].full_name%></td>
+                <td>Flat : <%-result[i].flat_name%>
+                    <a href="edit_property.html" class="edit-link">
+                      <i class="fa fa-pencil-square"></i>
+                    </a>
+                </td>
+                <td><%-result[i].site_name%></td>
+                <td>₹0</td>
+                <td><%-result[i].deadline_date.toISOString().slice(0,10)%></td>
+                <% let deadline=new Date(result[i].deadline_date); let today=new Date(); today.setHours(0,0,0,0); %>
+
+                  <td>
+                    <% if (deadline < today) { %>
+                      <span class="badge-overdue">Overdue</span>
+                      <% } else { %>
+                        <span class="badge-upcoming">Upcoming</span>
+                        <% } %>
+                  </td>
+
+              </tr>
+              <%}%>
+                <% } %>
+
         </tbody>
       </table>
     </div>
