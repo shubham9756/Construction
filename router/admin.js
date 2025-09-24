@@ -71,7 +71,6 @@ router.get('/add_rent_flat', async function (req, res) {
 router.get('/rent_flat_list', async function (req, res) {
     var sql = `SELECT * FROM flats INNER JOIN site ON flats.site_id = site.site_id WHERE flats.buy ='Sell' AND flats.type ='Rent';`;
     var flat = await exe(sql);
-    console.log(flat);
     res.render('admin/rent_flat_list.ejs', { flat: flat });
 })
 // sell management
@@ -88,17 +87,12 @@ router.get('/selling_flat_list', async function (req, res) {
 
 router.get('/rent_flat_details/:id', async function (req, res) {
     var id = req.params.id;
-    var sql = `SELECT * FROM flat_sales
-LEFT JOIN flats 
-    ON flat_sales.flat_id = flats.flat_id
-LEFT JOIN site ON flats.site_id = site.site_id
-LEFT JOIN customers 
-    ON flat_sales.customer_id = customers.id
-    WHERE flat_sales.sale_id = ?`
+    var sql = `SELECT * FROM flat_sales LEFT JOIN flats ON flat_sales.flat_id = flats.flat_id
+        LEFT JOIN site ON flats.site_id = site.site_id
+        LEFT JOIN customers 
+        ON flat_sales.customer_id = customers.id
+        WHERE flat_sales.sale_id = ?`
     var result = await exe(sql, [id]);
-    console.log(result);
-<<<<<<< HEAD
-    res.render('admin/flat_details.ejs', { result });
 })
 
 router.get('/rent_flat_report', async function (req, res) {
@@ -112,17 +106,6 @@ LEFT JOIN customers
     console.log(result)
     res.render('admin/rent_flat_report.ejs', { result })
 })
-=======
-    res.render('admin/flat_details.ejs', { result, site });
-});
-
-
-
-
-
->>>>>>> 7263cb7cf624e431546b120c5ea94844db449171
-
-
 // site flat view
 router.get('/view/:id', async function (req, res) {
     var id = req.params.id;
@@ -134,6 +117,7 @@ router.get('/view/:id', async function (req, res) {
     var result = await exe(sql, [id]);
     res.render('admin/view_flat.ejs', { customer, result, employee });
 });
+
 router.post('/flat-sold', async function (req, res) {
     var d = req.body;
     var filename = ""
@@ -181,7 +165,8 @@ router.get("/add_customor", function (req, res) {
 router.post("/add_customor", async function (req, res) {
     var d = req.body;
     var sql = `INSERT INTO customers(full_name,email,mobile,password)VALUES(?,?,?,?)`;
-    var result = await exe(sql, [d.full_name, d.email, d.mobile, d.password]);
+    var result = await exe(sql,[d.full_name, d.email, d.mobile, d.password]);
+    console.log(d)
     res.redirect("/add_customor");
 });
 router.get("/customor_list", async function (req, res) {
@@ -329,8 +314,6 @@ router.get("/login", function (req, res) {
 //     res.redirect("/admin/view_account/" + d.account_id);
 // });
 
-
-<<<<<<< HEAD
 router.get("/edit_account/:account_id", async function (req, res) {
     var data = await exe("SELECT * FROM bank_accounts WHERE account_id=?", [req.params.account_id]);
     res.render("admin/edit_bank_account.ejs", { "data": data[0] });
@@ -345,8 +328,6 @@ router.get("/delete_account/:account_id", async function (req, res) {
     var result = await exe("DELETE FROM bank_accounts WHERE account_id=?", [req.params.account_id]);
     res.redirect("/admin/bank_accounts");
 });
-=======
-// router.get("/edit_account/:account_id", async function (req, res) {
 //     var data = await exe("SELECT * FROM bank_accounts WHERE account_id=?", [req.params.account_id]);
 //     res.render("admin/edit_bank_account.ejs", { "data": data[0] });
 // });
@@ -360,7 +341,6 @@ router.get("/delete_account/:account_id", async function (req, res) {
 //     var result = await exe("DELETE FROM bank_accounts WHERE account_id=?", [req.params.account_id]);
 //     res.redirect("/admin/bank_accounts");
 // });
->>>>>>> 7263cb7cf624e431546b120c5ea94844db449171
 router.get("/new_bill", function (req, res) {
     res.render("admin/new_bill.ejs");
 });
