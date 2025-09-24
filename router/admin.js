@@ -419,7 +419,18 @@ router.get("/delete_new/:id", async (req, res) => {
     // res.send("delete successfull")
     res.redirect("/admin/new_enquiries");
 });
-
+router.get("/processing_inquiries", async function (req, res) {
+    var enquiry = await exe("SELECT * FROM enquiries WHERE inquiry_status='processing'");
+    res.render("admin/processing_inquiries", { "enquiry": enquiry });
+    // res.send({"enquiry":enquiry});
+});
+router.get("/delete_processing/:id", async (req, res) => {
+    var id = req.params.id;
+    var sql = `DELETE  FROM enquiries WHERE id = ?`;
+    var data = await exe(sql, [id]);
+    // res.send("delete successfull")
+    res.redirect("/admin/processing_enquiries");
+});
 router.get("/closed_inquiries", async function (req, res) {
     var enquiry = await exe("SELECT * FROM enquiries WHERE inquiry_status='closed'");
     res.render("admin/closed_inquiries", { "enquiry": enquiry });
