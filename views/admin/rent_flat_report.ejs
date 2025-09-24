@@ -1,0 +1,227 @@
+<%-include('navbar')%>
+  <style>
+    .report-container {
+      max-width: 1300px;
+      margin: 24px auto;
+    }
+
+    h5.section-title {
+      font-weight: 700;
+      color: #374151;
+      letter-spacing: 0.5px;
+      font-size: 25px;
+    }
+
+    .card-custom {
+      border-radius: 10px;
+      background: #fff;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+      overflow: hidden;
+    }
+
+    .table thead {
+      background: #f9fafb;
+      text-transform: uppercase;
+      font-size: 13px;
+      font-weight: 600;
+      color: #4b5563;
+    }
+
+    .table tbody td {
+      transition: background-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+      vertical-align: middle;
+    }
+
+    .table tbody tr.status-overdue td {
+      background-color: #fde2e4;
+    }
+
+    .table tbody tr.status-upcoming td {
+      background-color: #e0f7f4;
+    }
+
+    .table tbody tr.status-overdue:hover td {
+      background-color: #fbcfd3 !important;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+      transform: translateY(-2px);
+    }
+
+    .table tbody tr.status-upcoming:hover td {
+      background-color: #c7f0ea !important;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+      transform: translateY(-2px);
+    }
+
+    .table tbody tr:hover {
+      cursor: pointer;
+    }
+
+    .btn-view {
+      background: #ede9fe;
+      border: 0;
+      padding: 6px 10px;
+      border-radius: 8px;
+      transition: background 0.15s;
+    }
+
+    .btn-view:hover {
+      background: #ddd6fe;
+    }
+
+    .btn-view i {
+      color: #6d28d9;
+      font-size: 16px;
+    }
+
+    /* Edit icon */
+    .edit-link {
+      margin-left: 8px;
+      color: #2563eb;
+      font-size: 16px;
+      text-decoration: none;
+    }
+
+    .edit-link:hover {
+      color: #1e40af;
+    }
+
+    .badge-overdue {
+      background-color: #e11d48;
+      color: #fff;
+      font-size: 12px;
+      border-radius: 12px;
+      padding: 4px 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .badge-upcoming {
+      background-color: #059669;
+      color: #fff;
+      font-size: 12px;
+      border-radius: 12px;
+      padding: 4px 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .filter-badges .badge {
+      font-size: 13px;
+      padding: 6px 16px;
+      font-weight: 600;
+      border-radius: 16px;
+    }
+
+    .badge-overdue-header {
+      background: #f43f5e;
+      color: #fff;
+    }
+
+    .badge-upcoming-header {
+      background: #10b981;
+      color: #fff;
+    }
+
+    .summary-card {
+      border-radius: 10px;
+      background: #fff;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+      padding: 20px;
+    }
+
+    .summary-card h6 {
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: #6b7280;
+      margin-bottom: 6px;
+    }
+
+    .summary-card p {
+      font-size: 18px;
+      font-weight: 700;
+      color: #111827;
+      margin: 0;
+    }
+
+    .summary-title {
+      font-size: 15px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: #374151;
+      border-bottom: 1px solid #e5e7eb;
+      padding-bottom: 8px;
+    }
+  </style>
+  <div class="container report-container">
+    <h5 class="section-title mb-3">Deadline Sale Report</h5>
+
+    <div class="d-flex justify-content-end mb-2 filter-badges">
+    </div>
+
+    <div class="table-responsive card-custom">
+      <table class="table align-middle mb-0">
+        <thead>
+          <tr>
+            <th style="width:60px">#</th>
+            <th>Customer</th>
+            <th>Property</th>
+            <th>Site</th>
+            <th>Pending</th>
+            <th>Deadline</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <%for(var i=0;i<result.length;i++){%>
+            <% if (result[i].type === 'Rent' ) { %>
+              <tr class="status-overdue">
+                <td>
+                  <a href="/rent_flat_details/<%-result[i].sale_id%>" class="btn-view">
+                    <i class="fa fa-eye"></i>
+                  </a>
+                </td>
+                <td><%-result[i].full_name%></td>
+                <td>Flat : <%-result[i].flat_name%>
+                    <a href="edit_property.html" class="edit-link">
+                      <i class="fa fa-pencil-square"></i>
+                    </a>
+                </td>
+                <td><%-result[i].site_name%></td>
+                <td>₹0</td>
+                <td><%-result[i].deadline_date.toISOString().slice(0,10)%></td>
+                <% let deadline=new Date(result[i].deadline_date); let today=new Date(); today.setHours(0,0,0,0); %>
+
+                  <td>
+                    <% if (deadline < today) { %>
+                      <span class="badge-overdue">Overdue</span>
+                      <% } else { %>
+                        <span class="badge-upcoming">Upcoming</span>
+                        <% } %>
+                  </td>
+
+              </tr>
+              <%}%>
+                <% } %>
+
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Summary Card -->
+    <div class="card summary-card mt-3" style="max-width:520px;">
+      <h6 class="summary-title mb-3">Summary</h6>
+      <div class="row">
+        <div class="col-md-6">
+          <h6>Total Pending</h6>
+          <p>₹94,61,335</p>
+        </div>
+        <div class="col-md-6">
+          <h6>Overdue Amount</h6>
+          <p>₹41,17,585</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <%-include('footer.ejs')%>

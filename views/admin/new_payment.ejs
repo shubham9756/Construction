@@ -1,0 +1,226 @@
+<%- include('navbar') %>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <style>
+    body {
+      background-color: #f4f6f9;
+      font-family: "Segoe UI", sans-serif;
+    }
+
+    .card {
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .card-header {
+      background: linear-gradient(90deg, #1a2c80, #673ab7);
+      color: #fff;
+      font-weight: 600;
+      font-size: 18px;
+      padding: 15px 20px;
+      border-bottom: none;
+    }
+
+    .table th {
+      background-color: #212529 !important;
+      color: #fff;
+    }
+
+    .form-control,
+    .form-select {
+      border: 1px solid black !important;
+      /* Black border */
+      border-radius: 6px;
+      padding: 10px 12px;
+      box-shadow: none !important;
+    }
+
+    .form-label {
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .signature-block {
+      min-height: 80px;
+      border: 2px dashed black;
+      border-radius: 8px;
+      background-color: #f8f9fa;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: 0.3s;
+    }
+
+    .signature-block:hover {
+      background-color: #e9ecef;
+    }
+
+    .btn-payment-received {
+      background-color: #673ab7;
+      color: #fff;
+      font-weight: 600;
+      border-radius: 8px;
+      padding: 12px 25px;
+      border: none;
+    }
+
+    .btn-payment-received:hover {
+      background-color: #512da8;
+      transform: translateY(-2px);
+    }
+  </style>
+
+  <div class="container my-5">
+    <div class="card shadow">
+      <div class="card-header">💳 Payment Received</div>
+
+      <!-- Customer Info Table -->
+      <div class="table-responsive">
+        <table class="table table-bordered text-center align-middle mb-0">
+          <thead>
+            <tr>
+              <th>Customer</th>
+              <th>Flat / Store</th>
+              <th>Date</th>
+              <th>Amount</th>
+              <th>Received</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><%-result[0].customer_name%></td>
+              <td>
+                <%-result[0].site_name%><br />
+                  FLAT : <%-result[0].flat_name%><br />
+                    (<%-result[0].sqfeet%>)
+              </td>
+              <td><%-result[0].deadline_date.toISOString().slice(0,10)%></td>
+              <td>₹ <%-result[0].grand_total%> /-</td>
+              <td>₹ <%-result[0].site_name%>/-</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Form Section -->
+      <div class="card-body">
+        <form action="/save_payment_recvied" method="post" enctype="multipart/form-data">
+          <input type="hidden" name="customername" value="<%-result[0].customer_id%>">
+          <input type="hidden" name="employee_id" value="<%-result[0].employee_id%>">
+          <input type="hidden" name="site_name" value="<%-result[0].site_id%>">
+          <input type="hidden" name="flat_name" value=" <%-result[0].flat_id%>">
+          <input type="hidden" name="grand_total" value="<%-result[0].grand_total%> ">
+          <!-- Row 1 -->
+          <div class="row g-3 mb-3">
+            <div class="col-md-4">
+              <label for="description" class="form-label">Description</label>
+              <input type="text" id="description" class="form-control" placeholder="Enter description"
+                name="description" required />
+            </div>
+            <div class="col-md-4">
+              <label for="receiptNo" class="form-label">Receipt No</label>
+              <input type="text" id="receiptNo" class="form-control" value="2" name="receiptNo" required />
+            </div>
+            <div class="col-md-4">
+              <label for="paymentType" class="form-label">Payment Type*</label>
+              <select id="paymentType" class="form-select" name="paymentType" required>
+                <option>UPI</option>
+                <option>Cash</option>
+                <option>Bank Transfer</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Row 2 -->
+          <div class="row g-3 mb-3">
+            <div class="col-md-4">
+              <label for="transactionId" class="form-label">Transaction ID</label>
+              <input type="text" id="transactionId" class="form-control" placeholder="Transaction ID"
+                name="transactionId" readonly />
+            </div>
+            <div class="col-md-4">
+              <label for="dateOfPayment" class="form-label">Date of Payment</label>
+              <input type="date" id="dateOfPayment" class="form-control" value="2025-08-12" name="payment_date"
+                readonly />
+            </div>
+            <div class="col-md-4">
+              <label for="receivedAmount" class="form-label">Received Amount*</label>
+              <input type="number" id="receivedAmount" class="form-control" value="0" name="receivedAmount" />
+            </div>
+          </div>
+
+          <!-- Row 3 -->
+          <div class="row g-3 mb-3">
+            <div class="col-md-4">
+              <label for="grandTotal" class="form-label">Grand Total</label>
+              <input type="text" id="grandTotal" class="form-control" value="<%-result[0].total_amount%>" disabled
+                name="grandTotal" readonly />
+            </div>
+            <div class="col-md-4">
+              <label for="oldDue" class="form-label">Old Due</label>
+              <input type="text" id="oldDue" class="form-control" value="1216000" disabled name="oldDue" />
+            </div>
+            <div class="col-md-4">
+              <label for="newDue" class="form-label">New Due</label>
+              <input type="text" id="newDue" class="form-control" value="1216000" disabled name="newDue" />
+            </div>
+          </div>
+
+          <!-- Signature Row -->
+          <div class="row g-3 mt-4">
+            <div class="col-md-6">
+              <label class="form-label">Employee Signature</label>
+              <div class="signature-block" id="employeeSignatureBlock">
+                <small>Click to Upload</small>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Customer Signature</label>
+              <div class="signature-block" id="customerSignatureBlock">
+                <small>Click to Upload</small>
+              </div>
+            </div>
+          </div>
+
+          <input type="file" id="employeeSignatureInput" accept="image/*" hidden name="employee_signature" required>
+   <input type="file" id="customerSignatureInput" accept="image/*" hidden name="customer_signature" required>
+          <!-- Button -->
+          <div class="mt-4 text-end">
+            <button type="submit" class="btn btn-payment-received" id="paymentReceivedBtn">
+              <i class="fas fa-check-circle me-2"></i> Payment Received
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hidden Inputs -->
+
+
+  <script>
+    const employeeSignatureBlock = document.getElementById("employeeSignatureBlock");
+    const customerSignatureBlock = document.getElementById("customerSignatureBlock");
+    const employeeSignatureInput = document.getElementById("employeeSignatureInput");
+    const customerSignatureInput = document.getElementById("customerSignatureInput");
+    const paymentReceivedBtn = document.getElementById("paymentReceivedBtn");
+
+    function handleSignatureChange(event, signatureBlockElement) {
+      const file = event.target.files[0];
+      if (file) {
+        const fileUrl = URL.createObjectURL(file);
+        signatureBlockElement.innerHTML = `<img src="${fileUrl}" class="img-fluid rounded" style="max-height:70px;" />`;
+      }
+    }
+
+    employeeSignatureBlock.addEventListener("click", () => employeeSignatureInput.click());
+    customerSignatureBlock.addEventListener("click", () => customerSignatureInput.click());
+    employeeSignatureInput.addEventListener("change", (e) => handleSignatureChange(e, employeeSignatureBlock));
+    customerSignatureInput.addEventListener("change", (e) => handleSignatureChange(e, customerSignatureBlock));
+
+  </script>
+
+  <%- include('footer.ejs') %>
