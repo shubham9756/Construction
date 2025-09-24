@@ -97,7 +97,7 @@ LEFT JOIN customers
     WHERE flat_sales.sale_id = ?`
     var result = await exe(sql, [id]);
     console.log(result);
-<<<<<<< HEAD
+ 
     res.render('admin/flat_details.ejs', { result });
 })
 
@@ -112,15 +112,7 @@ LEFT JOIN customers
     console.log(result)
     res.render('admin/rent_flat_report.ejs', { result })
 })
-=======
-    res.render('admin/flat_details.ejs', { result, site });
-});
 
-
-
-
-
->>>>>>> 7263cb7cf624e431546b120c5ea94844db449171
 
 
 // site flat view
@@ -330,7 +322,7 @@ router.get("/login", function (req, res) {
 // });
 
 
-<<<<<<< HEAD
+
 router.get("/edit_account/:account_id", async function (req, res) {
     var data = await exe("SELECT * FROM bank_accounts WHERE account_id=?", [req.params.account_id]);
     res.render("admin/edit_bank_account.ejs", { "data": data[0] });
@@ -345,7 +337,7 @@ router.get("/delete_account/:account_id", async function (req, res) {
     var result = await exe("DELETE FROM bank_accounts WHERE account_id=?", [req.params.account_id]);
     res.redirect("/admin/bank_accounts");
 });
-=======
+
 // router.get("/edit_account/:account_id", async function (req, res) {
 //     var data = await exe("SELECT * FROM bank_accounts WHERE account_id=?", [req.params.account_id]);
 //     res.render("admin/edit_bank_account.ejs", { "data": data[0] });
@@ -360,7 +352,7 @@ router.get("/delete_account/:account_id", async function (req, res) {
 //     var result = await exe("DELETE FROM bank_accounts WHERE account_id=?", [req.params.account_id]);
 //     res.redirect("/admin/bank_accounts");
 // });
->>>>>>> 7263cb7cf624e431546b120c5ea94844db449171
+
 router.get("/new_bill", function (req, res) {
     res.render("admin/new_bill.ejs");
 });
