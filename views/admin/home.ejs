@@ -227,8 +227,8 @@
                     <div class="dashboard-card">
                         <span class="card-header-icon bg-primary"><i class="fas fa-user-friends"></i></span>
                         <div class="ms-3 card-body">
-                            <div class="card-value">0</div>
-                            <div class="card-label">PRESENT EMPLOYEES</div>
+                          <div class="card-value"><%= presentEmp %></div>
+<div class="card-label">PRESENT EMPLOYEES</div>
                         </div>
                     </div>
                 </div>
@@ -236,8 +236,8 @@
                     <div class="dashboard-card">
                         <span class="card-header-icon bg-success"><i class="fas fa-users"></i></span>
                         <div class="ms-3 card-body">
-                            <div class="card-value">9</div>
-                            <div class="card-label">TOTAL CUSTOMERS</div>
+                           <div class="card-value"><%= totalCust %></div>
+<div class="card-label">TOTAL CUSTOMERS</div>
                             <a href="TotalCustomers.html" class="card-link mt-2">VIEW ALL <i
                                     class="fas fa-arrow-right"></i></a>
                         </div>
@@ -247,8 +247,9 @@
                     <div class="dashboard-card">
                         <span class="card-header-icon bg-info"><i class="fas fa-building"></i></span>
                         <div class="ms-3 card-body">
-                            <div class="card-value">1</div>
-                            <div class="card-label">TOTAL SITES</div>
+                           
+<div class="card-value"><%= totalSites %></div>
+<div class="card-label">TOTAL SITES</div>
                             <small class="text-muted d-block">ACTIVE PROJECTS</small>
                         </div>
                     </div>
@@ -257,8 +258,8 @@
                     <div class="dashboard-card">
                         <span class="card-header-icon bg-warning"><i class="fas fa-rupee-sign"></i></span>
                         <div class="ms-3 card-body">
-                            <div class="card-revenue">₹0L</div>
-                            <div class="card-label">TOTAL REVENUE</div>
+                            <div class="card-revenue">₹<%= totalBalance.toLocaleString() %></div>
+<div class="card-label">TOTAL REVENUE</div>
                             <div class="revenue-growth"><i class="fas fa-arrow-up"></i> 0% COLLECTED</div>
                         </div>
                     </div>
@@ -270,26 +271,29 @@
                 <h3>FINANCIAL OVERVIEW</h3>
                 <p>COMPLETE FINANCIAL SUMMARY AND PAYMENT STATUS</p>
             </div>
-            <div class="row g-4 mt-3">
-                <div class="col-md-4">
-                    <div class="financial-card card-blue">
-                        <div class="financial-value">₹0</div>
-                        <div class="financial-label">TOTAL AMOUNT</div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="financial-card card-green">
-                        <div class="financial-value">₹0</div>
-                        <div class="financial-label">RECEIVED AMOUNT</div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="financial-card card-pink">
-                        <div class="financial-value">₹0</div>
-                        <div class="financial-label">PENDING AMOUNT</div>
-                    </div>
-                </div>
-            </div>
+           <div class="row g-4 mt-3">
+  <div class="col-md-4">
+    <div class="financial-card card-blue">
+      <div class="financial-value">₹<%= totalAmount.toLocaleString('en-IN') %></div>
+      <div class="financial-label">TOTAL AMOUNT</div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="financial-card card-green">
+      <div class="financial-value">₹<%= receivedAmount.toLocaleString('en-IN') %></div>
+      <div class="financial-label">RECEIVED AMOUNT</div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="financial-card card-pink">
+      <div class="financial-value">₹<%= pendingAmount.toLocaleString('en-IN') %></div>
+      <div class="financial-label">PENDING AMOUNT</div>
+    </div>
+  </div>
+</div>
+
 
             <!-- Techno Site -->
             <div class="site-card">
@@ -302,54 +306,82 @@
                 </div>
                 <p class="text-muted mt-2 mb-4">PROPERTY MANAGEMENT AND OCCUPANCY STATUS</p>
                 <div class="row g-3">
-                    <div class="col-sm-6 col-lg-3">
-                        <div class="stat-card card-lightblue">
-                            <div class="stat-value">1</div>
-                            <div class="stat-label">AVAILABLE FLATS</div>
-                        </div>
-                    </div>
-                    <div class="col-sm-6 col-lg-3">
-                        <div class="stat-card card-lightgreen">
-                            <div class="stat-value">0</div>
-                            <div class="stat-label">SOLD FLATS</div>
-                        </div>
-                    </div>
-                    <div class="col-sm-6 col-lg-3">
-                        <div class="stat-card card-lightyellow">
-                            <div class="stat-value">0</div>
-                            <div class="stat-label">RENTED FLATS</div>
-                        </div>
-                    </div>
-                    <div class="col-sm-6 col-lg-3">
-                        <div class="stat-card card-lightpurple">
-                            <div class="stat-value">0</div>
-                            <div class="stat-label">SITE CONTACTS</div>
-                        </div>
-                    </div>
-                </div>
+  <div class="col-sm-6 col-lg-3">
+    <div class="stat-card card-lightblue">
+      <div class="stat-value"><%= availableFlats %></div>
+      <div class="stat-label">AVAILABLE FLATS</div>
+    </div>
+  </div>
+
+  <div class="col-sm-6 col-lg-3">
+    <div class="stat-card card-lightgreen">
+      <div class="stat-value"><%= soldFlats %></div>
+      <div class="stat-label">SOLD FLATS</div>
+    </div>
+  </div>
+
+  <div class="col-sm-6 col-lg-3">
+    <div class="stat-card card-lightyellow">
+      <div class="stat-value"><%= rentedFlats %></div>
+      <div class="stat-label">RENTED FLATS</div>
+    </div>
+  </div>
+
+  <div class="col-sm-6 col-lg-3">
+    <div class="stat-card card-lightpurple">
+      <div class="stat-value"><%= totalSites %></div>
+      <div class="stat-label">SITE CONTACTS</div>
+    </div>
+  </div>
+</div>
+
             </div>
 
-            <!-- Customer Payments -->
-            <div class="customer-card">
-                <div class="d-flex align-items-center">
-                    <i class="fas fa-user-friends text-primary"></i>
-                    <h3 class="ms-2 mb-0">CUSTOMER PAYMENT DETAILS</h3>
-                </div>
-                <p class="text-muted mt-2 mb-4">PAYMENT STATUS AND FINANCIAL OVERVIEW FOR ALL CUSTOMERS</p>
-                <div class="customer-card-content bg-light p-3 rounded"> <!-- placeholder --></div>
-            </div>
+           
 
             <!-- Enquiry + Maintenance -->
             <div class="row g-4 mt-3">
-                <div class="col-md-6">
-                    <div class="alert-card">
-                        <div class="alert-card-header alert-orange"><i class="fas fa-bell"></i> ENQUIRY ALERTS</div>
-                        <div class="alert-content"><i class="fas fa-check-circle alert-icon"></i>
-                            <div class="alert-message">NO ENQUIRY ALERTS</div>
-                            <div class="alert-subtitle">ALL ENQUIRIES ARE UP TO DATE</div>
-                        </div>
-                    </div>
-                </div>
+               <div class="col-md-6">
+  <div class="alert-card">
+    <div class="alert-card-header alert-orange">
+      <i class="fas fa-bell"></i> ENQUIRY ALERTS
+    </div>
+
+    <% if (enquiryAlerts.length === 0) { %>
+      <div class="alert-content text-center">
+        <i class="fas fa-check-circle alert-icon"></i>
+        <div class="alert-message">NO ENQUIRY ALERTS</div>
+        <div class="alert-subtitle">ALL ENQUIRIES ARE UP TO DATE</div>
+      </div>
+    <% } else { %>
+      <div class="table-responsive">
+        <table class="table table-borderless mb-0">
+          <thead>
+            <tr>
+              <th>CUSTOMER</th>
+              <th>REMINDER DATE</th>
+              <th>ACTION</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% enquiryAlerts.forEach(enquiry => { %>
+              <tr>
+                <td><i class="fas fa-user"></i> <%= enquiry.customer_name %></td>
+                <td><i class="fas fa-calendar-alt"></i> <%= enquiry.reminder_date.toISOString().split('T')[0] %></td>
+                <td>
+                  <a href="/new_enquiry" class="btn btn-sm btn-purple">
+                    <i class="fas fa-eye"></i> VIEW
+                  </a>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    <% } %>
+  </div>
+</div>
+
                 <div class="col-md-6">
                     <div class="alert-card">
                         <div class="alert-card-header alert-orange"><i class="fas fa-tools"></i> PENDING MAINTENANCE

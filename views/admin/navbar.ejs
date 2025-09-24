@@ -9,10 +9,12 @@
 
     <!-- Bootstrap 5 CDN -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
+        
     <!-- Datatables CSS -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.bootstrap5.min.css">
+    <!-- ✅ Latest Font Awesome 6 Free -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <!-- Fonts and icons -->
     <script src="/js/plugin/webfont/webfont.min.js"></script>
@@ -57,8 +59,8 @@
                 <!-- Logo Header -->
                 <div class="logo-header" data-background-color="dark">
                     <a href="/" class="logo">
-                        <img src="../assets/img/kaiadmin/logo_light.svg" alt="navbar brand" class="navbar-brand"
-                            height="20" />
+                        <img src="/image/Construction.png" alt="navbar brand" class="navbar-brand mt-3"
+                            height="170" />
                     </a>
                     <div class="nav-toggle">
                         <button class="btn btn-toggle toggle-sidebar">
@@ -78,7 +80,7 @@
                 <div class="sidebar-content">
                     <ul class="nav nav-secondary">
                         <li class="nav-item active submenu">
-                            <a href="/" class="collapsed " aria-expanded="false">
+                            <a href="/home" class="collapsed " aria-expanded="false">
                                 <i class="fas fa-home"></i>
                                 <p>Dashboard</p>
                             </a>
@@ -379,18 +381,20 @@
   </div>
 </li>
 
-                        <li class="nav-item">
-                            <a href="/bank_accounts">
-                                <i class="fas fa-desktop"></i>
-                                <p>Bank Accounts</p>
-                            </a>
-                        </li>
-                         <li class="nav-item">
-                            <a href="/contractor">
-                                <i class="fas fa-desktop"></i>
-                                <p> Contractor</p>
-                            </a>
-                        </li>
+                       <li class="nav-item">
+    <a href="/bank_accounts">
+        <i class="fas fa-university"></i>   <!-- Bank/Finance Icon -->
+        <p>Bank Accounts</p>
+    </a>
+</li>
+
+<li class="nav-item">
+    <a href="/contractor">
+        <i class="fas fa-user-tie"></i>    <!-- Construction/Contractor Icon -->
+        <p>Contractor</p>
+    </a>
+</li>
+
                         <li class="nav-item">
                             <a data-bs-toggle="collapse" href="#inquirydropdown" role="button" aria-expanded="false"
                                 aria-controls="inquirydropdown">
@@ -572,7 +576,7 @@
                                     </form>
                                 </ul>
                             </li>
-                            <li class="nav-item topbar-icon dropdown hidden-caret">
+                            <!-- <li class="nav-item topbar-icon dropdown hidden-caret">
                                 <a class="nav-link dropdown-toggle" href="#" id="messageDropdown" role="button"
                                     data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <i class="fa fa-envelope"></i>
@@ -639,8 +643,8 @@
                                         </a>
                                     </li>
                                 </ul>
-                            </li>
-                            <li class="nav-item topbar-icon dropdown hidden-caret">
+                            </li> -->
+                            <!-- <li class="nav-item topbar-icon dropdown hidden-caret">
                                 <a class="nav-link dropdown-toggle" href="#" id="notifDropdown" role="button"
                                     data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <i class="fa fa-bell"></i>
@@ -704,19 +708,19 @@
                                         </a>
                                     </li>
                                 </ul>
-                            </li>
+                            </li> -->
 
 
                             <li class="nav-item topbar-user dropdown hidden-caret">
                                 <a class="dropdown-toggle profile-pic" data-bs-toggle="dropdown" href="#"
                                     aria-expanded="false">
                                     <div class="avatar-sm">
-                                        <img src="/image/profile/myImage.png" alt="..."
+                                        <img src="/image/<%-user.admin_image%>" alt="..."
                                             class="avatar-img rounded-circle" />
                                     </div>
                                     <span class="profile-username">
                                         <span class="op-7">Hi,</span>
-                                        <span class="fw-bold">Hizrian</span>
+                                        <span class="fw-bold"><%-user.admin_name %></span>
                                     </span>
                                 </a>
                                 <ul class="dropdown-menu dropdown-user animated fadeIn">
@@ -724,26 +728,26 @@
                                         <li>
                                             <div class="user-box">
                                                 <div class="avatar-lg">
-                                                    <img src="/image/profile/myImage.png" alt="image profile"
+                                                    <img src="/image/<%-user.admin_image%>" alt="image profile"
                                                         class="avatar-img rounded" />
                                                 </div>
                                                 <div class="u-text">
-                                                    <h4>Hizrian</h4>
-                                                    <p class="text-muted">hello@example.com</p>
-                                                    <a href="profile.html" class="btn btn-xs btn-secondary btn-sm">View
+                                                    <h4><%-user.admin_name %></h4>
+                                                    <p class="text-muted"><%-user.admin_email %></p>
+                                                    <a href="/profile" class="btn btn-xs btn-secondary btn-sm">View
                                                         Profile</a>
                                                 </div>
                                             </div>
                                         </li>
                                         <li>
                                             <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item" href="#">My Profile</a>
-                                            <a class="dropdown-item" href="#">My Balance</a>
-                                            <a class="dropdown-item" href="#">Inbox</a>
+                                            <a class="dropdown-item" href="/profile"> Profile</a>
+                                            <a class="dropdown-item" href="/my_balance">My Balance</a>
+                                            
                                             <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item" href="#">Account Setting</a>
+                                            <!-- <a class="dropdown-item" href="#">Account Setting</a> -->
                                             <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item" href="#">Logout</a>
+                                            <a class="dropdown-item" href="/logout">Logout</a>
                                         </li>
                                     </div>
                                 </ul>

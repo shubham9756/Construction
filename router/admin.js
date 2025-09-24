@@ -2,12 +2,170 @@ var express = require('express');
 var exe = require("../conn");
 var router = express.Router();
 
-router.get("/", function (req, res) {
-    res.render("admin/home.ejs");
+
+// router.get("/login", function (req, res) {
+//     res.render("admin/login.ejs");
+// });
+router.get("/", async function (req, res) {
+   
+    res.render("admin/login.ejs");
+});
+
+
+router.post("/login",async function(req,res){
+
+   let d = req.body;
+    let sql = `SELECT * FROM login WHERE admin_email='${d.admin_email}' AND   admin_password ='${d.admin_password}' `;
+    let result = await exe(sql);
+
+
+
+    if (result.length > 0) {
+        // let logindata = result[0];
+        req.session.admin_id = result[0].admin_id;
+        console.log("login Success");
+        return res.redirect("/home");
+    } else {
+        console.log("Login Failed");
+        return res.redirect("/");
+    }
+
+
+});
+
+function authMiddleware(req, res, next) {
+  if (req.session && req.session.admin_id) {
+    next(); // session exists, continue
+  } else {
+    res.redirect("/admin"); // no session, redirect to login
+  }
+}
+function noCache(req, res, next) {
+  res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+  res.set('Pragma', 'no-cache');
+  res.set('Expires', '0');
+  next();
+}
+
+router.get('/logout', function(req, res) {
+  req.session.destroy(function(err) {
+    if (err) {
+      console.log("Error destroying session:", err);
+      return res.send("Error logging out.");
+    }
+
+    res.redirect('/'); 
+  });
+});
+
+
+router.get("/home", authMiddleware, noCache, async function (req, res) {
+  try {
+    // ✅ Get logged-in admin
+    const [user] = await exe("SELECT * FROM login WHERE admin_id = ?", [req.session.admin_id]);
+
+    // ✅ Dashboard stats
+    const [presentEmp = { total: 0 }] = await exe(
+      "SELECT COUNT(*) AS total FROM employees WHERE status='active'"
+    );
+    const [totalSites = { total: 0 }] = await exe(
+      "SELECT COUNT(*) AS total FROM site WHERE status='active'"
+    );
+    const [totalCust = { total: 0 }] = await exe(
+      "SELECT COUNT(*) AS total FROM customers"
+    );
+
+    // ✅ Bank accounts
+    const bankAccounts = await exe("SELECT * FROM bank_accounts");
+    const [totalBalance = { sum: 0 }] = await exe(
+      "SELECT IFNULL(SUM(current_balance),0) AS sum FROM bank_accounts"
+    );
+
+    // ✅ Payments from payment_received
+    const paymentData = await exe("SELECT * FROM payment_received");
+    const [totalAmount = { total: 0 }] = await exe(
+      "SELECT IFNULL(SUM(grand_total),0) AS total FROM payment_received"
+    );
+    const [receivedAmount = { total: 0 }] = await exe(
+      "SELECT IFNULL(SUM(received_amount),0) AS total FROM payment_received"
+    );
+    const [pendingAmount = { total: 0 }] = await exe(
+      "SELECT IFNULL(SUM(new_due_amount),0) AS total FROM payment_received"
+    );
+
+    // Inside your /home route
+   const [availableFlats = { total: 0 }] = await exe(
+  "SELECT COUNT(*) AS total FROM flats WHERE type='Sell' AND buy='Available'"
+);
+const [soldFlats = { total: 0 }] = await exe(
+  "SELECT COUNT(*) AS total FROM flats WHERE type='Sell' AND buy='Sell'"
+);
+const [rentedFlats = { total: 0 }] = await exe(
+  "SELECT COUNT(*) AS total FROM flats WHERE type='Rent' AND buy='Available'"
+);
+
+// Inside /home route
+const enquiryAlerts = await exe(
+  "SELECT * FROM enquiries WHERE reminder_date <= CURDATE() ORDER BY reminder_date ASC"
+);
+
+
+    // ✅ Render dashboard
+    res.render("admin/home.ejs", {
+      user,
+      presentEmp: presentEmp.total,
+      totalSites: totalSites.total,
+      totalCust: totalCust.total,
+      bankAccounts,
+      totalBalance: totalBalance.sum,
+      paymentData,
+      totalAmount: Number(totalAmount.total),
+      receivedAmount: Number(receivedAmount.total),
+      pendingAmount: Number(pendingAmount.total),
+      availableFlats: availableFlats.total,
+  soldFlats: soldFlats.total,
+  rentedFlats: rentedFlats.total,
+   enquiryAlerts
+    });
+
+  } catch (err) {
+    console.error("Dashboard Error:", err);
+    res.status(500).send("Error loading dashboard");
+  }
+});
+
+
+
+
+router.get("/profile",authMiddleware,noCache, async function (req, res) {
+   const result = await exe(`SELECT * FROM login WHERE admin_id = '${req.session.admin_id}'`);
+
+    res.render("admin/profile.ejs", { admin: result[0], "user": result[0] });
+});
+router.post("/save_profile", async (req, res) => {
+  let d = req.body;
+
+  if (req.files && req.files.admin_image) {
+        var admin_image = new Date().getTime()+req.files.admin_image.name;
+        req.files.admin_image.mv("public/image/"+admin_image);
+        var sql = `UPDATE login SET admin_image = '${admin_image}'WHERE admin_id = '${d.admin_id}'`
+        var data = await exe(sql);
+    }
+
+   
+    var sql = ` UPDATE login SET
+        admin_name = ?,  admin_mobile = ?, admin_email = ?,
+        admin_password = ?
+      WHERE admin_id = '${d.admin_id}'`;
+    var data = await exe(sql,[ d.admin_name, d.admin_mobile, d.admin_email, d.admin_password]);
+//   res.send(data)
+  res.redirect("/admin/profile")
 });
 // Site Management
-router.get("/addsite", function (req, res) {
-    res.render("admin/addsite.ejs");
+router.get("/addsite",authMiddleware,noCache, async function (req, res) {
+    var user = await exe(`SELECT * FROM login WHERE admin_id = '${req.session.admin_id}'`);
+
+    res.render("admin/addsite.ejs", { "user": user[0] });
 });
 router.post("/save_site", async function (req, res) {
     var d = req.body;
@@ -26,23 +184,26 @@ router.post("/save_site", async function (req, res) {
     res.redirect("/addsite");
 });
 router.get("/site_list", async function (req, res) {
+    var user = await exe(`SELECT * FROM login WHERE admin_id = '${req.session.admin_id}'`);
     var sql = "SELECT * FROM site WHERE status ='Active'";
     var result = await exe(sql);
-    res.render("admin/site_list.ejs", { site: result });
+    res.render("admin/site_list.ejs", { site: result, "user": user[0] });
 });
 
 router.get('/view_site/:id', async function (req, res) {
+    var user = await exe(`SELECT * FROM login WHERE admin_id = '${req.session.admin_id}'`);
     var sql = `SELECT * FROM site WHERE site_id = '${req.params.id}'`
     var sites = await exe(sql)
     console.log(sites)
-    res.render('admin/view_site.ejs', { sites })
+    res.render('admin/view_site.ejs', { sites, "user": user[0] })
 })
 
 // Flat Management
 router.get('/add_new_selling_flat', async function (req, res) {
+    var user = await exe(`SELECT * FROM login WHERE admin_id = '${req.session.admin_id}'`);
     var sql = "SELECT * FROM site WHERE status='Active'";
     var site = await exe(sql);
-    res.render('admin/add_flat.ejs', { site: site });
+    res.render('admin/add_flat.ejs', { site: site, "user": user[0] });
 });
 router.post('/save_flat', async function (req, res) {
     var d = req.body;
@@ -56,43 +217,49 @@ router.post('/save_flat', async function (req, res) {
     res.redirect('/add_new_selling_flat');
 });
 router.get('/new_selling_flat_list', async function (req, res) {
+    var user = await exe(`SELECT * FROM login WHERE admin_id = '${req.session.admin_id}'`);
     var sql = `SELECT * FROM flats INNER JOIN site ON flats.site_id = site.site_id WHERE flats.status='Available'`;
     var flat = await exe(sql);
-    res.render('admin/flat_list.ejs', { flat });
+    res.render('admin/flat_list.ejs', { flat, "user": user[0] });
 })
 
 
 // Rent Management
 router.get('/add_rent_flat', async function (req, res) {
+    var user = await exe(`SELECT * FROM login WHERE admin_id = '${req.session.admin_id}'`);
     var sql = `SELECT * FROM flats INNER JOIN site ON flats.site_id = site.site_id WHERE flats.type='Rent' AND flats.buy='Available'`;
     var flat = await exe(sql);
-    res.render('admin/rent_flat.ejs', { flat: flat });
+    res.render('admin/rent_flat.ejs', { flat: flat, "user": user[0] });
 })
 router.get('/rent_flat_list', async function (req, res) {
+    var user = await exe(`SELECT * FROM login WHERE admin_id = '${req.session.admin_id}'`);
     var sql = `SELECT * FROM flats INNER JOIN site ON flats.site_id = site.site_id WHERE flats.buy ='Sell' AND flats.type ='Rent';`;
     var flat = await exe(sql);
     console.log(flat);
-    res.render('admin/rent_flat_list.ejs', { flat: flat });
+    res.render('admin/rent_flat_list.ejs', { flat: flat, "user": user[0] });
 })
 // sell management
 router.get('/add_selling_flat', async function (req, res) {
+    var user = await exe(`SELECT * FROM login WHERE admin_id = '${req.session.admin_id}'`);
     var sql = `SELECT * FROM flats INNER JOIN site ON flats.site_id = site.site_id WHERE flats.type='Sell' AND flats.buy='Available'`;
     var flat = await exe(sql);
-    res.render('admin/add_selling_flat.ejs', { flat: flat });
+    res.render('admin/add_selling_flat.ejs', { flat: flat, "user": user[0] });
 })
 router.get('/selling_flat_list', async function (req, res) {
+    var user = await exe(`SELECT * FROM login WHERE admin_id = '${req.session.admin_id}'`);
     var sql = `SELECT * FROM flats INNER JOIN site ON flats.site_id = site.site_id WHERE flats.buy = 'Sell' AND flats.type ='Sell'`;
     var flat = await exe(sql);
-    res.render('admin/selling_flat_list.ejs', { flat: flat });
+    res.render('admin/selling_flat_list.ejs', { flat: flat, "user": user[0] });
 })
 
 router.get('/rent_flat_details/:id', async function (req, res) {
+    var user = await exe(`SELECT * FROM login WHERE admin_id = '${req.session.admin_id}'`);
     var id = req.params.id;
     var sql = "SELECT * FROM flats WHERE flat_id = ?";
     var site = await exe("SELECT * FROM site WHERE status='Sell'");
     var result = await exe(sql, [id]);
     console.log(result);
-    res.render('admin/flat_details.ejs', { result, site });
+    res.render('admin/flat_details.ejs', { result, site, "user": user[0] });
 });
 
 
@@ -103,6 +270,7 @@ router.get('/rent_flat_details/:id', async function (req, res) {
 
 // site flat view
 router.get('/view/:id', async function (req, res) {
+    var user = await exe(`SELECT * FROM login WHERE admin_id = '${req.session.admin_id}'`);
     var id = req.params.id;
     var sql = "SELECT * FROM flats INNER JOIN site ON flats.site_id=site.site_id WHERE flats.flat_id = ?";
     var employee = await exe("SELECT * FROM employees WHERE status='Active'");
@@ -110,7 +278,7 @@ router.get('/view/:id', async function (req, res) {
     var sql1 = "SELECT * FROM customers WHERE status='Active'";
     var customer = await exe(sql1);
     var result = await exe(sql, [id]);
-    res.render('admin/view_flat.ejs', { customer, result, employee });
+    res.render('admin/view_flat.ejs', { customer, result, employee, "user": user[0] });
 });
 router.post('/flat-sold', async function (req, res) {
     var d = req.body;
@@ -127,20 +295,23 @@ router.post('/flat-sold', async function (req, res) {
 
 // Report
 router.get('/selling_flat_report', async function (req, res) {
+    var user = await exe(`SELECT * FROM login WHERE admin_id = '${req.session.admin_id}'`);
     var sql = `SELECT * FROM flat_sales LEFT JOIN flats ON flat_sales.flat_id = flats.flat_id WHERE flat_sales.deadline_date < CURDATE();`
     var result = await exe(sql)
     console.log(result)
-    res.render('admin/selling_flat_report.ejs', { result })
+    res.render('admin/selling_flat_report.ejs', { result, "user": user[0] })
 })
 router.get('/sale_flat_bill_details/:id', async function (req, res) {
+    var user = await exe(`SELECT * FROM login WHERE admin_id = '${req.session.admin_id}'`);
     var sql = `SELECT * FROM flat_sales WHERE sales_id = '${req.params.id}'`
     var result = await exe(sql)
-    res.render('admin/selling_report.ejs', { result })
+    res.render('admin/selling_report.ejs', { result, "user": user[0] })
 })
 
 
-router.get("/add_customor", function (req, res) {
-    res.render("admin/add_customer.ejs");
+router.get("/add_customor", async function (req, res) {
+    var user = await exe(`SELECT * FROM login WHERE admin_id = '${req.session.admin_id}'`);
+    res.render("admin/add_customer.ejs", { "user": user[0] });
 });
 router.post("/add_customor", async function (req, res) {
     var d = req.body;
@@ -149,10 +320,11 @@ router.post("/add_customor", async function (req, res) {
     res.redirect("/add_customor");
 });
 router.get("/customor_list", async function (req, res) {
+    var user = await exe(`SELECT * FROM login WHERE admin_id = '${req.session.admin_id}'`);
     var sql = "SELECT * FROM customers WHERE status='Active'";
     var result = await exe(sql);
     console.log(result);
-    res.render("admin/customer_list.ejs", { customer: result });
+    res.render("admin/customer_list.ejs", { customer: result, "user": user[0] });
 
     var result = await exe(sql, [
         d.company_name,
@@ -164,22 +336,25 @@ router.get("/customor_list", async function (req, res) {
         d.location,
         d.remarks,
         "Pending"
+
     ]);
     res.redirect('/admin/godwon_orders');
 
 });
 
 
-router.get('/add_material', function (req, res) {
-    res.render('admin/add_material.ejs')
+router.get('/add_material', async function (req, res) {
+    var user = await exe(`SELECT * FROM login WHERE admin_id = '${req.session.admin_id}'`);
+    res.render('admin/add_material.ejs', { "user": user[0] });
 })
 
 router.get('/order_material', async function (req, res) {
+    var user = await exe(`SELECT * FROM login WHERE admin_id = '${req.session.admin_id}'`);
     var sql = "SELECT * FROM materials";
     var sql1 = "SELECT * FROM udm WHERE status='Active'";
     var result1 = await exe(sql1);
     var material = await exe(sql);
-    res.render('admin/material_order.ejs', { material, result1 });
+    res.render('admin/material_order.ejs', { material, result1, "user": user[0] });
 });
 router.post('/save_raw_material', function (req, res) {
     var d = req.body
@@ -188,16 +363,18 @@ router.post('/save_raw_material', function (req, res) {
     res.redirect('/order_material');
 });
 router.get('/site_order_material', async function (req, res) {
+    var user = await exe(`SELECT * FROM login WHERE admin_id = '${req.session.admin_id}'`);
     var sql = "SELECT * FROM raw_material INNER JOIN udm ON raw_material.udm = udm.udm_id";
     var material = await exe(sql);
     console.log(material);
-    res.render('admin/material_stock.ejs', { material });
+    res.render('admin/material_stock.ejs', { material, "user": user[0] });
 })
 
 router.get('/unit', async function (req, res) {
+    var user = await exe(`SELECT * FROM login WHERE admin_id = '${req.session.admin_id}'`);
     var sql = "SELECT * FROM udm WHERE status='Active'";
     var udm = await exe(sql);
-    res.render("admin/udm.ejs", { udm });
+    res.render("admin/udm.ejs", { udm, "user": user[0] });
 })
 router.post('/save_udm', async function (req, res) {
     var d = req.body;
@@ -205,16 +382,19 @@ router.post('/save_udm', async function (req, res) {
     var result = await exe(sql, [d.udm_name, d.udm_added_name]);
     res.redirect('/unit',);
 });
-router.get('/gst_unit', function (req, res) {
-    res.render('admin/gst.ejs')
+router.get('/gst_unit', async function (req, res) {
+    var user = await exe(`SELECT * FROM login WHERE admin_id = '${req.session.admin_id}'`);
+    res.render('admin/gst.ejs', { "user": user[0] });
 })
-router.get('/employee_list', function (req, res) {
-    res.render("admin/contractor_list.ejs");
+router.get('/employee_list', async function (req, res) {
+    var user = await exe(`SELECT * FROM login WHERE admin_id = '${req.session.admin_id}'`);
+    res.render("admin/contractor_list.ejs", { "user": user[0] });
 })
 
 router.get('/add_employee', async function (req, res) {
+    var user = await exe(`SELECT * FROM login WHERE admin_id = '${req.session.admin_id}'`);
     var result = await exe("SELECT * FROM employee_types WHERE status='Active'");
-    res.render("admin/add_employee.ejs", { result });
+    res.render("admin/add_employee.ejs", { result, "user": user[0] });
 });
 router.post('/save_type', async function (req, res) {
     var d = req.body;
@@ -235,81 +415,16 @@ router.post('/save_employee', async function (req, res) {
     res.redirect('/add_employee');
 });
 
-router.get("/add_flat", function (req, res) {
-    res.render("admin/add_flat.ejs");
+router.get("/add_flat", async function (req, res) {
+    var user = await exe(`SELECT * FROM login WHERE admin_id = '${req.session.admin_id}'`);
+    res.render("admin/add_flat.ejs", { "user": user[0] });
 })
-router.get("/login", function (req, res) {
-    res.render("admin/login.ejs");
-});
-
-// router.get("/bank_accounts", async function (req, res) {
-//     var account = await exe("SELECT * FROM bank_accounts");
-//     var obj = { "account": account }
-//     res.render("admin/bank_accounts_list.ejs", obj);
-// })
-
-// router.get("/add_account", function (req, res) {
-//     res.render("admin/add_bank_account.ejs");
-// });
-// router.post("/save_account", async function (req, res) {
-//     var d = req.body;
-//     var sql = `INSERT INTO bank_accounts(bank_name,account_holder,account_number,ifsc_code,current_balance)VALUES(?,?,?,?,?)`;
-//     var result = await exe(sql, [d.bank_name, d.account_holder, d.account_number, d.ifsc_code, d.current_balance]);
-//     res.redirect("/admin/bank_accounts");
 
 
-// })
-// router.get("/view_account/:account_id", async function (req, res) {
-//     var data = await exe("SELECT * FROM bank_accounts WHERE account_id=?", [req.params.account_id]);
-//     var result = await exe("SELECT * FROM transactions WHERE account_id=? ORDER BY transaction_id DESC LIMIT 10", [req.params.account_id]);
 
-//     res.render("admin/view_bank_account.ejs", { "result": result, "data": data });
-// })
-// router.post("/save_transaction", async function (req, res) {
-//     var d = req.body;
-
-
-//     var account = await exe("SELECT current_balance FROM bank_accounts WHERE account_id=?", [d.account_id]);
-//     var current_balance = parseFloat(account[0].current_balance);
-
-//     var amount = parseFloat(d.transaction_amount);
-
-
-//     if (d.transaction_type === "Credit") {
-//         current_balance += amount;
-//     } else if (d.transaction_type === "Debit") {
-//         current_balance -= amount;
-//     }
-
-
-//     var sql = `INSERT INTO transactions (account_id, transaction_date, transaction_amount, transaction_type, payment_type, transaction_details)
-//                VALUES (?, ?, ?, ?, ?, ?)`;
-
-//     await exe(sql, [d.account_id, d.transaction_date, amount, d.transaction_type, d.payment_type, d.transaction_details]);
-
-
-//     await exe("UPDATE bank_accounts SET current_balance=? WHERE account_id=?", [current_balance, d.account_id]);
-
-//     res.redirect("/admin/view_account/" + d.account_id);
-// });
-
-
-// router.get("/edit_account/:account_id", async function (req, res) {
-//     var data = await exe("SELECT * FROM bank_accounts WHERE account_id=?", [req.params.account_id]);
-//     res.render("admin/edit_bank_account.ejs", { "data": data[0] });
-// });
-// router.post("/update_account", async function (req, res) {
-//     var d = req.body;
-//     var sql = `UPDATE bank_accounts SET bank_name=?,account_holder=?,account_number=?,ifsc_code=?,current_balance=? WHERE account_id=?`;
-//     var result = await exe(sql, [d.bank_name, d.account_holder, d.account_number, d.ifsc_code, d.current_balance, d.account_id]);
-//     res.redirect("/admin/bank_accounts");
-// })
-// router.get("/delete_account/:account_id", async function (req, res) {
-//     var result = await exe("DELETE FROM bank_accounts WHERE account_id=?", [req.params.account_id]);
-//     res.redirect("/admin/bank_accounts");
-// });
-router.get("/new_bill", function (req, res) {
-    res.render("admin/new_bill.ejs");
+router.get("/new_bill", async function (req, res) {
+    var user = await exe(`SELECT * FROM login WHERE admin_id = '${req.session.admin_id}'`);
+    res.render("admin/new_bill.ejs", { "user": user[0] });
 });
 router.post("/save_bill", async function (req, res) {
     try {
@@ -342,10 +457,11 @@ router.post("/save_bill", async function (req, res) {
 });
 
 router.get("/bill_report", async function (req, res) {
+    var user = await exe(`SELECT * FROM login WHERE admin_id = '${req.session.admin_id}'`);
     var sql = `SELECT * FROM bills`;
     var expenses = await exe(sql);
     var obj = { "list": expenses };
-    res.render("admin/bill_report.ejs", { expenses })
+    res.render("admin/bill_report.ejs", { expenses, "user": user[0] })
     // res.send(obj);
 
 });
@@ -365,8 +481,9 @@ router.post("/bill_report", async function (req, res) {
     }
 });
 
-router.get("/add_enquiry", function (req, res) {
-    res.render("admin/add_enquiry");
+router.get("/add_enquiry", async function (req, res) {
+    var user = await exe(`SELECT * FROM login WHERE admin_id = '${req.session.admin_id}'`);
+    res.render("admin/add_enquiry", { "user": user[0] });
 });
 router.post("/new_enquiry", async function (req, res) {
     var d = req.body;
@@ -375,11 +492,13 @@ router.post("/new_enquiry", async function (req, res) {
     res.redirect("/admin/new_enquiry");
 });
 router.get('/new_enquiry', async function (req, res) {
+    var user = await exe(`SELECT * FROM login WHERE admin_id = '${req.session.admin_id}'`);
     var enquiry = await exe("SELECT * FROM enquiries WHERE inquiry_status='new'");
-    res.render("admin/new_enquiry.ejs", { "enquiry": enquiry });
+    res.render("admin/new_enquiry.ejs", { "enquiry": enquiry, "user": user[0] });
     // res.send({"enquiry":enquiry});
 });
 router.get("/delete_new/:id", async (req, res) => {
+
     var id = req.params.id;
     var sql = `DELETE  FROM enquiries WHERE id = ?`;
     var data = await exe(sql, [id]);
@@ -388,8 +507,9 @@ router.get("/delete_new/:id", async (req, res) => {
 });
 
 router.get("/closed_inquiries", async function (req, res) {
+    var user = await exe(`SELECT * FROM login WHERE admin_id = '${req.session.admin_id}'`);
     var enquiry = await exe("SELECT * FROM enquiries WHERE inquiry_status='closed'");
-    res.render("admin/closed_inquiries", { "enquiry": enquiry });
+    res.render("admin/closed_inquiries", { "enquiry": enquiry, "user": user[0] });
     // res.send({"enquiry":enquiry});
 });
 router.get("/delete_closed/:id", async (req, res) => {
@@ -401,8 +521,9 @@ router.get("/delete_closed/:id", async (req, res) => {
 });
 
 router.get("/confirm_enquiries", async function (req, res) {
+    var user = await exe(`SELECT * FROM login WHERE admin_id = '${req.session.admin_id}'`);
     var enquiry = await exe("SELECT * FROM enquiries WHERE inquiry_status='confirmed'");
-    res.render("admin/confirm_enquiries", { "enquiry": enquiry });
+    res.render("admin/confirm_enquiries", { "enquiry": enquiry, "user": user[0] });
     // res.send({"enquiry":enquiry});
 })
 router.get("/delete_confirm/:id", async (req, res) => {
@@ -413,8 +534,9 @@ router.get("/delete_confirm/:id", async (req, res) => {
     res.redirect("/admin/confirm_enquiries");
 });
 router.get('/processing_inquiries', async function (req, res) {
+    var user = await exe(`SELECT * FROM login WHERE admin_id = '${req.session.admin_id}'`);
     var enquiry = await exe("SELECT * FROM enquiries WHERE inquiry_status='processing'");
-    res.render("admin/processing_inquiries.ejs", { "enquiry": enquiry });
+    res.render("admin/processing_inquiries.ejs", { "enquiry": enquiry, "user": user[0] });
     // res.send({"enquiry":enquiry});
 });
 router.get("/delete_processing/:id", async (req, res) => {
@@ -424,29 +546,36 @@ router.get("/delete_processing/:id", async (req, res) => {
     // res.send("delete successfull")
     res.redirect("/admin/processing_enquiries");
 });
-router.get("/issue_stock", function (req, res) {
-    res.render("admin/issue_stock");
+router.get("/issue_stock", async function (req, res) {
+    var user = await exe(`SELECT * FROM login WHERE admin_id = '${req.session.admin_id}'`);
+    res.render("admin/issue_stock", { "user": user[0] });
 });
-router.get("/issue_report", function (req, res) {
-    res.render("admin/issue_report");
+router.get("/issue_report", async function (req, res) {
+    var user = await exe(`SELECT * FROM login WHERE admin_id = '${req.session.admin_id}'`);
+    res.render("admin/issue_report", { "user": user[0] });
 });
-router.get("/sale_stock", function (req, res) {
-    res.render("admin/sale_stock");
+router.get("/sale_stock", async function (req, res) {
+    var user = await exe(`SELECT * FROM login WHERE admin_id = '${req.session.admin_id}'`);
+    res.render("admin/sale_stock", { "user": user[0] });
 });
-router.get("/sale_report", function (req, res) {
-    res.render("admin/sale_report");
+router.get("/sale_report", async function (req, res) {
+    var user = await exe(`SELECT * FROM login WHERE admin_id = '${req.session.admin_id}'`);
+    res.render("admin/sale_report", { "user": user[0] });
+});
 
 
 
-});
+
 router.get("/bank_accounts",async function(req,res){
+    var user = await exe(`SELECT * FROM login WHERE admin_id = '${req.session.admin_id}'`);
     var account = await exe("SELECT * FROM bank_accounts");
-    var obj = {"account":account}
+    var obj = {"account":account,"user":user[0]}
     res.render("admin/bank_accounts_list.ejs",obj);   
 })
 
-router.get("/add_account",function(req,res){
-    res.render("admin/add_bank_account.ejs");   
+router.get("/add_account",async function(req,res){
+    var user = await exe(`SELECT * FROM login WHERE admin_id = '${req.session.admin_id}'`);
+    res.render("admin/add_bank_account.ejs", { "user": user[0] });
 });
 router.post("/save_account",async function(req,res){
     var d = req.body;
@@ -457,10 +586,11 @@ router.post("/save_account",async function(req,res){
     
 })
 router.get("/view_account/:account_id",async function(req,res){
+    var user = await exe(`SELECT * FROM login WHERE admin_id = '${req.session.admin_id}'`);
     var data = await exe("SELECT * FROM bank_accounts WHERE account_id=?", [req.params.account_id]);
    var result = await exe("SELECT * FROM transactions WHERE account_id=? ORDER BY transaction_id DESC LIMIT 10",[req.params.account_id]);
 
-       res.render("admin/view_bank_account.ejs",{"result":result,"data":data});   
+       res.render("admin/view_bank_account.ejs",{"result":result,"data":data,"user":user[0]});   
 })
 router.post("/save_transaction", async function (req, res) {
     var d = req.body;
@@ -492,8 +622,9 @@ router.post("/save_transaction", async function (req, res) {
 
 
 router.get("/edit_account/:account_id",async function(req,res){
+    var user = await exe(`SELECT * FROM login WHERE admin_id = '${req.session.admin_id}'`);
     var data = await exe("SELECT * FROM bank_accounts WHERE account_id=?", [req.params.account_id]);
-       res.render("admin/edit_bank_account.ejs",{"data":data[0]});   
+       res.render("admin/edit_bank_account.ejs",{"data":data[0],"user":user[0]});   
 });
 router.post("/update_account",async function(req,res){
     var d = req.body;
@@ -506,8 +637,9 @@ router.get("/delete_account/:account_id",async function(req,res){
     res.redirect("/admin/bank_accounts");
 });
 router.get("/contractor", async function (req, res) {
+    var user = await exe(`SELECT * FROM login WHERE admin_id = '${req.session.admin_id}'`);
     var contractors = await exe("SELECT * FROM contractors");
-    res.render("admin/contractors_list.ejs", { "contractors": contractors });
+    res.render("admin/contractors_list.ejs", { "contractors": contractors, "user": user[0] });
 });
 
 router.post("/save_contractor",async function(req,res){
@@ -524,6 +656,7 @@ router.post("/save_contractor",async function(req,res){
     res.redirect("/admin/contractor");
 });
 router.get("/contracts/:contractor_id",async function(req,res){
+    var user = await exe(`SELECT * FROM login WHERE admin_id = '${req.session.admin_id}'`);
     var contractor = await exe("SELECT * FROM contractors WHERE contractor_id=?", [req.params.contractor_id]);
     var payment2 = await exe("SELECT * FROM payments WHERE contractor_id=?", [req.params.contractor_id]);
     var contracts = await exe("SELECT * FROM contracts WHERE contractor_id=?", [req.params.contractor_id]);
@@ -540,7 +673,7 @@ router.get("/contracts/:contractor_id",async function(req,res){
     var pendingToPay = lastPayment.length > 0 ? lastPayment[0].next_due_amount : 0;
     var nextDueAmount = pendingToPay;
 
-    res.render("admin/contractor_details.ejs", { contractor: contractor[0], payment: { paid_amount: totalPaid, pending_to_pay: pendingToPay, next_due_amount: nextDueAmount  },  "payment2": payment2, "contracts": contracts });
+    res.render("admin/contractor_details.ejs", { contractor: contractor[0], payment: { paid_amount: totalPaid, pending_to_pay: pendingToPay, next_due_amount: nextDueAmount  },  "payment2": payment2, "contracts": contracts, "user": user[0] });
     
 });
    
@@ -548,8 +681,9 @@ router.get("/contracts/:contractor_id",async function(req,res){
   
 
 router.get("/edit_contractor/:contractor_id",async function(req,res){
+    var user = await exe(`SELECT * FROM login WHERE admin_id = '${req.session.admin_id}'`);
     var contractor = await exe("SELECT * FROM contractors WHERE contractor_id=?", [req.params.contractor_id]);
-    res.render("admin/edit_contractor.ejs",{"contractor":contractor[0]});
+    res.render("admin/edit_contractor.ejs",{"contractor":contractor[0],"user":user[0]});
 });
 router.post("/update_contractor",async function(req,res){
     var d = req.body;
@@ -568,6 +702,7 @@ router.get("/delete_contractor/:contractor_id",async function(req,res){
     res.redirect("/admin/contractor");
 });
 router.get("/pay_new_contract/:contractor_id", async function(req, res) {
+    var user = await exe(`SELECT * FROM login WHERE admin_id = '${req.session.admin_id}'`);
     var contractor = await exe("SELECT * FROM contractors WHERE contractor_id=?", [req.params.contractor_id]);
 
     // last payment for pending/next due
@@ -590,13 +725,15 @@ router.get("/pay_new_contract/:contractor_id", async function(req, res) {
             paid_amount: totalPaid,
             pending_to_pay: pendingToPay,
             next_due_amount: nextDueAmount
-        }
+        },
+        "user": user[0]
     });
 });
 
 router.get("/add_contract/:contractor_id",async function(req,res){
+    var user = await exe(`SELECT * FROM login WHERE admin_id = '${req.session.admin_id}'`);
     var contractor = await exe("SELECT * FROM contractors WHERE contractor_id=?", [req.params.contractor_id]);
-    res.render("admin/add_contract.ejs", { contractor: contractor[0] });
+    res.render("admin/add_contract.ejs", { contractor: contractor[0], "user": user[0] });
 });
 
 router.post("/save_contract", async function(req, res) {
@@ -658,9 +795,10 @@ router.post("/save_payment", async function(req, res) {
 });
 
 router.get("/labours/:contractor_id",async function(req,res){
+    var user = await exe(`SELECT * FROM login WHERE admin_id = '${req.session.admin_id}'`);
     var contractor = await exe("SELECT * FROM contractors WHERE contractor_id=?", [req.params.contractor_id]);
     var labours = await exe("SELECT * FROM labours WHERE contractor_id=?", [req.params.contractor_id]);
-    res.render("admin/labour_list.ejs", { contractor: contractor[0], "labours": labours });
+    res.render("admin/labour_list.ejs", { contractor: contractor[0], "labours": labours, "user": user[0] });
 });
 
 router.post("/add_labour",async function(req,res){
@@ -690,38 +828,42 @@ router.get("/delete_labour/:labour_id", async function(req, res) {
 });
 
 router.get("/new_maintenance", async function(req,res){
+    var user = await exe(`SELECT * FROM login WHERE admin_id = '${req.session.admin_id}'`);
     var sites  = await exe("SELECT * FROM site");
-    
-    res.render("admin/new_maintenance.ejs", { sites, flats: []});
+
+    res.render("admin/new_maintenance.ejs", { sites, flats: [], "user": user[0] });
 });
 
 
 router.get("/check_maintenance/:site_id", async function(req,res){
+    var user = await exe(`SELECT * FROM login WHERE admin_id = '${req.session.admin_id}'`);
     let site_id = req.params.site_id;
 
     var sites  = await exe("SELECT * FROM site  ");
 
-    
-    var flats = await exe("SELECT * FROM flats WHERE site_id=?", [site_id]);
+    res.render("admin/check_maintenance.ejs", { sites, "user": user[0] });
+    // var flats = await exe("SELECT * FROM flats WHERE site_id=?", [site_id]);
 
-    res.render("admin/new_maintenance.ejs", { sites, flats });
+    // res.render("admin/new_maintenance.ejs", { sites, flats, "user": user[0] });
 });
 
 
 
 
 router.get("/pending_maintenance",async function(req,res){
+    var user = await exe(`SELECT * FROM login WHERE admin_id = '${req.session.admin_id}'`);
     // var flats = await exe("SELECT * FROM flats WHERE status='Available'");
-    res.render("admin/pending_maintenance.ejs");
+    res.render("admin/pending_maintenance.ejs", { "user": user[0] });
 });
 router.get("/completed_maintenance",async function(req,res){   
-
-    res.render("admin/completed_maintenance.ejs");
+    var user = await exe(`SELECT * FROM login WHERE admin_id = '${req.session.admin_id}'`);
+    res.render("admin/completed_maintenance.ejs", { "user": user[0] });
 });
 
 router.get("/add_vendor",async function(req,res){
     var vendor = await exe("SELECT * FROM vendors");
-    res.render("admin/vendor_list.ejs",{vendors:vendor});   
+    var user = await exe(`SELECT * FROM login WHERE admin_id = '${req.session.admin_id}'`);
+    res.render("admin/vendor_list.ejs",{"vendor":vendor, "user": user[0]});   
 });
 
 router.post("/save_vendor",async function(req,res){
@@ -732,8 +874,9 @@ router.post("/save_vendor",async function(req,res){
     res.redirect("/admin/vendor_list");
 });
 router.get("/edit_vendor/:vendor_id",async function(req,res){
+    var user = await exe(`SELECT * FROM login WHERE admin_id = '${req.session.admin_id}'`);
     var data = await exe("SELECT * FROM vendors WHERE vendor_id=?", [req.params.vendor_id]);
-       res.render("admin/edit_vendoe.ejs",{"data":data[0]});   
+       res.render("admin/edit_vendoe.ejs",{"data":data[0], "user": user[0]});   
 });
 router.post("/update_vendor",async function (req,res){
     var d = req.body;
@@ -743,11 +886,12 @@ router.post("/update_vendor",async function (req,res){
     
 });
 router.get("/pro_inq",async function(req,res){
+    var user = await exe(`SELECT * FROM login WHERE admin_id = '${req.session.admin_id}'`);
     var vendor = await exe("SELECT * FROM vendors");
     // var vendor = await exe("SELECT * FROM vendors WHERE vendor_id=?",[req.params.vendor_id]);
     var employee = await exe("SELECT * FROM employees");
-    res.render("admin/Pro_inq.ejs",{"vendor":vendor, "employee": employee});
-    
+    res.render("admin/Pro_inq.ejs",{"vendor":vendor, "employee": employee, "user": user[0]});
+
 });
 
 
@@ -806,11 +950,13 @@ router.post("/save_inquiries", async function (req, res) {
 
 
 router.get("/Processing_inq_list",async function(req,res){
+    var user = await exe(`SELECT * FROM login WHERE admin_id = '${req.session.admin_id}'`);
     var inquiry = await exe("SELECT * FROM inquiries");
-    res.render("admin/Processing_inq_list.ejs",{inquiries:inquiry});   
+    res.render("admin/Processing_inq_list.ejs",{inquiries:inquiry, "user": user[0]});   
 });
 
 router.get("/view_bill/:inquiry_id",async function(req,res){
+    var user = await exe(`SELECT * FROM login WHERE admin_id = '${req.session.admin_id}'`);
     const items = await exe("SELECT * FROM inquiries WHERE inquiry_id=?", [req.params.inquiry_id]);
 
 if(items.length === 0) return res.send("Inquiry not found");
@@ -825,7 +971,7 @@ const inquiry = {
   items: items
 };
 
-res.render("admin/view_inquiry.ejs", { inquiry });
+res.render("admin/view_inquiry.ejs", { inquiry, "user": user[0] });
 });
 router.get("/delete_inquiry/:inquiry_id",async function(req,res){
     var result = await exe("DELETE FROM inquiries WHERE inquiry_id=?", [req.params.inquiry_id]);
@@ -833,9 +979,10 @@ router.get("/delete_inquiry/:inquiry_id",async function(req,res){
 });
 
 router.get("/Purchase_raw_material",async function(req,res) {
+    var user = await exe(`SELECT * FROM login WHERE admin_id = '${req.session.admin_id}'`);
     var vendor = await exe("SELECT * FROM vendors");
     var employee = await exe("SELECT * FROM employees ");
-    res.render("admin/purchase_raw_material.ejs",{"vendor":vendor,"employee":employee})
+    res.render("admin/purchase_raw_material.ejs",{"vendor":vendor,"employee":employee, "user": user[0]})
 });
 router.post("/save_new_raw_material", async function(req, res) {
   try {
@@ -912,32 +1059,41 @@ router.post("/save_new_raw_material", async function(req, res) {
 
 
 router.get("/Purchase_report",async function(req,res) {
+    var user = await exe(`SELECT * FROM login WHERE admin_id = '${req.session.admin_id}'`);
     var data = await exe("SELECT * FROM raw_material_purchases")
-    res.render("admin/Purchase_report.ejs",{"data":data})
+    res.render("admin/Purchase_report.ejs",{"data":data, "user": user[0]})
 })
 
 router.get("/purchase_report_product",async function (req,res) {
+    var user = await exe(`SELECT * FROM login WHERE admin_id = '${req.session.admin_id}'`);
     var data = await exe("SELECT * FROM raw_material_purchases")
 
-    res.render("admin/purchase_report_product.ejs",{"data":data})
+    res.render("admin/purchase_report_product.ejs",{"data":data, "user": user[0]})
 });
 
 router.get("/view_purchase_details/:purchase_id", async function (req,res) {
+    var user = await exe(`SELECT * FROM login WHERE admin_id = '${req.session.admin_id}'`);
     var data = await exe("SELECT * FROM raw_material_purchases WHERE purchase_id=?",[req.params.purchase_id])
 
-    res.render("admin/view_purchase_details.ejs",{"data":data})
+    res.render("admin/view_purchase_details.ejs",{"data":data, "user": user[0]})
 });
 
 router.get("/view_purchase_bill/:purchase_id",async function (req,res) {
+    var user = await exe(`SELECT * FROM login WHERE admin_id = '${req.session.admin_id}'`);
     var vendor = await exe("SELECT * FROM raw_material_purchases WHERE purchase_id=?",[req.params.purchase_id])
         var vendors = await exe("SELECT * FROM vendors ")
- 
-    res.render("admin/view_purchase_bill.ejs",{"vendor":vendor,"vendors":vendors})
+
+    res.render("admin/view_purchase_bill.ejs",{"vendor":vendor,"vendors":vendors, "user": user[0]})
 })
-    
-    
-   
-    
+ 
+router.get("/my_balance",async function(req,res){
+    var user = await exe(`SELECT * FROM login WHERE admin_id = '${req.session.admin_id}'`);
+
+    var balance = await exe("SELECT * FROM bank_accounts");
+
+    res.render("admin/my balance.ejs",{"balance":balance, "user": user[0]})
+});
+
 
 
     module.exports = router;
