@@ -1,0 +1,91 @@
+<%- include('navbar.ejs') %>
+
+<style>
+    .form-control {
+        border: 2px solid black;
+        border-radius: 0%;
+    }
+</style>
+
+<div class="container">
+  <div class="card shadow-lg">
+    <div class="card-header text-white fw-bold" style="background-color: #111111;">
+      EDIT SITE "<%= site.site_name %>"
+    </div>
+    <div class="card-body">
+      <form action="/update_site/<%= site.site_id %>" method="POST" enctype="multipart/form-data">
+        
+        <!-- Site Name -->
+        <div class="mb-3">
+          <label for="siteName" class="form-label">Site Name <span class="text-danger">*</span></label>
+          <input type="text" class="form-control" id="siteName" name="site_name"
+                 value="<%= site.site_name %>" required>
+        </div>
+
+        <!-- Site Address -->
+        <div class="mb-3">
+          <label for="siteAddress" class="form-label">Site Address</label>
+          <input type="text" class="form-control" id="siteAddress" name="site_location"
+                 value="<%= site.site_location %>">
+        </div>
+
+        <!-- Site Manager -->
+        <div class="mb-3">
+          <label for="siteManager" class="form-label">Site Manager Name</label>
+          <input type="text" class="form-control" id="siteManager" name="site_manager_name"
+                 value="<%= site.site_manager_name %>">
+        </div>
+
+        <!-- Site Start Date -->
+        <div class="mb-3">
+          <label for="siteStartDate" class="form-label">Site Start Date</label>
+        <input type="date" class="form-control" id="siteStartDate" name="site_start_date"
+       value="<%= site.site_start_date ? new Date(site.site_start_date).toISOString().split('T')[0] : '' %>">
+        </div>
+
+        <!-- Site Map -->
+        <div class="mb-3">
+          <label for="siteMap" class="form-label">Site Map Link</label>
+          <input type="text" class="form-control" id="siteMap" name="site_map_link"
+                 value="<%= site.site_map_link %>"required >
+          <small class="text-muted">
+            <a href="<%= site.site_map_link %>" target="_blank">View Current Map</a>
+          </small>
+        </div>
+
+        <!-- Site Details -->
+        <div class="mb-3">
+          <label for="siteDetails" class="form-label">Site Details</label>
+          <textarea class="form-control" id="siteDetails" name="site_description" rows="3"><%- site.site_description %></textarea>
+        </div>
+
+        <!-- Site Images -->
+        <div class="mb-3">
+          <label for="siteStructureImage" class="form-label">Site Structure Image</label>
+          <input class="form-control" type="file" id="siteStructureImage" name="site_structure_image">
+          <% if(site.site_structure_image){ %>
+            <img src="/image/site_image/<%= site.site_structure_image %>" alt="Structure" class="img-thumbnail mt-2" width="150">
+          <% } %>
+        </div>
+
+        <div class="mb-3">
+          <label for="site3DImage" class="form-label">Site 3D Image</label>
+          <input class="form-control" type="file" id="site3DImage" name="site_3d_image">
+          <% if(site.site_3d_image){ %>
+            <img src="/image/site_image/<%= site.site_3d_image %>" alt="3D" class="img-thumbnail mt-2" width="150">
+          <% } %>
+        </div>
+
+        <!-- Status -->
+        
+
+        <!-- Buttons -->
+        <div class="d-flex justify-content-end">
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<%- include('footer.ejs') %>

@@ -33,10 +33,79 @@ router.get("/site_list", async function (req, res) {
 
 router.get('/view_site/:id', async function (req, res) {
     var sql = `SELECT * FROM site WHERE site_id = '${req.params.id}'`
+    var result = await exe(`SELECT * FROM site_contact`)
+    var camera = await exe(`SELECT * FROM camera`)
     var sites = await exe(sql)
-    console.log(sites)
-    res.render('admin/view_site.ejs', { sites })
+    res.render('admin/view_site.ejs', { sites,result,camera})
 })
+router.post('/save_contact/:id',async function(req,res){
+    var d = req.body;
+    var sql = `INSERT INTO site_contact(contact_name,contact_number,contact_address)VALUES(?,?,?)`
+    var result = await exe(sql,[d.contact_name,d.contact_number,d.contact_address])
+   res.redirect(`/view_site/${req.params.id}`)
+})
+router.get('/delete_contact/:id/:site_id',async function(req,res){
+    var sql = await exe(`DELETE from site_contact WHERE contact_id = '${req.params.id}'`)
+    res.redirect(`/view_site/${req.params.site_id}`)
+})
+router.get('/delete_camera/:id/:site_id',async function(req,res){
+    var sql = await exe(`DELETE from camera WHERE camera_id = '${req.params.id}'`)
+    res.redirect(`/view_site/${req.params.site_id}`)
+})
+router.get('/edit_site/:id',async function(req,res){
+    var sql = `SELECT * FROM site WHERE site_id = '${req.params.id}'`
+    var result = await exe(sql)
+    res.render('admin/edit_site.ejs',{'site':result[0]})
+})
+router.post('/save_camera/:id',async function(req,res){
+    var d = req.body
+    var sql= `INSERT INTO camera (site_id, camera_name, camera_ip, camera_link,camera_password) VALUES (?,?,?,?,?)`
+    var result = await exe(sql,[req.params.id,d.camera_name,d.username,d.camera_link,d.password])
+     res.redirect(`/view_site/${req.params.id}`)
+})
+
+// Update site by ID
+router.post("/update_site/:id", async function (req, res) {
+    try {
+        var d = req.body;
+        var { id } = req.params;
+
+        let filename = d.old_structure_image || "";
+        let filename1 = d.old_3d_image || "";
+
+        // जर नवीन फाइल आली तर ती save कर
+        if (req.files) {
+            if (req.files.site_structure_image) {
+                filename = new Date().getTime() + req.files.site_structure_image.name;
+                req.files.site_structure_image.mv("public/image/site_image/" + filename);
+            }
+
+            if (req.files.site_3d_image) {
+                filename1 = new Date().getTime() + req.files.site_3d_image.name;
+                req.files.site_3d_image.mv("public/image/site_image/" + filename1);
+            }
+        }
+
+        var sql = `UPDATE site SET site_name=?, site_location=?, site_manager_name=?, site_structure_image=?, site_3d_image=?, site_start_date=?, site_description=?, site_map_link=? WHERE site_id=?`;
+
+        await exe(sql, [
+            d.site_name,
+            d.site_location,
+            d.site_manager_name,
+            filename,
+            filename1,
+            d.site_start_date,
+            d.site_description,
+            d.site_map_link,
+            id
+        ]);
+
+        res.redirect("/site_list"); // update झाल्यावर list page वर redirect कर
+    } catch (err) {
+        console.log(err);
+        res.status(500).send("Error updating site");
+    }
+});
 
 // Flat Management
 router.get('/add_new_selling_flat', async function (req, res) {
@@ -55,8 +124,8 @@ router.post('/save_flat', async function (req, res) {
     var result = await exe(sql, [d.flat_name, d.site_name, filename, d.carpet, d.buldup, d.description, d.type]);
     res.redirect('/add_new_selling_flat');
 });
-router.get('/new_selling_flat_list', async function (req, res) {
-    var sql = `SELECT * FROM flats INNER JOIN site ON flats.site_id = site.site_id WHERE flats.status='Available'`;
+router.get('/flat_list', async function (req, res) {
+    var sql = `SELECT * FROM flats INNER JOIN site ON flats.site_id = site.site_id WHERE flats.buy='Available'`;
     var flat = await exe(sql);
     res.render('admin/flat_list.ejs', { flat });
 })
@@ -115,8 +184,11 @@ router.get('/view/:id', async function (req, res) {
     var sql1 = "SELECT * FROM customers WHERE status='Active'";
     var customer = await exe(sql1);
     var result = await exe(sql, [id]);
-    res.render('admin/view_flat.ejs', { customer, result, employee });
+    res.render('admin/buy_flat.ejs', { customer, result, employee });
 });
+router.get('/view_flat/:id',async function(req,res){
+    res.render('admin/view_flat.ejs')
+})
 
 router.post('/flat-sold', async function (req, res) {
     var d = req.body;
@@ -171,10 +243,11 @@ router.post("/add_customor", async function (req, res) {
 });
 router.get("/customor_list", async function (req, res) {
     var sql = "SELECT * FROM customers WHERE status='Active'";
-    var result = await exe(sql);
-    console.log(result);
-    res.render("admin/customer_list.ejs", { customer: result });
-
+    var customer = await exe(sql);
+    res.render("admin/customer_list.ejs", { customer });
+})
+router.post('/save_godwon',async function(req,res){
+    var sql = 'data';
     var result = await exe(sql, [
         d.company_name,
         d.product_name,
