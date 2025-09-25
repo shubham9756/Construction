@@ -37,7 +37,7 @@ function authMiddleware(req, res, next) {
   if (req.session && req.session.admin_id) {
     next(); // session exists, continue
   } else {
-    res.redirect("/admin"); // no session, redirect to login
+    res.redirect("/"); // no session, redirect to login
   }
 }
 function noCache(req, res, next) {
@@ -157,7 +157,7 @@ router.post("/save_profile", async (req, res) => {
         admin_name = ?,  admin_mobile = ?, admin_email = ?,
         admin_password = ?
       WHERE admin_id = '${d.admin_id}'`;
-    var data = await exe(sql,[ d.admin_name, d.admin_mobile, d.admin_email, d.admin_password]);
+    var data = await exe(sql,[ d.admin_name, d.admin_mobile, d.admin_email, d.admin_password, admin_image]);
 //   res.send(data)
   res.redirect("/admin/profile")
 });
@@ -497,20 +497,20 @@ router.get("/new_bill", async function (req, res) {
 //     res.redirect("/admin/view_account/" + d.account_id);
 // });
 
-router.get("/edit_account/:account_id", async function (req, res) {
-    var data = await exe("SELECT * FROM bank_accounts WHERE account_id=?", [req.params.account_id]);
-    res.render("admin/edit_bank_account.ejs", { "data": data[0] });
-});
-router.post("/update_account", async function (req, res) {
-    var d = req.body;
-    var sql = `UPDATE bank_accounts SET bank_name=?,account_holder=?,account_number=?,ifsc_code=?,current_balance=? WHERE account_id=?`;
-    var result = await exe(sql, [d.bank_name, d.account_holder, d.account_number, d.ifsc_code, d.current_balance, d.account_id]);
-    res.redirect("/admin/bank_accounts");
-})
-router.get("/delete_account/:account_id", async function (req, res) {
-    var result = await exe("DELETE FROM bank_accounts WHERE account_id=?", [req.params.account_id]);
-    res.redirect("/admin/bank_accounts");
-});
+// router.get("/edit_account/:account_id", async function (req, res) {
+//     var data = await exe("SELECT * FROM bank_accounts WHERE account_id=?", [req.params.account_id]);
+//     res.render("admin/edit_bank_account.ejs", { "data": data[0] });
+// });
+// router.post("/update_account", async function (req, res) {
+//     var d = req.body;
+//     var sql = `UPDATE bank_accounts SET bank_name=?,account_holder=?,account_number=?,ifsc_code=?,current_balance=? WHERE account_id=?`;
+//     var result = await exe(sql, [d.bank_name, d.account_holder, d.account_number, d.ifsc_code, d.current_balance, d.account_id]);
+//     res.redirect("/admin/bank_accounts");
+// })
+// router.get("/delete_account/:account_id", async function (req, res) {
+//     var result = await exe("DELETE FROM bank_accounts WHERE account_id=?", [req.params.account_id]);
+//     res.redirect("/admin/bank_accounts");
+// });
 //     var data = await exe("SELECT * FROM bank_accounts WHERE account_id=?", [req.params.account_id]);
 //     res.render("admin/edit_bank_account.ejs", { "data": data[0] });
 // });
@@ -1004,6 +1004,11 @@ router.get("/edit_vendor/:vendor_id",async function(req,res){
     var data = await exe("SELECT * FROM vendors WHERE vendor_id=?", [req.params.vendor_id]);
        res.render("admin/edit_vendoe.ejs",{"data":data[0], "user": user[0]});   
 });
+
+router.get("/delete_vendor/:vendor_id", async function (req, res) {
+    var result = await exe("DELETE FROM vendors WHERE vendor_id=?", [req.params.vendor_id]);
+    res.redirect("/admin/add_vendor");
+});
 router.post("/update_vendor", async function (req, res) {
     var d = req.body;
     var sql = `UPDATE vendors SET vendor_name=?,vendor_address=?,vendor_other_details=?,vendor_phone=?,vendor_gst_no=?,vendor_phone2=? WHERE vendor_id=?`;
@@ -1011,19 +1016,7 @@ router.post("/update_vendor", async function (req, res) {
     res.redirect("/admin/add_vendor");
 
 });
-// router.get("/PROCESSING_INQUIRIES", async function (req, res) {
-//     var vendor = await exe("SELECT * FROM vendors");
-//     var vendors = await exe("SELECT * FROM vendors WHERE vendor_id=?", [req.params.vendor_id]);
-//     res.render("admin/Processing_Inquiries.ejs", { "vendor": vendor, vendors: vendors });
-// });
-// router.post("/save_inquiry", async function (req, res) {
-//     var d = req.body;
 
-//     var sql = `INSERT INTO inquiries(vendor_id,vendor_name,purchase_date,purchase_type,raw_material,Material_qyt,udm,rate,discount,Taxable_value,gst,total,employee_sign,employee_signature,created_at)VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`;
-//     var result = await exe(sql, [d.vendor_id, d.vendor_name, d.purchase_date, d.purchase_type, d.raw_material, d.Material_qyt, d.udm, d.rate, d.discount, d.Taxable_value, d.gst, d.total, d.employee_sign, d.employee_signature, d.created_at]);
-//     res.redirect("/admin/PROCESSING_INQUIRIES");
-//     console.log("Form data =>", d);
-// });
 router.get("/pro_inq",async function(req,res){
     var user = await exe(`SELECT * FROM login WHERE admin_id = '${req.session.admin_id}'`);
     var vendor = await exe("SELECT * FROM vendors");
@@ -1153,7 +1146,7 @@ router.post("/save_payment_recvied", async function (req, res) {
 });
 
 
-module.exports = router;
+
 router.get("/view_bill/:inquiry_id",async function(req,res){
     var user = await exe(`SELECT * FROM login WHERE admin_id = '${req.session.admin_id}'`);
     const items = await exe("SELECT * FROM inquiries WHERE inquiry_id=?", [req.params.inquiry_id]);
@@ -1262,6 +1255,11 @@ router.get("/Purchase_report",async function(req,res) {
     var data = await exe("SELECT * FROM raw_material_purchases")
     res.render("admin/Purchase_report.ejs",{"data":data, "user": user[0]})
 })
+
+router.get("/delete_purchase/:purchase_id",async function(req,res){
+    var result = await exe("DELETE FROM raw_material_purchases WHERE purchase_id=?", [req.params.purchase_id]);
+    res.redirect("/admin/Purchase_report");
+});
 
 router.get("/purchase_report_product",async function (req,res) {
     var user = await exe(`SELECT * FROM login WHERE admin_id = '${req.session.admin_id}'`);
