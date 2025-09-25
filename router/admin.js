@@ -983,9 +983,9 @@ router.get("/completed_maintenance",async function(req,res){
 });
 
 router.get("/add_vendor", async function (req, res) {
-    var vendor = await exe("SELECT * FROM vendors");
+    var vendors = await exe("SELECT * FROM vendors");
     var user = await exe(`SELECT * FROM login WHERE admin_id = '${req.session.admin_id}'`);
-    res.render("admin/vendor_list.ejs",{"vendor":vendor, "user": user[0]});   
+    res.render("admin/vendor_list.ejs",{"vendors":vendors, "user": user[0]});   
 });
 
 router.post("/save_vendor", async function (req, res) {
@@ -1076,7 +1076,7 @@ router.post("/save_inquiries", async function (req, res) {
     }
 
    
-    res.redirect("/admin//pro_inq");
+    res.redirect("/admin/pro_inq");
   } catch (err) {
     console.error(err);
     res.status(500).send("Database error");
