@@ -22,6 +22,7 @@ app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
 app.use("/admin",adminroute);
+
 app.use("/",adminroute);
 app.use("/login",adminroute);
 
