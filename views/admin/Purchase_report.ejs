@@ -96,6 +96,7 @@
           <th>GST</th>
           <th>EXTRA</th>
           <th>GRAND TOTAL</th>
+          <th>Action</th>
         </tr>
       </thead>
       <tbody>
@@ -110,6 +111,10 @@
           <td>% <%-data[i].gst%></td>
           <td>₹ <%-data[i].extra_charges%></td>
           <td>₹ <%-data[i].grand_total%></td>
+          <td>
+            
+            <a href="/delete_purchase/<%-data[i].purchase_id%>" class="btn btn-danger btn-sm">Delete</a>
+          </td>
         </tr>
         <% } %>
       

@@ -60,7 +60,7 @@
                 <div class="logo-header" data-background-color="dark">
                     <a href="/" class="logo">
                         <img src="/image/Construction.png" alt="navbar brand" class="navbar-brand mt-3"
-                            height="170" />
+                            height="160" />
                     </a>
                     <div class="nav-toggle">
                         <button class="btn btn-toggle toggle-sidebar">
@@ -715,12 +715,12 @@
                                 <a class="dropdown-toggle profile-pic" data-bs-toggle="dropdown" href="#"
                                     aria-expanded="false">
                                     <div class="avatar-sm">
-                                        <img src="/image/<%-user.admin_image%>" alt="..."
+                                        <img src="/image/<%- user ? user.admin_image : 'default.png' %>" alt="..."
                                             class="avatar-img rounded-circle" />
                                     </div>
                                     <span class="profile-username">
                                         <span class="op-7">Hi,</span>
-                                        <span class="fw-bold"><%-user.admin_name %></span>
+                                        <span class="fw-bold"><%- user ? user.admin_name : 'admin' %></span>
                                     </span>
                                 </a>
                                 <ul class="dropdown-menu dropdown-user animated fadeIn">
@@ -728,12 +728,13 @@
                                         <li>
                                             <div class="user-box">
                                                 <div class="avatar-lg">
-                                                    <img src="/image/<%-user.admin_image%>" alt="image profile"
+                                                    <img src="/image/<%- user ? user.admin_image : 'default.png' %>"
+                                                        alt="image profile"
                                                         class="avatar-img rounded" />
                                                 </div>
                                                 <div class="u-text">
-                                                    <h4><%-user.admin_name %></h4>
-                                                    <p class="text-muted"><%-user.admin_email %></p>
+                                                    <h4><%- user ? user.admin_name : 'admin' %></h4>
+                                                    <p class="text-muted"><%- user ? user.admin_email : 'admin@gmail.com' %></p>
                                                     <a href="/profile" class="btn btn-xs btn-secondary btn-sm">View
                                                         Profile</a>
                                                 </div>
