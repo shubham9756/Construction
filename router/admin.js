@@ -71,7 +71,6 @@ router.get('/add_rent_flat', async function (req, res) {
 router.get('/rent_flat_list', async function (req, res) {
     var sql = `SELECT * FROM flats INNER JOIN site ON flats.site_id = site.site_id WHERE flats.buy ='Sell' AND flats.type ='Rent';`;
     var flat = await exe(sql);
-    console.log(flat);
     res.render('admin/rent_flat_list.ejs', { flat: flat });
 })
 // sell management
@@ -88,13 +87,11 @@ router.get('/selling_flat_list', async function (req, res) {
 
 router.get('/rent_flat_details/:id', async function (req, res) {
     var id = req.params.id;
-    var sql = `SELECT * FROM flat_sales
-LEFT JOIN flats 
-    ON flat_sales.flat_id = flats.flat_id
-LEFT JOIN site ON flats.site_id = site.site_id
-LEFT JOIN customers 
-    ON flat_sales.customer_id = customers.id
-    WHERE flat_sales.sale_id = ?`
+    var sql = `SELECT * FROM flat_sales LEFT JOIN flats ON flat_sales.flat_id = flats.flat_id
+        LEFT JOIN site ON flats.site_id = site.site_id
+        LEFT JOIN customers 
+        ON flat_sales.customer_id = customers.id
+        WHERE flat_sales.sale_id = ?`
     var result = await exe(sql, [id]);
     console.log(result);
  
@@ -173,7 +170,8 @@ router.get("/add_customor", function (req, res) {
 router.post("/add_customor", async function (req, res) {
     var d = req.body;
     var sql = `INSERT INTO customers(full_name,email,mobile,password)VALUES(?,?,?,?)`;
-    var result = await exe(sql, [d.full_name, d.email, d.mobile, d.password]);
+    var result = await exe(sql,[d.full_name, d.email, d.mobile, d.password]);
+    console.log(d)
     res.redirect("/add_customor");
 });
 router.get("/customor_list", async function (req, res) {
@@ -431,7 +429,18 @@ router.get("/delete_new/:id", async (req, res) => {
     // res.send("delete successfull")
     res.redirect("/admin/new_enquiries");
 });
-
+router.get("/processing_inquiries", async function (req, res) {
+    var enquiry = await exe("SELECT * FROM enquiries WHERE inquiry_status='processing'");
+    res.render("admin/processing_inquiries", { "enquiry": enquiry });
+    // res.send({"enquiry":enquiry});
+});
+router.get("/delete_processing/:id", async (req, res) => {
+    var id = req.params.id;
+    var sql = `DELETE  FROM enquiries WHERE id = ?`;
+    var data = await exe(sql, [id]);
+    // res.send("delete successfull")
+    res.redirect("/admin/processing_enquiries");
+});
 router.get("/closed_inquiries", async function (req, res) {
     var enquiry = await exe("SELECT * FROM enquiries WHERE inquiry_status='closed'");
     res.render("admin/closed_inquiries", { "enquiry": enquiry });
