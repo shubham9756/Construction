@@ -14,9 +14,16 @@ function checkLogin(req, res, next) {
 router.use(async function (req, res, next) {
     try {
         if (req.session && req.session.admin_id) {
-           
-            req.user = user[0];
-            res.locals.user = user[0];  
+            // DB मधून user fetch करा
+            let user = await exe(`SELECT * FROM login WHERE admin_id = '${req.session.admin_id}'`);
+
+            if (user.length > 0) {
+                req.user = user[0];
+                res.locals.user = user[0];
+            } else {
+                req.user = null;
+                res.locals.user = null;
+            }
         } else {
             req.user = null;
             res.locals.user = null;
@@ -27,9 +34,10 @@ router.use(async function (req, res, next) {
         next(err);
     }
 });
+
 // login page
 
-router.get("/",async function (req, res) {
+router.get("/", async function (req, res) {
     res.render("admin/login.ejs");
 });
 
@@ -39,15 +47,15 @@ router.post("/login", async function (req, res) {
     let result = await exe(sql);
     if (result.length > 0) {
         req.session.admin_id = result[0].admin_id;
-         res.redirect("/home");
+        res.redirect("/home");
     } else {
-         res.redirect("/");
+        res.redirect("/");
     }
 
 
 });
 
-router.get('/logout',checkLogin,function (req, res) {
+router.get('/logout', checkLogin, function (req, res) {
     req.session.destroy(function (err) {
         if (err) {
             console.log("Error destroying session:", err);
@@ -59,7 +67,7 @@ router.get('/logout',checkLogin,function (req, res) {
 });
 
 // dashbord
-router.get("/home",checkLogin, async function (req, res) {
+router.get("/home", checkLogin, async function (req, res) {
     try {
 
         const [user] = await exe("SELECT * FROM login WHERE admin_id = ?", [req.session.admin_id]);
@@ -177,29 +185,101 @@ router.post("/save_site", async function (req, res) {
     res.redirect("/addsite");
 });
 router.get("/site_list", async function (req, res) {
-   
+
     var sql = "SELECT * FROM site WHERE status ='Active'";
     var result = await exe(sql);
-    res.render("admin/site_list.ejs", { site: result,  });
+    res.render("admin/site_list.ejs", { site: result, });
 });
 router.get('/view_site/:id', async function (req, res) {
     var sql = `SELECT * FROM site WHERE site_id = '${req.params.id}'`
     var sites = await exe(sql)
     var result = await exe(`SELECT * FROM site_contact`)
     var camera = await exe(`SELECT * FROM camera`)
-    res.render('admin/view_site.ejs', { sites,result,camera})
+    res.render('admin/view_site.ejs', { sites, result, camera })
+})
+router.get('/edit_site/:id', async function (req, res) {
+    var sql = `SELECT * FROM site WHERE site_id = '${req.params.id}'`
+    var result = await exe(sql)
+    res.render('admin/edit_site.ejs', { 'site': result[0] })
+})
+router.post("/update_site/:id", async function (req, res) {
+    try {
+        var d = req.body;
+        var { id } = req.params;
+
+        let filename = d.old_structure_image || "";
+        let filename1 = d.old_3d_image || "";
+
+        // जर नवीन फाइल आली तर ती save कर
+        if (req.files) {
+            if (req.files.site_structure_image) {
+                filename = new Date().getTime() + req.files.site_structure_image.name;
+                req.files.site_structure_image.mv("public/image/site_image/" + filename);
+            }
+
+            if (req.files.site_3d_image) {
+                filename1 = new Date().getTime() + req.files.site_3d_image.name;
+                req.files.site_3d_image.mv("public/image/site_image/" + filename1);
+            }
+        }
+
+        var sql = `UPDATE site SET site_name=?, site_location=?, site_manager_name=?, site_structure_image=?, site_3d_image=?, site_start_date=?, site_description=?, site_map_link=? WHERE site_id=?`;
+
+        await exe(sql, [
+            d.site_name,
+            d.site_location,
+            d.site_manager_name,
+            filename,
+            filename1,
+            d.site_start_date,
+            d.site_description,
+            d.site_map_link,
+            id
+        ]);
+
+        res.redirect("/site_list"); // update झाल्यावर list page वर redirect कर
+    } catch (err) {
+        console.log(err);
+        res.status(500).send("Error updating site");
+    }
+});
+
+// site Contact
+
+router.post('/save_contact/:id',async function(req,res){
+    var d = req.body;
+    var sql = `INSERT INTO site_contact(contact_name,contact_number,contact_address)VALUES(?,?,?)`
+    var result = await exe(sql,[d.contact_name,d.contact_number,d.contact_address])
+   res.redirect(`/view_site/${req.params.id}`)
+})
+router.get('/delete_contact/:id/:site_id',async function(req,res){
+    var sql = await exe(`DELETE from site_contact WHERE contact_id = '${req.params.id}'`)
+    res.redirect(`/view_site/${req.params.site_id}`)
+})
+
+
+// camera site_link
+router.post('/save_camera/:id',async function(req,res){
+    var d = req.body
+    var sql= `INSERT INTO camera (site_id, camera_name, camera_ip, camera_link,camera_password) VALUES (?,?,?,?,?)`
+    var result = await exe(sql,[req.params.id,d.camera_name,d.username,d.camera_link,d.password])
+     res.redirect(`/view_site/${req.params.id}`)
+})
+router.get('/delete_camera/:id/:site_id',async function(req,res){
+    var sql = await exe(`DELETE from camera WHERE camera_id = '${req.params.id}'`)
+    res.redirect(`/view_site/${req.params.site_id}`)
 })
 
 // Flat Management
 router.get("/add_flat", async function (req, res) {
-   
-    res.render("admin/add_flat.ejs", {  });
+
+    res.render("admin/add_flat.ejs", {});
 })
 router.get('/add_new_selling_flat', async function (req, res) {
-   
+
     var sql = "SELECT * FROM site WHERE status='Active'";
     var site = await exe(sql);
-    res.render('admin/add_flat.ejs', { site: site,  });
+    res.render('admin/add_flat.ejs', { site: site, });
 });
 router.post('/save_flat', async function (req, res) {
     var d = req.body;
@@ -212,28 +292,27 @@ router.post('/save_flat', async function (req, res) {
     var result = await exe(sql, [d.flat_name, d.site_name, filename, d.carpet, d.buldup, d.description, d.type]);
     res.redirect('/add_new_selling_flat');
 });
-router.get('/new_selling_flat_list', async function (req, res) {
-   
-    var sql = `SELECT * FROM flats INNER JOIN site ON flats.site_id = site.site_id WHERE flats.status='Available'`;
+router.get('/flat_list', async function (req, res) {
+    var sql = `SELECT * FROM flats INNER JOIN site ON flats.site_id = site.site_id WHERE flats.buy='Available'`;
     var flat = await exe(sql);
-    res.render('admin/flat_list.ejs', { flat,  });
+    res.render('admin/flat_list.ejs', { flat, });
 })
 
 
 // Rent Management
 router.get('/add_rent_flat', async function (req, res) {
-   
+
     var sql = `SELECT * FROM flats INNER JOIN site ON flats.site_id = site.site_id WHERE flats.type='Rent' AND flats.buy='Available'`;
     var flat = await exe(sql);
-    res.render('admin/rent_flat.ejs', { flat: flat,  });
+    res.render('admin/rent_flat.ejs', { flat: flat, });
 })
 router.get('/rent_flat_list', async function (req, res) {
-   
+
     var sql = `SELECT * FROM flats INNER JOIN site ON flats.site_id = site.site_id WHERE flats.buy ='Sell' AND flats.type ='Rent';`;
     var flat = await exe(sql);
 
     console.log(flat);
-    res.render('admin/rent_flat_list.ejs', { flat: flat,  });
+    res.render('admin/rent_flat_list.ejs', { flat: flat, });
 })
 router.get('/rent_flat_report', async function (req, res) {
     var sql = `SELECT * FROM flat_sales
@@ -247,7 +326,6 @@ LEFT JOIN customers
     res.render('admin/rent_flat_report.ejs', { result })
 })
 router.get('/rent_flat_details/:id', async function (req, res) {
-   
     var id = req.params.id;
     var sql = `SELECT * FROM flat_sales LEFT JOIN flats ON flat_sales.flat_id = flats.flat_id
         LEFT JOIN site ON flats.site_id = site.site_id
@@ -257,29 +335,28 @@ router.get('/rent_flat_details/:id', async function (req, res) {
     var result = await exe(sql, [id]);
 
     console.log(result);
-    res.render('admin/flat_details.ejs', { result, site,  });
+    res.render('admin/flat_details.ejs', { result });
 });
 
 // sell management
 router.get('/add_selling_flat', async function (req, res) {
-   
+
     var sql = `SELECT * FROM flats INNER JOIN site ON flats.site_id = site.site_id WHERE flats.type='Sell' AND flats.buy='Available'`;
     var flat = await exe(sql);
-    res.render('admin/add_selling_flat.ejs', { flat: flat,  });
+    res.render('admin/add_selling_flat.ejs', { flat: flat, });
 })
 router.get('/selling_flat_list', async function (req, res) {
-   
     var sql = `SELECT * FROM flats INNER JOIN site ON flats.site_id = site.site_id WHERE flats.buy = 'Sell' AND flats.type ='Sell'`;
     var flat = await exe(sql);
-    res.render('admin/selling_flat_list.ejs', { flat: flat,  });
+    res.render('admin/selling_flat_list.ejs', { flat: flat, });
 })
 router.get('/selling_flat_report', async function (req, res) {
 
-   
+
     var sql = `SELECT * FROM flat_sales LEFT JOIN flats ON flat_sales.flat_id = flats.flat_id WHERE flat_sales.deadline_date < CURDATE();`
     var result = await exe(sql)
     console.log(result)
-    res.render('admin/selling_flat_report.ejs', { result,  })
+    res.render('admin/selling_flat_report.ejs', { result, })
 
     var sql = `SELECT * FROM flat_sales
 LEFT JOIN flats 
@@ -292,27 +369,25 @@ LEFT JOIN customers
 
 })
 router.get('/sale_flat_bill_details/:id', async function (req, res) {
-   
+
     var sql = `SELECT * FROM flat_sales WHERE sales_id = '${req.params.id}'`
     var result = await exe(sql)
-    res.render('admin/selling_report.ejs', { result,  })
+    res.render('admin/selling_report.ejs', { result, })
 })
 
 
 // site flat view
 router.get('/view/:id', async function (req, res) {
-   
     var id = req.params.id;
     var sql = "SELECT * FROM flats INNER JOIN site ON flats.site_id=site.site_id WHERE flats.flat_id = ?";
     var employee = await exe("SELECT * FROM employees WHERE status='Active'");
-
     var sql1 = "SELECT * FROM customers WHERE status='Active'";
     var customer = await exe(sql1);
     var result = await exe(sql, [id]);
-    res.render('admin/view_flat.ejs', { customer, result, employee,  });
+    res.render('admin/view_flat.ejs', { customer, result, employee, });
 });
 
-router.post('/flat-sold', async function (req, res) {
+router.post('/flat-sold/:id', async function (req, res) {
     var d = req.body;
     var filename = ""
     var filename1 = ""
@@ -329,16 +404,27 @@ router.post('/flat-sold', async function (req, res) {
     var values = await exe(sql, [d.customer_id, d.date, d.invoice_no, d.deadline_date, d.carpet, d.buildup, d.sqfeet, d.rate, d.basic_amount, d.note, filename, d.employee_id, filename1, d.customer_name, d.stamp_duty_percent, d.stamp_duty_amount, d.other_tax_percent, d.other_tax_amount, d.gst_percent, d.gst_amount, d.cgst_percent, d.cgst_amount, d.sgst_percent, d.sgst_amount, d.total_amount, d.discount_percent, d.discount_amount, d.grand_total]);
 
     var sql1 = "UPDATE flats SET status='Inavailable' WHERE flat_id=?";
+    var result = await exe()
     res.redirect('/')
 
 
 
 })
+router.get('/delete_flat/:id', async function (req, res) {
+    var result = await exe(`DELETE FROM flat_sales WHERE sale_id = ${req.params.id}`)
+    var  data = await exe(`DELETE FROM flats WHERE flat_id = ${req.params.id}`)
+    res.redirect('/flat_list')
+})
+router.get("/view_flat/:id", async function (req, res) {
+    var sql = await exe(`SELECT * FROM flats LEFT JOIN site ON flats.site_id = site.site_id WHERE flats.flat_id  = '${req.params.id}'`)
+    console.log(sql)
+    res.render('admin/view_flat_details.ejs', { 'flats': sql })
+})
+
 
 // Custmor
 router.get("/add_customor", async function (req, res) {
-   
-    res.render("admin/add_customer.ejs", {  });
+    res.render("admin/add_customer.ejs", {});
 });
 router.post("/add_customor", async function (req, res) {
     var d = req.body;
@@ -348,41 +434,25 @@ router.post("/add_customor", async function (req, res) {
     res.redirect("/add_customor");
 });
 router.get("/customor_list", async function (req, res) {
-   
     var sql = "SELECT * FROM customers WHERE status='Active'";
     var result = await exe(sql);
     console.log(result);
-    res.render("admin/customer_list.ejs", { customer: result,  });
-
-    var result = await exe(sql, [
-        d.company_name,
-        d.product_name,
-        d.material_type,
-        d.quantity,
-        d.order_date,
-        d.delivery_date,
-        d.location,
-        d.remarks,
-        "Pending"
-
-    ]);
-    res.redirect('/admin/godwon_orders');
-
+    res.render("admin/customer_list.ejs", { customer: result, });
 });
 
 
 // material
 router.get('/add_material', async function (req, res) {
-   
-    res.render('admin/add_material.ejs', {  });
+
+    res.render('admin/add_material.ejs', {});
 })
 router.get('/order_material', async function (req, res) {
-   
+
     var sql = "SELECT * FROM materials";
     var sql1 = "SELECT * FROM udm WHERE status='Active'";
     var result1 = await exe(sql1);
     var material = await exe(sql);
-    res.render('admin/material_order.ejs', { material, result1,  });
+    res.render('admin/material_order.ejs', { material, result1, });
 });
 router.post('/save_raw_material', function (req, res) {
     var d = req.body
@@ -391,19 +461,19 @@ router.post('/save_raw_material', function (req, res) {
     res.redirect('/order_material');
 });
 router.get('/site_order_material', async function (req, res) {
-   
+
     var sql = "SELECT * FROM raw_material INNER JOIN udm ON raw_material.udm = udm.udm_id";
     var material = await exe(sql);
     console.log(material);
-    res.render('admin/material_stock.ejs', { material,  });
+    res.render('admin/material_stock.ejs', { material, });
 })
 
 // master
 router.get('/unit', async function (req, res) {
-   
+
     var sql = "SELECT * FROM udm WHERE status='Active'";
     var udm = await exe(sql);
-    res.render("admin/udm.ejs", { udm,  });
+    res.render("admin/udm.ejs", { udm, });
 })
 router.post('/save_udm', async function (req, res) {
     var d = req.body;
@@ -412,19 +482,19 @@ router.post('/save_udm', async function (req, res) {
     res.redirect('/unit',);
 });
 router.get('/gst_unit', async function (req, res) {
-   
-    res.render('admin/gst.ejs', {  });
+
+    res.render('admin/gst.ejs', {});
 })
 
 // employee
 router.get('/employee_list', async function (req, res) {
-   
-    res.render("admin/contractor_list.ejs", {  });
+
+    res.render("admin/contractor_list.ejs", {});
 })
 router.get('/add_employee', async function (req, res) {
-   
+
     var result = await exe("SELECT * FROM employee_types WHERE status='Active'");
-    res.render("admin/add_employee.ejs", { result,  });
+    res.render("admin/add_employee.ejs", { result, });
 });
 router.post('/save_employee', async function (req, res) {
     var d = req.body;
@@ -450,8 +520,8 @@ router.post('/save_type', async function (req, res) {
 
 // bills
 router.get("/new_bill", async function (req, res) {
-   
-    res.render("admin/new_bill.ejs", {  });
+
+    res.render("admin/new_bill.ejs", {});
 })
 // })
 // router.post("/save_transaction", async function (req, res) {
@@ -544,11 +614,11 @@ router.post("/save_bill", async function (req, res) {
     }
 });
 router.get("/bill_report", async function (req, res) {
-   
+
     var sql = `SELECT * FROM bills`;
     var expenses = await exe(sql);
     var obj = { "list": expenses };
-    res.render("admin/bill_report.ejs", { expenses,  })
+    res.render("admin/bill_report.ejs", { expenses, })
     // res.send(obj);
 
 });
@@ -569,8 +639,8 @@ router.post("/bill_report", async function (req, res) {
 
 // enquiry
 router.get("/add_enquiry", async function (req, res) {
-   
-    res.render("admin/add_enquiry", {  });
+
+    res.render("admin/add_enquiry", {});
 });
 router.post("/new_enquiry", async function (req, res) {
     var d = req.body;
@@ -579,9 +649,9 @@ router.post("/new_enquiry", async function (req, res) {
     res.redirect("/admin/new_enquiry");
 });
 router.get('/new_enquiry', async function (req, res) {
-   
+
     var enquiry = await exe("SELECT * FROM enquiries WHERE inquiry_status='new'");
-    res.render("admin/new_enquiry.ejs", { "enquiry": enquiry,  });
+    res.render("admin/new_enquiry.ejs", { "enquiry": enquiry, });
     // res.send({"enquiry":enquiry});
 });
 router.get("/delete_new/:id", async (req, res) => {
@@ -605,9 +675,9 @@ router.get("/delete_processing/:id", async (req, res) => {
     res.redirect("/admin/processing_enquiries");
 });
 router.get("/closed_inquiries", async function (req, res) {
-   
+
     var enquiry = await exe("SELECT * FROM enquiries WHERE inquiry_status='closed'");
-    res.render("admin/closed_inquiries", { "enquiry": enquiry,  });
+    res.render("admin/closed_inquiries", { "enquiry": enquiry, });
     // res.send({"enquiry":enquiry});
 });
 router.get("/delete_closed/:id", async (req, res) => {
@@ -618,9 +688,9 @@ router.get("/delete_closed/:id", async (req, res) => {
     res.redirect("/admin/closed_enquiries");
 });
 router.get("/confirm_enquiries", async function (req, res) {
-   
+
     var enquiry = await exe("SELECT * FROM enquiries WHERE inquiry_status='confirmed'");
-    res.render("admin/confirm_enquiries", { "enquiry": enquiry,  });
+    res.render("admin/confirm_enquiries", { "enquiry": enquiry, });
     // res.send({"enquiry":enquiry});
 })
 router.get("/delete_confirm/:id", async (req, res) => {
@@ -631,9 +701,9 @@ router.get("/delete_confirm/:id", async (req, res) => {
     res.redirect("/admin/confirm_enquiries");
 });
 router.get('/processing_inquiries', async function (req, res) {
-   
+
     var enquiry = await exe("SELECT * FROM enquiries WHERE inquiry_status='processing'");
-    res.render("admin/processing_inquiries.ejs", { "enquiry": enquiry,  });
+    res.render("admin/processing_inquiries.ejs", { "enquiry": enquiry, });
     // res.send({"enquiry":enquiry});
 });
 router.get("/delete_processing/:id", async (req, res) => {
@@ -646,33 +716,33 @@ router.get("/delete_processing/:id", async (req, res) => {
 
 // stock
 router.get("/issue_stock", async function (req, res) {
-   
-    res.render("admin/issue_stock", {  });
+
+    res.render("admin/issue_stock", {});
 });
 router.get("/issue_report", async function (req, res) {
-   
-    res.render("admin/issue_report", {  });
+
+    res.render("admin/issue_report", {});
 });
 router.get("/sale_stock", async function (req, res) {
-   
-    res.render("admin/sale_stock", {  });
+
+    res.render("admin/sale_stock", {});
 });
 router.get("/sale_report", async function (req, res) {
-   
-    res.render("admin/sale_report", {  });
+
+    res.render("admin/sale_report", {});
 });
 
 
 // bank account
 router.get("/bank_accounts", async function (req, res) {
-   
+
     var account = await exe("SELECT * FROM bank_accounts");
-    var obj = { "account": account,  }
+    var obj = { "account": account, }
     res.render("admin/bank_accounts_list.ejs", obj);
 })
 router.get("/add_account", async function (req, res) {
-   
-    res.render("admin/add_bank_account.ejs", {  });
+
+    res.render("admin/add_bank_account.ejs", {});
 });
 router.post("/save_account", async function (req, res) {
     var d = req.body;
@@ -683,11 +753,11 @@ router.post("/save_account", async function (req, res) {
 
 })
 router.get("/view_account/:account_id", async function (req, res) {
-   
+
     var data = await exe("SELECT * FROM bank_accounts WHERE account_id=?", [req.params.account_id]);
     var result = await exe("SELECT * FROM transactions WHERE account_id=? ORDER BY transaction_id DESC LIMIT 10", [req.params.account_id]);
 
-    res.render("admin/view_bank_account.ejs", { "result": result, "data": data,  });
+    res.render("admin/view_bank_account.ejs", { "result": result, "data": data, });
 })
 router.post("/save_transaction", async function (req, res) {
     var d = req.body;
@@ -718,9 +788,9 @@ router.post("/save_transaction", async function (req, res) {
 });
 
 router.get("/edit_account/:account_id", async function (req, res) {
-   
+
     var data = await exe("SELECT * FROM bank_accounts WHERE account_id=?", [req.params.account_id]);
-    res.render("admin/edit_bank_account.ejs", { "data": data[0],  });
+    res.render("admin/edit_bank_account.ejs", { "data": data[0], });
 });
 router.post("/update_account", async function (req, res) {
     var d = req.body;
@@ -736,9 +806,9 @@ router.get("/delete_account/:account_id", async function (req, res) {
 
 // contractor
 router.get("/contractor", async function (req, res) {
-   
+
     var contractors = await exe("SELECT * FROM contractors");
-    res.render("admin/contractors_list.ejs", { "contractors": contractors,  });
+    res.render("admin/contractors_list.ejs", { "contractors": contractors, });
 });
 router.post("/save_contractor", async function (req, res) {
     var d = req.body;
@@ -754,7 +824,7 @@ router.post("/save_contractor", async function (req, res) {
     res.redirect("/admin/contractor");
 });
 router.get("/contracts/:contractor_id", async function (req, res) {
-   
+
     var contractor = await exe("SELECT * FROM contractors WHERE contractor_id=?", [req.params.contractor_id]);
     var payment2 = await exe("SELECT * FROM payments WHERE contractor_id=?", [req.params.contractor_id]);
     var contracts = await exe("SELECT * FROM contracts WHERE contractor_id=?", [req.params.contractor_id]);
@@ -771,13 +841,13 @@ router.get("/contracts/:contractor_id", async function (req, res) {
     var pendingToPay = lastPayment.length > 0 ? lastPayment[0].next_due_amount : 0;
     var nextDueAmount = pendingToPay;
 
-    res.render("admin/contractor_details.ejs", { contractor: contractor[0], payment: { paid_amount: totalPaid, pending_to_pay: pendingToPay, next_due_amount: nextDueAmount }, "payment2": payment2, "contracts": contracts,  });
+    res.render("admin/contractor_details.ejs", { contractor: contractor[0], payment: { paid_amount: totalPaid, pending_to_pay: pendingToPay, next_due_amount: nextDueAmount }, "payment2": payment2, "contracts": contracts, });
 
 });
 router.get("/edit_contractor/:contractor_id", async function (req, res) {
-   
+
     var contractor = await exe("SELECT * FROM contractors WHERE contractor_id=?", [req.params.contractor_id]);
-    res.render("admin/edit_contractor.ejs", { "contractor": contractor[0],  });
+    res.render("admin/edit_contractor.ejs", { "contractor": contractor[0], });
 });
 router.get("/edit_contractor/:contractor_id", async function (req, res) {
     var contractor = await exe("SELECT * FROM contractors WHERE contractor_id=?", [req.params.contractor_id]);
@@ -800,7 +870,7 @@ router.get("/delete_contractor/:contractor_id", async function (req, res) {
     res.redirect("/admin/contractor");
 });
 router.get("/pay_new_contract/:contractor_id", async function (req, res) {
-   
+
     var contractor = await exe("SELECT * FROM contractors WHERE contractor_id=?", [req.params.contractor_id]);
 
     // last payment for pending/next due
@@ -824,13 +894,13 @@ router.get("/pay_new_contract/:contractor_id", async function (req, res) {
             pending_to_pay: pendingToPay,
             next_due_amount: nextDueAmount
         },
-        
+
     });
 });
 router.get("/add_contract/:contractor_id", async function (req, res) {
-   
+
     var contractor = await exe("SELECT * FROM contractors WHERE contractor_id=?", [req.params.contractor_id]);
-    res.render("admin/add_contract.ejs", { contractor: contractor[0],  });
+    res.render("admin/add_contract.ejs", { contractor: contractor[0], });
 });
 router.post("/save_contract", async function (req, res) {
     let d = req.body;
@@ -890,10 +960,10 @@ router.post("/save_payment", async function (req, res) {
 
 // labours
 router.get("/labours/:contractor_id", async function (req, res) {
-   
+
     var contractor = await exe("SELECT * FROM contractors WHERE contractor_id=?", [req.params.contractor_id]);
     var labours = await exe("SELECT * FROM labours WHERE contractor_id=?", [req.params.contractor_id]);
-    res.render("admin/labour_list.ejs", { contractor: contractor[0], "labours": labours,  });
+    res.render("admin/labour_list.ejs", { contractor: contractor[0], "labours": labours, });
 });
 router.post("/add_labour", async function (req, res) {
     var d = req.body;
@@ -923,39 +993,39 @@ router.get("/delete_labour/:labour_id", async function (req, res) {
 
 // maintance
 router.get("/new_maintenance", async function (req, res) {
-   
+
     var sites = await exe("SELECT * FROM site");
 
-    res.render("admin/new_maintenance.ejs", { sites, flats: [],  });
+    res.render("admin/new_maintenance.ejs", { sites, flats: [], });
 });
 router.get("/check_maintenance/:site_id", async function (req, res) {
-   
+
     let site_id = req.params.site_id;
 
     var sites = await exe("SELECT * FROM site  ");
 
 
-    res.render("admin/check_maintenance.ejs", { sites,  });
+    res.render("admin/check_maintenance.ejs", { sites, });
     // var flats = await exe("SELECT * FROM flats WHERE site_id=?", [site_id]);
 
     // res.render("admin/new_maintenance.ejs", { sites, flats,  });
 });
 router.get("/pending_maintenance", async function (req, res) {
-   
+
     // var flats = await exe("SELECT * FROM flats WHERE status='Available'");
-    res.render("admin/pending_maintenance.ejs", {  });
+    res.render("admin/pending_maintenance.ejs", {});
 });
 router.get("/completed_maintenance", async function (req, res) {
-   
-    res.render("admin/completed_maintenance.ejs", {  });
+
+    res.render("admin/completed_maintenance.ejs", {});
 });
 
 
 // vendor
 router.get("/add_vendor", async function (req, res) {
     var vendors = await exe("SELECT * FROM vendors");
-   
-    res.render("admin/vendor_list.ejs", { "vendors": vendors,  });
+
+    res.render("admin/vendor_list.ejs", { "vendors": vendors, });
 });
 router.post("/save_vendor", async function (req, res) {
     var d = req.body;
@@ -969,9 +1039,9 @@ router.post("/save_vendor", async function (req, res) {
     res.redirect("/admin/vendor_list");
 });
 router.get("/edit_vendor/:vendor_id", async function (req, res) {
-   
+
     var data = await exe("SELECT * FROM vendors WHERE vendor_id=?", [req.params.vendor_id]);
-    res.render("admin/edit_vendoe.ejs", { "data": data[0],  });
+    res.render("admin/edit_vendoe.ejs", { "data": data[0], });
 });
 router.get("/delete_vendor/:vendor_id", async function (req, res) {
     var result = await exe("DELETE FROM vendors WHERE vendor_id=?", [req.params.vendor_id]);
@@ -987,11 +1057,11 @@ router.post("/update_vendor", async function (req, res) {
 
 // inquiries
 router.get("/pro_inq", async function (req, res) {
-   
+
     var vendor = await exe("SELECT * FROM vendors");
     // var vendor = await exe("SELECT * FROM vendors WHERE vendor_id=?",[req.params.vendor_id]);
     var employee = await exe("SELECT * FROM employees");
-    res.render("admin/Pro_inq.ejs", { "vendor": vendor, "employee": employee,  });
+    res.render("admin/Pro_inq.ejs", { "vendor": vendor, "employee": employee, });
 
 });
 router.post("/save_inquiries", async function (req, res) {
@@ -1043,9 +1113,9 @@ router.post("/save_inquiries", async function (req, res) {
     }
 });
 router.get("/Processing_inq_list", async function (req, res) {
-   
+
     var inquiry = await exe("SELECT * FROM inquiries");
-    res.render("admin/Processing_inq_list.ejs", { inquiries: inquiry,  });
+    res.render("admin/Processing_inq_list.ejs", { inquiries: inquiry, });
 });
 
 
@@ -1107,7 +1177,7 @@ router.post("/save_payment_recvied", async function (req, res) {
 });
 
 router.get("/view_bill/:inquiry_id", async function (req, res) {
-   
+
     const items = await exe("SELECT * FROM inquiries WHERE inquiry_id=?", [req.params.inquiry_id]);
 
     if (items.length === 0) return res.send("Inquiry not found");
@@ -1122,7 +1192,7 @@ router.get("/view_bill/:inquiry_id", async function (req, res) {
         items: items
     };
 
-    res.render("admin/view_inquiry.ejs", { inquiry,  });
+    res.render("admin/view_inquiry.ejs", { inquiry, });
 });
 router.get("/delete_inquiry/:inquiry_id", async function (req, res) {
     var result = await exe("DELETE FROM inquiries WHERE inquiry_id=?", [req.params.inquiry_id]);
@@ -1132,10 +1202,10 @@ router.get("/delete_inquiry/:inquiry_id", async function (req, res) {
 
 // purchese material
 router.get("/Purchase_raw_material", async function (req, res) {
-   
+
     var vendor = await exe("SELECT * FROM vendors");
     var employee = await exe("SELECT * FROM employees ");
-    res.render("admin/purchase_raw_material.ejs", { "vendor": vendor, "employee": employee,  })
+    res.render("admin/purchase_raw_material.ejs", { "vendor": vendor, "employee": employee, })
 });
 router.post("/save_new_raw_material", async function (req, res) {
     try {
@@ -1210,39 +1280,39 @@ router.post("/save_new_raw_material", async function (req, res) {
     }
 });
 router.get("/Purchase_report", async function (req, res) {
-   
+
     var data = await exe("SELECT * FROM raw_material_purchases")
-    res.render("admin/Purchase_report.ejs", { "data": data,  })
+    res.render("admin/Purchase_report.ejs", { "data": data, })
 })
 router.get("/delete_purchase/:purchase_id", async function (req, res) {
     var result = await exe("DELETE FROM raw_material_purchases WHERE purchase_id=?", [req.params.purchase_id]);
     res.redirect("/admin/Purchase_report");
 });
 router.get("/purchase_report_product", async function (req, res) {
-   
+
     var data = await exe("SELECT * FROM raw_material_purchases")
 
-    res.render("admin/purchase_report_product.ejs", { "data": data,  })
+    res.render("admin/purchase_report_product.ejs", { "data": data, })
 });
 router.get("/view_purchase_details/:purchase_id", async function (req, res) {
-   
+
     var data = await exe("SELECT * FROM raw_material_purchases WHERE purchase_id=?", [req.params.purchase_id])
 
-    res.render("admin/view_purchase_details.ejs", { "data": data,  })
+    res.render("admin/view_purchase_details.ejs", { "data": data, })
 });
 router.get("/view_purchase_bill/:purchase_id", async function (req, res) {
-   
+
     var vendor = await exe("SELECT * FROM raw_material_purchases WHERE purchase_id=?", [req.params.purchase_id])
     var vendors = await exe("SELECT * FROM vendors ")
 
-    res.render("admin/view_purchase_bill.ejs", { "vendor": vendor, "vendors": vendors,  })
+    res.render("admin/view_purchase_bill.ejs", { "vendor": vendor, "vendors": vendors, })
 })
 router.get("/my_balance", async function (req, res) {
-   
+
 
     var balance = await exe("SELECT * FROM bank_accounts");
 
-    res.render("admin/my balance.ejs", { "balance": balance,  })
+    res.render("admin/my balance.ejs", { "balance": balance, })
 });
 
 
