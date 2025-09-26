@@ -419,7 +419,7 @@ router.get('/gst_unit', async function (req, res) {
 // employee
 router.get('/employee_list', async function (req, res) {
    
-    res.render("admin/contractor_list.ejs", {  });
+    res.render("admin/contractor_list.ejs");
 })
 router.get('/add_employee', async function (req, res) {
    
