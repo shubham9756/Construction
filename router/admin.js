@@ -747,7 +747,7 @@ router.post("/save_account", async function (req, res) {
     var d = req.body;
     var sql = `INSERT INTO bank_accounts(bank_name,account_holder,account_number,ifsc_code,current_balance)VALUES(?,?,?,?,?)`;
     var result = await exe(sql, [d.bank_name, d.account_holder, d.account_number, d.ifsc_code, d.current_balance]);
-    res.redirect("/admin/bank_accounts");
+    res.redirect("/bank_accounts");
 
 
 })
@@ -783,8 +783,10 @@ router.post("/save_transaction", async function (req, res) {
 
     await exe("UPDATE bank_accounts SET current_balance=? WHERE account_id=?", [current_balance, d.account_id]);
 
-    res.redirect("/admin/view_account/" + d.account_id);
+    res.redirect("/view_account/" + d.account_id);
 });
+
+
 
 router.get("/edit_account/:account_id", async function (req, res) {
 
@@ -795,11 +797,11 @@ router.post("/update_account", async function (req, res) {
     var d = req.body;
     var sql = `UPDATE bank_accounts SET bank_name=?,account_holder=?,account_number=?,ifsc_code=?,current_balance=? WHERE account_id=?`;
     var result = await exe(sql, [d.bank_name, d.account_holder, d.account_number, d.ifsc_code, d.current_balance, d.account_id]);
-    res.redirect("/admin/bank_accounts");
+    res.redirect("/bank_accounts");
 })
 router.get("/delete_account/:account_id", async function (req, res) {
     var result = await exe("DELETE FROM bank_accounts WHERE account_id=?", [req.params.account_id]);
-    res.redirect("/admin/bank_accounts");
+    res.redirect("/bank_accounts");
 });
 
 
@@ -820,7 +822,7 @@ router.post("/save_contractor", async function (req, res) {
 
     var sql = `INSERT INTO contractors(contractor_name,contractor_address,contractor_details,contractor_mobile,contractor_aadhar,contractor_pan,contractor_type,contractor_image)VALUES(?,?,?,?,?,?,?,?)`;
     var result = await exe(sql, [d.contractor_name, d.contractor_address, d.contractor_details, d.contractor_mobile, d.contractor_aadhar, d.contractor_pan, d.contractor_type, filename]);
-    res.redirect("/admin/contractor");
+    res.redirect("/contractor");
 });
 router.get("/contracts/:contractor_id", async function (req, res) {
 
@@ -862,11 +864,11 @@ router.post("/update_contractor", async function (req, res) {
 
     var sql = `UPDATE contractors SET contractor_name=?, contractor_address=?, contractor_details=?, contractor_mobile=?, contractor_aadhar=?, contractor_pan=?, contractor_type=?, contractor_image=? WHERE contractor_id=?`;
     var result = await exe(sql, [d.contractor_name, d.contractor_address, d.contractor_details, d.contractor_mobile, d.contractor_aadhar, d.contractor_pan, d.contractor_type, filename, d.contractor_id]);
-    res.redirect("/admin/contractor");
+    res.redirect("/contractor");
 });
 router.get("/delete_contractor/:contractor_id", async function (req, res) {
     var result = await exe("DELETE FROM contractors WHERE contractor_id=?", [req.params.contractor_id]);
-    res.redirect("/admin/contractor");
+    res.redirect("/contractor");
 });
 router.get("/pay_new_contract/:contractor_id", async function (req, res) {
 
@@ -925,7 +927,7 @@ router.post("/save_contract", async function (req, res) {
         d.contract_details
     ]);
 
-    res.redirect("/admin/add_contract/" + d.contractor_id);
+    res.redirect("/add_contract/" + d.contractor_id);
 });
 router.post("/save_payment", async function (req, res) {
     let d = req.body;
@@ -954,7 +956,7 @@ router.post("/save_payment", async function (req, res) {
         nextDue
     ]);
 
-    res.redirect("/admin/pay_new_contract/" + contractorId);
+    res.redirect("/pay_new_contract/" + contractorId);
 });
 
 // labours
@@ -973,7 +975,7 @@ router.post("/add_labour", async function (req, res) {
     }
     var sql = `INSERT INTO labours(contractor_id,labour_name,labour_address,joining_date,labour_mobile,aadhar_card,pan_card,daily_payments,other_details,labour_photo)VALUES(?,?,?,?,?,?,?,?,?,?)`;
     var result = await exe(sql, [d.contractor_id, d.labour_name, d.labour_address, d.joining_date, d.labour_mobile, d.aadhar_card, d.pan_card, d.daily_payments, d.other_details, filename]);
-    res.redirect("/admin/labours/" + d.contractor_id);
+    res.redirect("/labours/" + d.contractor_id);
 });
 router.get("/delete_labour/:labour_id", async function (req, res) {
     var id = req.params.labour_id;
@@ -985,7 +987,7 @@ router.get("/delete_labour/:labour_id", async function (req, res) {
     await exe("DELETE FROM labours WHERE labour_id=?", [id]);
 
 
-    res.redirect("/admin/labours/" + contractorId);
+    res.redirect("/labours/" + contractorId);
 
 });
 
@@ -1035,7 +1037,7 @@ router.post("/save_vendor", async function (req, res) {
 
     var sql = `INSERT INTO vendors(vendor_name,vendor_address,vendor_other_details,vendor_phone,vendor_gst_no,vendor_phone2,vendor_date)VALUES(?,?,?,?,?,?,?)`;
     var result = await exe(sql, [d.vendor_name, d.vendor_address, d.vendor_other_details, d.vendor_phone, d.vendor_gst_no, d.vendor_phone2, d.vendoe_date]);
-    res.redirect("/admin/vendor_list");
+    res.redirect("/vendor_list");
 });
 router.get("/edit_vendor/:vendor_id", async function (req, res) {
 
@@ -1044,13 +1046,13 @@ router.get("/edit_vendor/:vendor_id", async function (req, res) {
 });
 router.get("/delete_vendor/:vendor_id", async function (req, res) {
     var result = await exe("DELETE FROM vendors WHERE vendor_id=?", [req.params.vendor_id]);
-    res.redirect("/admin/add_vendor");
+    res.redirect("/add_vendor");
 });
 router.post("/update_vendor", async function (req, res) {
     var d = req.body;
     var sql = `UPDATE vendors SET vendor_name=?,vendor_address=?,vendor_other_details=?,vendor_phone=?,vendor_gst_no=?,vendor_phone2=? WHERE vendor_id=?`;
     var result = await exe(sql, [d.vendor_name, d.vendor_address, d.vendor_other_details, d.vendor_phone, d.vendor_gst_no, d.vendor_phone2, d.vendor_id]);
-    res.redirect("/admin/add_vendor");
+    res.redirect("/add_vendor");
 
 });
 
@@ -1105,7 +1107,7 @@ router.post("/save_inquiries", async function (req, res) {
         }
 
 
-        res.redirect("/admin/pro_inq");
+        res.redirect("/pro_inq");
     } catch (err) {
         console.error(err);
         res.status(500).send("Database error");
@@ -1271,7 +1273,7 @@ router.post("/save_new_raw_material", async function (req, res) {
             );
         }
 
-        res.redirect("/admin/Purchase_raw_material");
+        res.redirect("/Purchase_raw_material");
 
     } catch (err) {
         console.error(err);
@@ -1285,7 +1287,7 @@ router.get("/Purchase_report", async function (req, res) {
 })
 router.get("/delete_purchase/:purchase_id", async function (req, res) {
     var result = await exe("DELETE FROM raw_material_purchases WHERE purchase_id=?", [req.params.purchase_id]);
-    res.redirect("/admin/Purchase_report");
+    res.redirect("/Purchase_report");
 });
 router.get("/purchase_report_product", async function (req, res) {
 
