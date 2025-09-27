@@ -488,7 +488,8 @@ router.get('/gst_unit', async function (req, res) {
 
 // employee
 router.get('/employee_list', async function (req, res) {
-    res.render("admin/contractor_list.ejs");
+    var employee = await exe("SELECT * FROM employees ");
+    res.render("admin/employees_list.ejs", { "employees": employee });
 })
 router.get('/add_employee', async function (req, res) {
 
@@ -508,6 +509,30 @@ router.post('/save_employee', async function (req, res) {
     res.redirect('/add_employee');
 });
 
+router.get("/edit_employee/:employee_id", async function (req, res) {
+    var employee = await exe("SELECT * FROM employees WHERE employee_id=?", [req.params.employee_id]);
+    var result = await exe("SELECT * FROM employee_types WHERE status='Active'");
+    res.render("admin/edit_employee.ejs", { employee: employee[0],  result });
+});
+
+router.get("/delete_employee/:employee_id", async function (req, res) {
+    var sql = "DELETE FROM employees WHERE employee_id=?";
+    var result = await exe(sql, [req.params.employee_id]);
+    res.redirect('/employee_list');
+});
+
+router.post("/update_employee/:employee_id", async function (req, res) {
+    var d = req.body;
+    var filename = "";
+    if (req.files) {
+        var filename = new Date().getTime() + req.files.employee_photo.name;
+        req.files.employee_photo.mv("public/image/employee/" + filename);
+    }
+    var sql = `UPDATE employees SET employee_name=?, employee_email=?, employee_mobile=?, employee_address=?, employee_photo=?, employee_type_id=?, pan_number=?, aadhar_number=?, employee_password=?, employee_dob=?, employee_position=?, employee_in_time=?, employee_monthly_payment=?, employee_joining_date=? WHERE employee_id=?`;
+    var result = await exe(sql, [d.employee_name, d.employee_email, d.employee_mobile, d.employee_address, filename, d.employee_type, d.pan_number, d.aadhar_number, d.employee_password, d.employee_dob, d.employee_position, d.employee_in_time, d.employee_monthly_payment, d.employee_joining_date, req.params.employee_id]);
+
+    res.redirect('/employee_list');
+});
 
 // type
 router.post('/save_type', async function (req, res) {
