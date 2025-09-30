@@ -1,377 +1,430 @@
 <%-include('navbar.ejs')%>
 
-        <style>
-            @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
-            body {
-                font-family: 'Inter', sans-serif;
-                background-color: #f1f5f9;
-            }
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f1f5f9;
+    }
 
-            .header {
-                background-color: #2949b2;
-                color: #fff;
-                padding: 1.5rem;
-                border-radius: 0.5rem;
-            }
+    .header {
+      background-color: #2949b2;
+      color: #fff;
+      padding: 1.5rem;
+      border-radius: 0.5rem;
+    }
 
-            .header-title {
-                font-size: 1.5rem;
-                font-weight: 700;
-            }
+    .header-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
 
-            .header-subtitle {
-                font-size: 1rem;
-                font-weight: 400;
-            }
+    .header-subtitle {
+      font-size: 1rem;
+      font-weight: 400;
+    }
 
-            .dashboard-card {
-                background-color: #fff;
-                border-radius: 0.5rem;
-                padding: 1.5rem;
-                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-                display: flex;
-                flex-direction: row;
-                align-items: center;
-                height: 100%;
-            }
+    .dashboard-card {
+      background-color: #fff;
+      border-radius: 0.5rem;
+      padding: 1.5rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      height: 100%;
+    }
 
-            .card-header-icon {
-                font-size: 2rem;
-                color: #fff;
-                padding: 0.75rem;
-                border-radius: 0.5rem;
-            }
+    .card-header-icon {
+      font-size: 2rem;
+      color: #fff;
+      padding: 0.75rem;
+      border-radius: 0.5rem;
+    }
 
-            .card-body {
-                flex-grow: 1;
-            }
+    .card-body {
+      flex-grow: 1;
+    }
 
-            .card-value {
-                font-size: 2.5rem;
-                font-weight: 700;
-                margin-top: 0.5rem;
-            }
+    .card-value {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-top: 0.5rem;
+    }
 
-            .card-label {
-                font-size: 0.875rem;
-                font-weight: 500;
-                color: #64748b;
-                text-transform: uppercase;
-            }
+    .card-label {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #64748b;
+      text-transform: uppercase;
+    }
 
-            .card-revenue {
-                font-size: 2.5rem;
-                font-weight: 700;
-                color: #2949b2;
-            }
+    .card-revenue {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #2949b2;
+    }
 
-            .card-link {
-                font-size: 0.875rem;
-                color: #2949b2;
-                font-weight: 600;
-                text-decoration: none;
-                display: inline-flex;
-                align-items: center;
-            }
+    .card-link {
+      font-size: 0.875rem;
+      color: #2949b2;
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+    }
 
-            .card-link i {
-                margin-left: 0.25rem;
-            }
+    .card-link i {
+      margin-left: 0.25rem;
+    }
 
-            .financial-card {
-                border-radius: 0.5rem;
-                padding: 1.5rem;
-                text-align: center;
-                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-                height: 100%;
-            }
+    .financial-card {
+      border-radius: 0.5rem;
+      padding: 1.5rem;
+      text-align: center;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      height: 100%;
+    }
 
-            .card-blue {
-                background-color: #e0f2fe;
-                color: #0c4a6e;
-            }
+    .card-blue {
+      background-color: #e0f2fe;
+      color: #0c4a6e;
+    }
 
-            .card-green {
-                background-color: #dcfce7;
-                color: #14532d;
-            }
+    .card-green {
+      background-color: #dcfce7;
+      color: #14532d;
+    }
 
-            .card-pink {
-                background-color: #fce7f3;
-                color: #9d174d;
-            }
+    .card-pink {
+      background-color: #fce7f3;
+      color: #9d174d;
+    }
 
-            .financial-value {
-                font-size: 2rem;
-                font-weight: 700;
-                margin-bottom: 0.5rem;
-            }
+    .financial-value {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
 
-            .financial-label {
-                font-size: 0.875rem;
-                font-weight: 500;
-                text-transform: uppercase;
-            }
+    .financial-label {
+      font-size: 0.875rem;
+      font-weight: 500;
+      text-transform: uppercase;
+    }
 
-            .revenue-growth {
-                color: #16a34a;
-            }
+    .revenue-growth {
+      color: #16a34a;
+    }
 
-            .site-card,
-            .customer-card,
-            .alert-card {
-                background-color: #fff;
-                border-radius: 0.5rem;
-                padding: 1.5rem;
-                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-                margin-top: 2rem;
-            }
+    .site-card,
+    .customer-card,
+    .alert-card {
+      background-color: #fff;
+      border-radius: 0.5rem;
+      padding: 1.5rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      margin-top: 2rem;
+    }
 
-            .stat-card {
-                border-radius: 0.5rem;
-                padding: 1rem;
-                text-align: center;
-                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-                height: 100%;
-            }
+    .stat-card {
+      border-radius: 0.5rem;
+      padding: 1rem;
+      text-align: center;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      height: 100%;
+    }
 
-            .stat-value {
-                font-size: 2rem;
-                font-weight: 700;
-            }
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 700;
+    }
 
-            .stat-label {
-                font-size: 0.875rem;
-                font-weight: 500;
-                color: #6c757d;
-            }
+    .stat-label {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #6c757d;
+    }
 
-            .card-lightblue {
-                background-color: #e0f7ff;
-                color: #007bb6;
-            }
+    .card-lightblue {
+      background-color: #e0f7ff;
+      color: #007bb6;
+    }
 
-            .card-lightgreen {
-                background-color: #f0fdf4;
-                color: #2e7d32;
-            }
+    .card-lightgreen {
+      background-color: #f0fdf4;
+      color: #2e7d32;
+    }
 
-            .card-lightyellow {
-                background-color: #fffbeb;
-                color: #ffc107;
-            }
+    .card-lightyellow {
+      background-color: #fffbeb;
+      color: #ffc107;
+    }
 
-            .card-lightpurple {
-                background-color: #f3e8ff;
-                color: #6a1b9a;
-            }
+    .card-lightpurple {
+      background-color: #f3e8ff;
+      color: #6a1b9a;
+    }
 
-            .alert-card-header {
-                padding: 1rem;
-                font-weight: 700;
-                color: #fff;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                gap: 0.5rem;
-            }
+    .alert-card-header {
+      padding: 1rem;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
 
-            .alert-orange {
-                background-color: #fdba74;
-            }
+    .alert-orange {
+      background-color: #fdba74;
+    }
 
-            .alert-purple {
-                background-color: #9c6cde;
-            }
+    .alert-purple {
+      background-color: #9c6cde;
+    }
 
-            .alert-content {
-                padding: 1.5rem;
-                text-align: center;
-            }
+    .alert-content {
+      padding: 1.5rem;
+      text-align: center;
+    }
 
-            .alert-icon {
-                font-size: 4rem;
-                color: #d1d5db;
-            }
+    .alert-icon {
+      font-size: 4rem;
+      color: #d1d5db;
+    }
 
-            .alert-message {
-                font-size: 1.25rem;
-                font-weight: 600;
-                margin-top: 1rem;
-                color: #1f2937;
-            }
+    .alert-message {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-top: 1rem;
+      color: #1f2937;
+    }
 
-            .alert-subtitle {
-                font-size: 0.875rem;
-                color: #6b7280;
-                margin-top: 0.5rem;
-            }
-        </style>
-        <div class="container-fluid p-4">
-            <!-- Header -->
-            <div class="header row">
-                <div class="col-md-8">
-                    <h1 class="header-title">DASHBOARD OVERVIEW</h1>
-                    <p class="header-subtitle mb-0">WELCOME TO YOUR CONSTRUCTION MANAGEMENT SYSTEM</p>
-                </div>
-                <div class="col-md-4 text-md-end mt-3 mt-md-0">
-                    <p class="mb-0">LAST UPDATED</p>
-                    <p class="mb-0">12 SEP 2025, 11:56 AM</p>
-                </div>
+    .alert-subtitle {
+      font-size: 0.875rem;
+      color: #6b7280;
+      margin-top: 0.5rem;
+    }
+  </style>
+  <div class="container-fluid p-4">
+    <!-- Header -->
+    <div class="header row">
+      <div class="col-md-8">
+        <h1 class="header-title">DASHBOARD OVERVIEW</h1>
+        <p class="header-subtitle mb-0">WELCOME TO YOUR CONSTRUCTION MANAGEMENT SYSTEM</p>
+      </div>
+      <div class="col-md-4 text-md-end mt-3 mt-md-0">
+        <p class="mb-0">LAST UPDATED</p>
+        <p class="mb-0">12 SEP 2025, 11:56 AM</p>
+      </div>
+    </div>
+
+    <!-- Dashboard Cards -->
+    <div class="row g-4 mt-3">
+      <div class="col-sm-6 col-lg-3">
+        <div class="dashboard-card">
+          <span class="card-header-icon bg-primary"><i class="fas fa-user-friends"></i></span>
+          <div class="ms-3 card-body">
+            <div class="card-value">
+              <%= presentEmp %>
             </div>
+            <div class="card-label">PRESENT EMPLOYEES</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-6 col-lg-3">
+        <div class="dashboard-card">
+          <span class="card-header-icon bg-success"><i class="fas fa-users"></i></span>
+          <div class="ms-3 card-body">
+            <div class="card-value">
+              <%= totalCust %>
+            </div>
+            <div class="card-label">TOTAL CUSTOMERS</div>
+            <a href="/customor_list" class="card-link mt-2">VIEW ALL <i class="fas fa-arrow-right"></i></a>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-6 col-lg-3">
+        <div class="dashboard-card">
+          <span class="card-header-icon bg-info"><i class="fas fa-building"></i></span>
+          <div class="ms-3 card-body">
 
-            <!-- Dashboard Cards -->
-            <div class="row g-4 mt-3">
-                <div class="col-sm-6 col-lg-3">
-                    <div class="dashboard-card">
-                        <span class="card-header-icon bg-primary"><i class="fas fa-user-friends"></i></span>
-                        <div class="ms-3 card-body">
-                            <div class="card-value">0</div>
-                            <div class="card-label">PRESENT EMPLOYEES</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-6 col-lg-3">
-                    <div class="dashboard-card">
-                        <span class="card-header-icon bg-success"><i class="fas fa-users"></i></span>
-                        <div class="ms-3 card-body">
-                            <div class="card-value">9</div>
-                            <div class="card-label">TOTAL CUSTOMERS</div>
-                            <a href="TotalCustomers.html" class="card-link mt-2">VIEW ALL <i
-                                    class="fas fa-arrow-right"></i></a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-6 col-lg-3">
-                    <div class="dashboard-card">
-                        <span class="card-header-icon bg-info"><i class="fas fa-building"></i></span>
-                        <div class="ms-3 card-body">
-                            <div class="card-value">1</div>
-                            <div class="card-label">TOTAL SITES</div>
-                            <small class="text-muted d-block">ACTIVE PROJECTS</small>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-6 col-lg-3">
-                    <div class="dashboard-card">
-                        <span class="card-header-icon bg-warning"><i class="fas fa-rupee-sign"></i></span>
-                        <div class="ms-3 card-body">
-                            <div class="card-revenue">₹0L</div>
-                            <div class="card-label">TOTAL REVENUE</div>
-                            <div class="revenue-growth"><i class="fas fa-arrow-up"></i> 0% COLLECTED</div>
-                        </div>
-                    </div>
-                </div>
+            <div class="card-value">
+              <%= totalSites %>
             </div>
+            <div class="card-label">TOTAL SITES</div>
+            <small class="text-muted d-block">ACTIVE PROJECTS</small>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-6 col-lg-3">
+        <div class="dashboard-card">
+          <span class="card-header-icon bg-warning"><i class="fas fa-rupee-sign"></i></span>
+          <div class="ms-3 card-body">
+            <div class="card-revenue">₹<%= totalBalance.toLocaleString() %>
+            </div>
+            <div class="card-label">TOTAL REVENUE</div>
+            <div class="revenue-growth"><i class="fas fa-arrow-up"></i> 0% COLLECTED</div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-            <!-- Financial Overview -->
-            <div class="mt-5">
-                <h3>FINANCIAL OVERVIEW</h3>
-                <p>COMPLETE FINANCIAL SUMMARY AND PAYMENT STATUS</p>
-            </div>
-            <div class="row g-4 mt-3">
-                <div class="col-md-4">
-                    <div class="financial-card card-blue">
-                        <div class="financial-value">₹0</div>
-                        <div class="financial-label">TOTAL AMOUNT</div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="financial-card card-green">
-                        <div class="financial-value">₹0</div>
-                        <div class="financial-label">RECEIVED AMOUNT</div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="financial-card card-pink">
-                        <div class="financial-value">₹0</div>
-                        <div class="financial-label">PENDING AMOUNT</div>
-                    </div>
-                </div>
-            </div>
+    <!-- Financial Overview -->
+    <div class="mt-5">
+      <h3>FINANCIAL OVERVIEW</h3>
+      <p>COMPLETE FINANCIAL SUMMARY AND PAYMENT STATUS</p>
+    </div>
+    <div class="row g-4 mt-3">
+      <div class="col-md-4">
+        <div class="financial-card card-blue">
+          <div class="financial-value">₹<%= totalAmount.toLocaleString('en-IN') %>
+          </div>
+          <div class="financial-label">TOTAL AMOUNT</div>
+        </div>
+      </div>
 
-            <!-- Techno Site -->
-            <div class="site-card">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div class="d-flex align-items-center">
-                        <i class="fas fa-building text-primary"></i>
-                        <h3 class="ms-2 mb-0">TECHNO - SITE OVERVIEW</h3>
-                    </div>
-                    <button class="view-details-btn btn btn-sm">VIEW DETAILS <i class="fas fa-arrow-right"></i></button>
-                </div>
-                <p class="text-muted mt-2 mb-4">PROPERTY MANAGEMENT AND OCCUPANCY STATUS</p>
-                <div class="row g-3">
-                    <div class="col-sm-6 col-lg-3">
-                        <div class="stat-card card-lightblue">
-                            <div class="stat-value">1</div>
-                            <div class="stat-label">AVAILABLE FLATS</div>
-                        </div>
-                    </div>
-                    <div class="col-sm-6 col-lg-3">
-                        <div class="stat-card card-lightgreen">
-                            <div class="stat-value">0</div>
-                            <div class="stat-label">SOLD FLATS</div>
-                        </div>
-                    </div>
-                    <div class="col-sm-6 col-lg-3">
-                        <div class="stat-card card-lightyellow">
-                            <div class="stat-value">0</div>
-                            <div class="stat-label">RENTED FLATS</div>
-                        </div>
-                    </div>
-                    <div class="col-sm-6 col-lg-3">
-                        <div class="stat-card card-lightpurple">
-                            <div class="stat-value">0</div>
-                            <div class="stat-label">SITE CONTACTS</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+      <div class="col-md-4">
+        <div class="financial-card card-green">
+          <div class="financial-value">₹<%= receivedAmount.toLocaleString('en-IN') %>
+          </div>
+          <div class="financial-label">RECEIVED AMOUNT</div>
+        </div>
+      </div>
 
-            <!-- Customer Payments -->
-            <div class="customer-card">
-                <div class="d-flex align-items-center">
-                    <i class="fas fa-user-friends text-primary"></i>
-                    <h3 class="ms-2 mb-0">CUSTOMER PAYMENT DETAILS</h3>
-                </div>
-                <p class="text-muted mt-2 mb-4">PAYMENT STATUS AND FINANCIAL OVERVIEW FOR ALL CUSTOMERS</p>
-                <div class="customer-card-content bg-light p-3 rounded"> <!-- placeholder --></div>
-            </div>
+      <div class="col-md-4">
+        <div class="financial-card card-pink">
+          <div class="financial-value">₹<%= pendingAmount.toLocaleString('en-IN') %>
+          </div>
+          <div class="financial-label">PENDING AMOUNT</div>
+        </div>
+      </div>
+    </div>
 
-            <!-- Enquiry + Maintenance -->
-            <div class="row g-4 mt-3">
-                <div class="col-md-6">
-                    <div class="alert-card">
-                        <div class="alert-card-header alert-orange"><i class="fas fa-bell"></i> ENQUIRY ALERTS</div>
-                        <div class="alert-content"><i class="fas fa-check-circle alert-icon"></i>
-                            <div class="alert-message">NO ENQUIRY ALERTS</div>
-                            <div class="alert-subtitle">ALL ENQUIRIES ARE UP TO DATE</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="alert-card">
-                        <div class="alert-card-header alert-orange"><i class="fas fa-tools"></i> PENDING MAINTENANCE
-                        </div>
-                        <div class="alert-content"><i class="fas fa-check-circle alert-icon"></i>
-                            <div class="alert-message">NO PENDING MAINTENANCE</div>
-                            <div class="alert-subtitle">ALL MAINTENANCE PAYMENTS ARE UP TO DATE</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Deadlines -->
-            <div class="alert-card mt-4">
-                <div class="alert-card-header alert-purple"><i class="fas fa-exclamation-triangle"></i> DEADLINES REPORT
-                </div>
-                <div class="alert-content">
-                    <p class="text-muted">PAYMENT DEADLINES AND OVERDUE STATUS TRACKING</p><i
-                        class="fas fa-check-circle alert-icon"></i>
-                    <div class="alert-message">NO DEADLINE REPORTS</div>
-                </div>
+    <!-- Techno Site -->
+    <div class="site-card">
+      <div class="d-flex justify-content-between align-items-center">
+        <div class="d-flex align-items-center">
+          <i class="fas fa-building text-primary"></i>
+          <h3 class="ms-2 mb-0">TECHNO - SITE OVERVIEW</h3>
+        </div>
+        <button class="view-details-btn btn btn-sm">VIEW DETAILS <i class="fas fa-arrow-right"></i></button>
+      </div>
+      <p class="text-muted mt-2 mb-4">PROPERTY MANAGEMENT AND OCCUPANCY STATUS</p>
+      <div class="row g-3">
+        <div class="col-sm-6 col-lg-3">
+          <div class="stat-card card-lightblue">
+            <div class="stat-value">
+              <%= availableFlats %>
             </div>
+            <div class="stat-label">AVAILABLE FLATS</div>
+          </div>
         </div>
 
-    <%-include('footer.ejs')%>
+        <div class="col-sm-6 col-lg-3">
+          <div class="stat-card card-lightgreen">
+            <div class="stat-value">
+              <%= soldFlats %>
+            </div>
+            <div class="stat-label">SOLD FLATS</div>
+          </div>
+        </div>
+
+        <div class="col-sm-6 col-lg-3">
+          <div class="stat-card card-lightyellow">
+            <div class="stat-value">
+              <%= rentedFlats %>
+            </div>
+            <div class="stat-label">RENTED FLATS</div>
+          </div>
+        </div>
+
+        <div class="col-sm-6 col-lg-3">
+          <div class="stat-card card-lightpurple">
+            <div class="stat-value">
+              <%= totalSites %>
+            </div>
+            <div class="stat-label">SITE CONTACTS</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+
+
+    <!-- Enquiry + Maintenance -->
+    <div class="row g-4 mt-3">
+      <div class="col-md-6">
+        <div class="alert-card">
+          <div class="alert-card-header alert-orange">
+            <i class="fas fa-bell"></i> ENQUIRY ALERTS
+          </div>
+
+          <% if (enquiryAlerts.length===0) { %>
+            <div class="alert-content text-center">
+              <i class="fas fa-check-circle alert-icon"></i>
+              <div class="alert-message">NO ENQUIRY ALERTS</div>
+              <div class="alert-subtitle">ALL ENQUIRIES ARE UP TO DATE</div>
+            </div>
+            <% } else { %>
+              <div class="table-responsive">
+                <table class="table table-borderless mb-0">
+                  <thead>
+                    <tr>
+                      <th>CUSTOMER</th>
+                      <th>REMINDER DATE</th>
+                      <th>ACTION</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% enquiryAlerts.forEach(enquiry=> { %>
+                      <tr>
+                        <td><i class="fas fa-user"></i>
+                          <%= enquiry.customer_name %>
+                        </td>
+                        <td><i class="fas fa-calendar-alt"></i>
+                          <%= enquiry.reminder_date.toISOString().split('T')[0] %>
+                        </td>
+                        <td>
+                          <a href="/new_enquiry" class="btn btn-sm btn-purple">
+                            <i class="fas fa-eye"></i> VIEW
+                          </a>
+                        </td>
+                      </tr>
+                      <% }) %>
+                  </tbody>
+                </table>
+              </div>
+              <% } %>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="alert-card">
+          <div class="alert-card-header alert-orange"><i class="fas fa-tools"></i> PENDING MAINTENANCE
+          </div>
+          <div class="alert-content"><i class="fas fa-check-circle alert-icon"></i>
+            <div class="alert-message">NO PENDING MAINTENANCE</div>
+            <div class="alert-subtitle">ALL MAINTENANCE PAYMENTS ARE UP TO DATE</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Deadlines -->
+    <div class="alert-card mt-4">
+      <div class="alert-card-header alert-purple"><i class="fas fa-exclamation-triangle"></i> DEADLINES REPORT
+      </div>
+      <div class="alert-content">
+        <p class="text-muted">PAYMENT DEADLINES AND OVERDUE STATUS TRACKING</p><i
+          class="fas fa-check-circle alert-icon"></i>
+        <div class="alert-message">NO DEADLINE REPORTS</div>
+      </div>
+    </div>
+  </div>
+
+  <%-include('footer.ejs')%>

@@ -8,12 +8,11 @@
     <thead class="table-light">
       <tr>
         <th>Action</th>
-        <th>SN</th>
         <th>Site Name</th>
         <th>Site Address</th>
         <th>Site Manger </th>
         <th>Site Start Date</th>
-        <th>Descreption</th>
+        <th width="200px">Descreption</th>
       </tr>
     </thead>
     <tbody>
@@ -23,7 +22,6 @@
           <a href="/view_site/<%-site[i].site_id%>" class="btn btn-sm btn-outline-primary"><i class="fa fa-eye"></i></a>
           <a href="/edit_site/<%-site[i].site_id%>" class="btn btn-sm btn-outline-warning"><i class="fa fa-pen"></i></a>
         </td>
-        <td><%- i+1 %></td>
         <td><%-site[i].site_name%></td>
         <td><%- site[i].site_location%></td>
         <td><%- site[i].site_manager_name%></td>

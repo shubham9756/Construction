@@ -1,6 +1,8 @@
 <%-include('navbar')%>
 
     <div class="container my-5">
+<!-- Bootstrap Icons CDN -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
         <!-- Site Details -->
         <h6 class="bg-primary text-white fw-bold p-2 mb-2">SITE DETAILS 'NAYANTARA APARTMENT'</h6>
@@ -28,8 +30,8 @@
                             </tr>
                         </tbody>
                     </table>
-                    <button class="btn btn-primary " style="background-color:#886ab5 !important;border: none;">EDIT SITE
-                        DETAILS</button>
+                   <a href="/edit_site/<%-sites[0].site_id%>"> <button class="btn btn-primary " style="background-color:#886ab5 !important;border: none;">EDIT SITE
+                        DETAILS</button></a>
                 </div>
 
                 <!-- Right Table -->
@@ -43,26 +45,34 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>SHUBHAM</td>
-                                <td>8208639756</td>
-                                <td>AHMADNAGAR</td>
-                                <td><i class="bi bi-trash text-danger"></i></td>
-                            </tr>
-                            <tr>
-                                <td colspan="4">
-                                    <div class="row g-1">
-                                        <div class="col-md-4"><input type="text" class="form-control border-black"
-                                                placeholder="Name"></div>
-                                        <div class="col-md-4"><input type="text" class="form-control border-black"
-                                                placeholder="Mobile"></div>
-                                        <div class="col-md-4"><input type="text" class="form-control border-black"
-                                                placeholder="Designation"></div>
-                                    </div>
-                                    <button class="btn btn-primary mt-3 "
-                                        style="background-color:#886ab5 !important;border: none;">Add</button>
-                                </td>
-                            </tr>
+                            <%for(var i=0;i<result.length;i++){%>
+                                <tr>
+                                    <td><%-result[i].contact_name%></td>
+                                    <td><%-result[i].contact_number%></td>
+                                    <td><%-result[i].contact_address%></td>
+                                    <td><a href="/delete_contact/<%-result[i].contact_id%>/<%-sites[0].site_id%>"><i class="bi bi-trash btn btn-outline-danger btn-sm"></i></a></td>
+                                </tr>
+                                <%}%>
+
+                                <form action="/save_contact/<%-sites[0].site_id%>" method="post">
+                                    <tr>
+                                        <td colspan="4">
+                                            <div class="row g-1">
+                                                <div class="col-md-4"><input type="text"
+                                                        class="form-control border-black" placeholder="Name"
+                                                        name="contact_name" required></div>
+                                                <div class="col-md-4"><input type="number"
+                                                        class="form-control border-black" placeholder="Mobile"
+                                                        name="contact_number" required></div>
+                                                <div class="col-md-4"><input type="text"
+                                                        class="form-control border-black" placeholder="Designation"
+                                                        name="contact_address" required></div>
+                                            </div>
+                                            <button class="btn btn-primary mt-3 "
+                                                style="background-color:#886ab5 !important;border: none;">Add</button>
+                                        </td>
+                                    </tr>
+                                </form>
                         </tbody>
                     </table>
                 </div>
@@ -77,23 +87,33 @@
                     <tr>
                         <th>CAMERA NAME</th>
                         <th>CAMERA LINK</th>
-                        <th>USERNAME</th>
+                        <th>CAMERA IP</th>
                         <th>PASSWORD</th>
                         <th style="width:80px;">Action</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td><input type="text" class="form-control border-black"></td>
-                        <td><input type="text" class="form-control border-black"></td>
-                        <td><input type="text" class="form-control border-black"></td>
-                        <td><input type="text" class="form-control border-black"></td>
-                        <td>
-                            <button class="btn btn-primary mt-3 "
-                                style="background-color:#886ab5 !important;border: none;">Add</button>
-                            <i class="bi bi-trash text-danger ms-2"></i>
-                        </td>
-                    </tr>
+                     <%for(var i=0;i<camera.length;i++){%>
+                                <tr>
+                                    <td><%-camera[i].camera_name%></td>
+                                    <td><%-camera[i].camera_link%></td>
+                                    <td><%-camera[i].camera_ip%></td>
+                                    <td>********</td>
+                                    <td><a href="/delete_camera/<%-camera[i].camera_id%>/<%-sites[0].site_id%>"><i class="bi bi-trash btn btn-outline-danger btn-sm"></i></a></td>
+                                </tr>
+                    <%}%>
+                    <form action="/save_camera/<%-sites[0].site_id%>" method="post">
+                        <tr>
+                            <td><input type="text" class="form-control border-black" name="camera_name" required></td>
+                            <td><input type="url" class="form-control border-black" name="camera_link" required></td>
+                            <td><input type="text" class="form-control border-black" name="username" required></td>
+                            <td><input type="password" class="form-control border-black" name="password" required></td>
+                            <td>
+                                <button class="btn btn-primary mt-3 "
+                                    style="background-color:#886ab5 !important;border: none;">Add</button>
+                            </td>
+                        </tr>
+                    </form>
                 </tbody>
             </table>
         </div>
@@ -102,20 +122,19 @@
         <h6 class="bg-primary text-white fw-bold p-2 mb-2">SITE IMAGES</h6>
         <div class="card p-3 mb-3">
             <div class="d-flex gap-2">
-                <img src="/image/site_image/<%-sites[0].site_structure_image%>" class="img-thumbnail flex-fill"
-                    width="10%">
-                <img src="/image/site_image/<%-sites[0].site_3d_image%>" class="img-thumbnail flex-fill" width="10%">
+                <img src="/image/site_image/<%-sites[0].site_structure_image%>" width="300px" style="margin-left: 30px;">
+                <img src="/image/site_image/<%-sites[0].site_3d_image%>"  width="300px">
             </div>
         </div>
 
 
         <!-- Google Location -->
-       <div class="card p-3 mb-3" style="height:300px;">
-  <iframe 
-    src="https://maps.google.com/maps?q=<%= sites[0].site_map_link %>&t=&z=14&ie=UTF8&iwloc=&output=embed" 
-    width="100%" height="100%" style="border:0;" allowfullscreen>
-  </iframe>
-</div>
+        <div class="card p-3 mb-3" style="height:300px;">
+            <iframe
+                src="https://maps.google.com/maps?q=<%= sites[0].site_map_link %>&t=&z=14&ie=UTF8&iwloc=&output=embed"
+                width="100%" height="100%" style="border:0;" allowfullscreen>
+            </iframe>
+        </div>
 
 
         <!-- 1757564847065Screenshot (1).png -->
