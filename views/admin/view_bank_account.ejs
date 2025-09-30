@@ -172,6 +172,7 @@
                 <th>Credit</th>
                 <th>Debit</th>
                 <th>Details</th>
+                
               </tr>
             </thead>
             <tbody>
@@ -198,7 +199,7 @@
 <!-- Add Bank Account Form -->
 <div class="card-wrap">
   <span class="top-title"> NEW TRANSACTION</span>
- <form class="form-exact" action="/admin/save_transaction" method="post" enctype="multipart/form-data">
+ <form class="form-exact" action="/save_transaction" method="post" enctype="multipart/form-data">
   
   <!-- hidden account id -->
   <input type="hidden" name="account_id" value="<%= data[0].account_id %>">

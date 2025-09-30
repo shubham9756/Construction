@@ -85,6 +85,11 @@
             $("#addRowModal").modal("hide");
         });
     });
+      const now = new Date();
+  const options = { day: '2-digit', month: 'short', year: 'numeric' };
+  const date = now.toLocaleDateString('en-GB', options); // e.g., 27 Sep 2025
+  const time = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true }); // e.g., 11:56 AM
+  document.getElementById('lastUpdated').innerText = `${date}, ${time}`;
 </script>
 </body>
 
