@@ -439,7 +439,14 @@ router.get("/customor_list", async function (req, res) {
     console.log(result);
     res.render("admin/customer_list.ejs", { customer: result, });
 });
+router.get("/delete_customer/:id", async (req, res) => {
 
+    var id = req.params.id;
+    var sql = `DELETE  FROM customers WHERE id = ?`;
+    var data = await exe(sql, [id]);
+    // res.send("delete successfull")
+    res.redirect("/admin/customer_list");
+});
 
 // material
 router.get('/add_material', async function (req, res) {
@@ -619,19 +626,30 @@ router.post("/save_bill", async function (req, res) {
             await file.mv("public/image/site_image/" + filename);
         }
 
-        var sql = `INSERT INTO bills(expense_by,expense_given_by,vendor_name,date,bill_file,employee_signature) 
-                   VALUES(?,?,?,?,?,?)`;
+        var sql = `INSERT INTO bills (
+              expense_by,
+              expense_given_by,
+              vendor_name,
+              date,
+              bill_file,
+              employee_signature,
+              total
+          ) VALUES (?, ?, ?, ?, ?, ?, ?)`;   // 7 placeholders
 
-        await exe(sql, [
-            d.expense_by,
-            d.expense_given_by,
-            d.vendor_name,
-            d.date,
-            filename,
-            d.employee_signature
-        ]);
+await exe(sql, [
+    d.expense_by,
+    d.expense_given_by,
+    d.vendor_name,
+    d.date,
+    d.bill_file,
+    d.employee_signature,
+    d.total  // जर दिलं नसेल तर 0
+]);
 
-        res.redirect("/admin/new_bill");
+
+       
+
+        res.redirect("/new_bill");
     } catch (err) {
         console.error("Error in /save_bill:", err);
         res.status(500).send("Something went wrong!");
@@ -670,7 +688,7 @@ router.post("/new_enquiry", async function (req, res) {
     var d = req.body;
     var sql = `INSERT INTO enquiries(customer_name,customer_mobile,customer_email,customer_address,inquiry_about,inquiry_status,reminder_date,remark,action)VALUES(?,?,?,?,?,?,?,?,?)`;
     var result = await exe(sql, [d.customer_name, d.customer_mobile, d.customer_email, d.customer_address, d.inquiry_about, d.inquiry_status, d.reminder_date, d.remark, d.action]);
-    res.redirect("/admin/new_enquiry");
+    res.redirect("/add_enquiry");
 });
 router.get('/new_enquiry', async function (req, res) {
 
