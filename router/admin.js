@@ -1411,6 +1411,11 @@ router.get("/my_balance", async function (req, res) {
 
     res.render("admin/my balance.ejs", { "balance": balance, })
 });
+router.get("/vendor_payment", async function (req, res) {
+ var vendor = await exe("SELECT * FROM vendors ")
+
+    res.render("admin/vendor_payment.ejs", { "vendor": vendor })
+});
 
 
 
