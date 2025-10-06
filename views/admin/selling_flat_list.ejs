@@ -116,7 +116,7 @@
                     <tbody>
                         <%for (var i=0; i<flat.length; i++) { %>
                             <tr>
-                                <td>
+                                <td width="200px">
                                     <a href="/flat_details/<%-flat[i].flat_id%>"><button
                                             class="btn btn-sm btn-outline-primary"><i
                                                 class="fa fa-eye"></i></button></a>
@@ -125,7 +125,9 @@
                                             class="btn btn-sm btn-outline-danger"><i
                                                 class="fa fa-trash"></i></button></a>
                                      <a href="/amount_flat/<%-flat[i].flat_id%>"> <button
-                                            class="btn btn-sm btn-outline-danger"><i class="fa fa-currency-rupee"></i></button></a>
+                                            class="btn btn-sm btn-outline-danger">
+                                           <i class="fas fa-rupee-sign"></i>
+                                        </button></a>
                                 </td>
                                 <td><%-flat[i].flat_name %></td>
                                 <td><%-flat[i].type %></td>

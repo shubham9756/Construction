@@ -266,7 +266,7 @@
               <p><span>SQUARE FEET:</span> -(<%-result[0].sqfeet%>)</p>
               <p><span>RATE:</span> ₹ <%-result[0].rate%> </p>
               <p><span>Basic Amount:</span> ₹ <%-result[0].basic_amount%> </p>
-              <p><span>PAYMENT RECEIVED:</span> ₹ 0</p>
+              <p><span>PAYMENT RECEIVED:</span> ₹ <%-result[0].pending_amount%></p>
             </div>
             <div class="signature-block">
               <div class="signature-box">
@@ -385,7 +385,7 @@
             <i class="fas fa-print"></i> PRINT
           </a>
           <a
-            href="/return_payment"
+            href="/return_payment/<%-result[0].flat_id%>"
             class="btn-return"
             id="returnPaymentBtn"
             role="button"
