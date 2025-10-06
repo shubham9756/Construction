@@ -1058,11 +1058,11 @@ router.post("/save_vendor", async function (req, res) {
     // console.log(d);
     // res.send("ok");
     var sql = `INSERT INTO vendors(vendor_name,vendor_address,vendor_other_details,vendor_phone,vendor_gst_no,vendor_phone2,vendor_date)VALUES(?,?,?,?,?,?,?)`;
-    var result = await exe(sql, [d.vendor_name, d.vendor_address, d.vendor_other_details, d.vendor_phone, d.vendor_gst_no, d.vendor_phone2, d.vendoe_date]);
+    var result = await exe(sql, [d.vendor_name, d.vendor_address, d.vendor_other_details, d.vendor_phone, d.vendor_gst_no, d.vendor_phone2, d.vendor_date]);
 
-    var sql = `INSERT INTO vendors(vendor_name,vendor_address,vendor_other_details,vendor_phone,vendor_gst_no,vendor_phone2,vendor_date)VALUES(?,?,?,?,?,?,?)`;
-    var result = await exe(sql, [d.vendor_name, d.vendor_address, d.vendor_other_details, d.vendor_phone, d.vendor_gst_no, d.vendor_phone2, d.vendoe_date]);
-    res.redirect("/vendor_list");
+    // var sql = `INSERT INTO vendors(vendor_name,vendor_address,vendor_other_details,vendor_phone,vendor_gst_no,vendor_phone2,vendor_date)VALUES(?,?,?,?,?,?,?)`;
+    // var result = await exe(sql, [d.vendor_name, d.vendor_address, d.vendor_other_details, d.vendor_phone, d.vendor_gst_no, d.vendor_phone2, d.vendoe_date]);
+    res.redirect("/add_vendor");
 });
 router.get("/edit_vendor/:vendor_id", async function (req, res) {
 
@@ -1222,7 +1222,7 @@ router.get("/view_bill/:inquiry_id", async function (req, res) {
 });
 router.get("/delete_inquiry/:inquiry_id", async function (req, res) {
     var result = await exe("DELETE FROM inquiries WHERE inquiry_id=?", [req.params.inquiry_id]);
-    res.redirect("/admin/Processing_inq_list");
+    res.redirect("/Processing_inq_list");
 });
 
 
