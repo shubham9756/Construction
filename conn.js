@@ -6,7 +6,7 @@ const pool = mysql.createPool({
   user: "u6jinnt8j5a1tshf",
   password: "Ri4fc5wniRPJMs3E85Cx",
   database: "biraqu10fdxc8n6ny0aj",
-  connectionLimit: 10,   // किती connections allow करायचे
+  connectionLimit: 10,   
 });
 
 // promisify query for async/await

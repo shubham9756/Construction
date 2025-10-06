@@ -173,8 +173,12 @@
           </tr>
         </thead>
         <tbody>
+          <% var Total =0%>
           <%for(var i=0;i<result.length;i++){%>
             <% if (result[i].type === 'Rent' ) { %>
+              <% pending =  Number(result[i].grand_total) - Number(result[i].pending_amount) %>
+             <% Total += pending; %>
+
               <tr class="status-overdue">
                 <td>
                   <a href="/rent_flat_details/<%-result[i].sale_id%>" class="btn-view">
@@ -183,12 +187,12 @@
                 </td>
                 <td><%-result[i].full_name%></td>
                 <td>Flat : <%-result[i].flat_name%>
-                    <a href="edit_property.html" class="edit-link">
+                    <a href="/edit_flat/<%-result[0].flat_id%>" class="edit-link">
                       <i class="fa fa-pencil-square"></i>
                     </a>
                 </td>
                 <td><%-result[i].site_name%></td>
-                <td>₹0</td>
+                <td>₹ <%-result[i].paid_amount%></td>
                 <td><%-result[i].deadline_date.toISOString().slice(0,10)%></td>
                 <% let deadline=new Date(result[i].deadline_date); let today=new Date(); today.setHours(0,0,0,0); %>
 
@@ -214,12 +218,10 @@
       <div class="row">
         <div class="col-md-6">
           <h6>Total Pending</h6>
-          <p>₹94,61,335</p>
+          <p>₹<%= (isNaN(Total) || Total < 0) ? 0 : Total %>
+</p>
         </div>
-        <div class="col-md-6">
-          <h6>Overdue Amount</h6>
-          <p>₹41,17,585</p>
-        </div>
+        
       </div>
     </div>
 

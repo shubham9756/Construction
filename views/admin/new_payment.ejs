@@ -110,8 +110,8 @@
         <form action="/save_payment_recvied" method="post" enctype="multipart/form-data">
           <input type="hidden" name="customername" value="<%-result[0].customer_id%>">
           <input type="hidden" name="employee_id" value="<%-result[0].employee_id%>">
-          <input type="hidden" name="site_name" value="<%-result[0].site_id%>">
-          <input type="hidden" name="flat_name" value=" <%-result[0].flat_id%>">
+          <input type="hidden" name="site_id" value="<%-result[0].site_id%>">
+          <input type="hidden" name="flat_id" value=" <%-result[0].flat_id%>">
           <input type="hidden" name="grand_total" value="<%-result[0].grand_total%> ">
           <!-- Row 1 -->
           <div class="row g-3 mb-3">

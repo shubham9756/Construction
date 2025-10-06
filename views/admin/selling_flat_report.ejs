@@ -173,7 +173,11 @@
           </tr>
         </thead>
         <tbody>
+          <%var total = 0%>
           <%for(var i=0;i<result.length;i++){%>
+             <% pending =  result[i].grand_total - result[i].pending_amount %>
+
+             <% total += pending; %>
             <% if (result[i].type === 'Sell' ) { %>
               <tr class="status-overdue">
                 <td>
@@ -183,12 +187,11 @@
                 </td>
                 <td><%-result[i].full_name%></td>
                 <td>Flat : <%-result[i].flat_name%>
-                    <a href="edit_property.html" class="edit-link">
-                      <i class="fa fa-pencil-square"></i>
-                    </a>
+                  
                 </td>
                 <td><%-result[i].site_name%></td>
-                <td>₹0</td>
+                <td>₹
+                <%=result[i].grand_total - result[i].pending_amount %></td>
                 <td><%-result[i].deadline_date.toISOString().slice(0,10)%></td>
                 <% let deadline=new Date(result[i].deadline_date); let today=new Date(); today.setHours(0,0,0,0); %>
 
@@ -214,12 +217,9 @@
       <div class="row">
         <div class="col-md-6">
           <h6>Total Pending</h6>
-          <p>₹94,61,335</p>
+          <p>₹<%-total%></p>
         </div>
-        <div class="col-md-6">
-          <h6>Overdue Amount</h6>
-          <p>₹41,17,585</p>
-        </div>
+        
       </div>
     </div>
 
