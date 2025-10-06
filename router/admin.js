@@ -161,7 +161,7 @@ router.post("/save_profile", async (req, res) => {
       WHERE admin_id = '${d.admin_id}'`;
     var data = await exe(sql, [d.admin_name, d.admin_mobile, d.admin_email, d.admin_password, admin_image]);
     //   res.send(data)
-    res.redirect("/admin/profile")
+    res.redirect("/profile")
 });
 
 // Site Management
