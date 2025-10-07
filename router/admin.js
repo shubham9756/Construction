@@ -328,9 +328,18 @@ router.get('/rent_flat_list', async function (req, res) {
 
     var sql = `SELECT * FROM flats INNER JOIN site ON flats.site_id = site.site_id WHERE flats.buy ='Sell' AND flats.type ='Rent';`;
     var flat = await exe(sql);
-
-    console.log(flat);
-    res.render('admin/rent_flat_list.ejs', { flat: flat, });
+})
+router.get('/rent_flat_details/:id', async function (req, res) {
+    var id = req.params.id;
+    var sql = `SELECT * FROM flat_sales LEFT JOIN flats ON flat_sales.flat_id = flats.flat_id
+        LEFT JOIN site ON flats.site_id = site.site_id
+        LEFT JOIN customers 
+        ON flat_sales.customer_id = customers.id
+        WHERE flat_sales.sale_id = ?`
+    var result = await exe(sql, [id]);
+    console.log(result);
+ 
+    res.render('admin/flat_details.ejs', { result });
 })
 router.get('/rent_flat_report', async function (req, res) {
     var sql = `SELECT * FROM flat_sales
@@ -343,66 +352,6 @@ LEFT JOIN customers
     console.log(result)
     res.render('admin/rent_flat_report.ejs', { result })
 })
-router.get('/rent_flat_details/:id', async function (req, res) {
-    var id = req.params.id;
-    var sql = `SELECT * FROM flat_sales LEFT JOIN flats ON flat_sales.flat_id = flats.flat_id
-        LEFT JOIN site ON flats.site_id = site.site_id
-        LEFT JOIN customers 
-        ON flat_sales.customer_id = customers.id
-        WHERE flat_sales.sale_id = ?`
-    var result = await exe(sql, [id]);
-
-    console.log(result);
-    res.render('admin/flat_details.ejs', { result });
-});
-
-// sell management
-router.get('/add_selling_flat', async function (req, res) {
-
-    var sql = `SELECT * FROM flats INNER JOIN site ON flats.site_id = site.site_id WHERE flats.type='Sell' AND flats.buy='Available'`;
-    var flat = await exe(sql);
-    res.render('admin/add_selling_flat.ejs', { flat: flat, });
-})
-router.get('/selling_flat_list', async function (req, res) {
-    var sql = `SELECT * FROM flats INNER JOIN site ON flats.site_id = site.site_id WHERE flats.buy = 'Sell' AND flats.type ='Sell'`;
-    var flat = await exe(sql);
-    res.render('admin/selling_flat_list.ejs', { flat: flat, });
-})
-router.get('/selling_flat_report', async function (req, res) {
-
-
-    var sql = `SELECT * FROM flat_sales
-LEFT JOIN flats 
-    ON flat_sales.flat_id = flats.flat_id
-LEFT JOIN site ON flats.site_id = site.site_id
-LEFT JOIN customers 
-    ON flat_sales.customer_id = customers.id`
-    var result = await exe(sql)
-    res.render('admin/selling_flat_report.ejs', { result })
-
-})
-router.get('/sale_flat_bill_details/:id', async function (req, res) {
-
-    var sql = `SELECT * FROM flat_sales WHERE sales_id = '${req.params.id}'`
-    var result = await exe(sql)
-    res.render('admin/selling_report.ejs', { result, })
-})
-router.get('/flat_details/:id', async function (req, res) {
-    var sql = ` SELECT 
-      flat_sales.*, 
-      flats.flat_name, flats.carpet, flats.buildup, flats.type, flats.flat_image,
-      site.site_name, site.site_location, site.site_manager_name,
-      customers.full_name AS customer_name, customers.mobile, customers.email
-  FROM flat_sales
-  LEFT JOIN flats ON flat_sales.flat_id = flats.flat_id
-  LEFT JOIN site ON flats.site_id = site.site_id
-  LEFT JOIN customers ON flat_sales.customer_id = customers.id
-  WHERE flat_sales.flat_id = ?;
-`
-    var result = await exe(sql, [req.params.id]);
-
-    res.render('admin/flat_details.ejs', { result });
-});
 
 
 
@@ -416,8 +365,7 @@ router.get('/view/:id', async function (req, res) {
     var result = await exe(sql, [id]);
     res.render('admin/view_flat.ejs', { customer, result, employee, });
 });
-
-router.post('/flat-sold/:id', async function (req, res) {
+router.post('/flat-sold', async function (req, res) {
     var d = req.body;
     var filename = ""
     var filename1 = ""
@@ -624,20 +572,24 @@ router.get("/new_bill", async function (req, res) {
 //     res.redirect("/admin/view_account/" + d.account_id);
 // });
 
+
+
+router.get("/edit_account/:account_id", async function (req, res) {
+    var data = await exe("SELECT * FROM bank_accounts WHERE account_id=?", [req.params.account_id]);
+    res.render("admin/edit_bank_account.ejs", { "data": data[0] });
+});
+router.post("/update_account", async function (req, res) {
+    var d = req.body;
+    var sql = `UPDATE bank_accounts SET bank_name=?,account_holder=?,account_number=?,ifsc_code=?,current_balance=? WHERE account_id=?`;
+    var result = await exe(sql, [d.bank_name, d.account_holder, d.account_number, d.ifsc_code, d.current_balance, d.account_id]);
+    res.redirect("/admin/bank_accounts");
+})
+router.get("/delete_account/:account_id", async function (req, res) {
+    var result = await exe("DELETE FROM bank_accounts WHERE account_id=?", [req.params.account_id]);
+    res.redirect("/admin/bank_accounts");
+});
+
 // router.get("/edit_account/:account_id", async function (req, res) {
-//     var data = await exe("SELECT * FROM bank_accounts WHERE account_id=?", [req.params.account_id]);
-//     res.render("admin/edit_bank_account.ejs", { "data": data[0] });
-// });
-// router.post("/update_account", async function (req, res) {
-//     var d = req.body;
-//     var sql = `UPDATE bank_accounts SET bank_name=?,account_holder=?,account_number=?,ifsc_code=?,current_balance=? WHERE account_id=?`;
-//     var result = await exe(sql, [d.bank_name, d.account_holder, d.account_number, d.ifsc_code, d.current_balance, d.account_id]);
-//     res.redirect("/admin/bank_accounts");
-// })
-// router.get("/delete_account/:account_id", async function (req, res) {
-//     var result = await exe("DELETE FROM bank_accounts WHERE account_id=?", [req.params.account_id]);
-//     res.redirect("/admin/bank_accounts");
-// });
 //     var data = await exe("SELECT * FROM bank_accounts WHERE account_id=?", [req.params.account_id]);
 //     res.render("admin/edit_bank_account.ejs", { "data": data[0] });
 // });
