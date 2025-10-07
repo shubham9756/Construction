@@ -1,0 +1,66 @@
+<%-include('navbar')%>
+<style>
+    .form-control{
+        border: 2px solid black;
+    }
+</style>
+<div class="container my-4">
+  <div class="card shadow-lg border-0 rounded-3">
+    <div class="card-header text-white fw-bold" style="background-color:#111111;">
+      EDIT FLAT - "<%= flat.flat_name %>"
+    </div>
+
+    <div class="card-body">
+      <form action="/update_flat/<%= flat.flat_id %>" method="POST" enctype="multipart/form-data" class="row g-3">
+
+        <!-- Flat Name -->
+        <div class="col-md-6">
+          <label class="form-label fw-semibold">Flat Name</label>
+          <input type="text" name="flat_name" class="form-control" value="<%= flat.flat_name %>" required>
+        </div>
+
+        <!-- Flat Type -->
+        <div class="col-md-6">
+          <label class="form-label fw-semibold">Flat Type</label>
+          <input type="text" name="type" class="form-control" value="<%= flat.type %>" required>
+        </div>
+
+        <!-- Carpet Area -->
+        <div class="col-md-6">
+          <label class="form-label fw-semibold">Carpet Area (sq.ft)</label>
+          <input type="number" name="carpet" class="form-control" value="<%= flat.carpet %>" required>
+        </div>
+
+        <!-- Build Up Area -->
+        <div class="col-md-6">
+          <label class="form-label fw-semibold">Build Up Area (sq.ft)</label>
+          <input type="number" name="buildup" class="form-control" value="<%= flat.buildup %>" required>
+        </div>
+
+        <!-- Description -->
+        <div class="col-12">
+          <label class="form-label fw-semibold">Description</label>
+          <textarea name="description" rows="3" class="form-control" required><%= flat.description %></textarea>
+        </div>
+
+        <!-- Flat Image -->
+        <div class="col-md-6">
+          <label class="form-label fw-semibold">Flat Image</label>
+          <input type="file" name="flat_image" class="form-control">
+          <% if(flat.flat_image) { %>
+            <div class="mt-2">
+              <img src="/image/flat/<%= flat.flat_image %>" alt="Flat Image" class="img-thumbnail" style="width:150px; height:auto;">
+            </div>
+          <% } %>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="col-12 text-end">
+          <button type="submit" class="btn btn-dark px-4">Update Flat</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<%-include('footer')%>

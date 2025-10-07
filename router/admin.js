@@ -161,7 +161,7 @@ router.post("/save_profile", async (req, res) => {
       WHERE admin_id = '${d.admin_id}'`;
     var data = await exe(sql, [d.admin_name, d.admin_mobile, d.admin_email, d.admin_password, admin_image]);
     //   res.send(data)
-    res.redirect("/admin/profile")
+    res.redirect("/profile")
 });
 
 // Site Management
@@ -193,7 +193,7 @@ router.get("/site_list", async function (req, res) {
 router.get('/view_site/:id', async function (req, res) {
     var sql = `SELECT * FROM site WHERE site_id = '${req.params.id}'`
     var sites = await exe(sql)
-    var result = await exe(`SELECT * FROM site_contact`)
+    var result = await exe(`SELECT * FROM site_contact `)//WHERE site_id = ${req.params.id}
     var camera = await exe(`SELECT * FROM camera`)
     res.render('admin/view_site.ejs', { sites, result, camera })
 })
@@ -246,26 +246,26 @@ router.post("/update_site/:id", async function (req, res) {
 
 // site Contact
 
-router.post('/save_contact/:id',async function(req,res){
+router.post('/save_contact/:id', async function (req, res) {
     var d = req.body;
     var sql = `INSERT INTO site_contact(contact_name,contact_number,contact_address)VALUES(?,?,?)`
-    var result = await exe(sql,[d.contact_name,d.contact_number,d.contact_address])
-   res.redirect(`/view_site/${req.params.id}`)
+    var result = await exe(sql, [d.contact_name, d.contact_number, d.contact_address])
+    res.redirect(`/view_site/${req.params.id}`)
 })
-router.get('/delete_contact/:id/:site_id',async function(req,res){
+router.get('/delete_contact/:id/:site_id', async function (req, res) {
     var sql = await exe(`DELETE from site_contact WHERE contact_id = '${req.params.id}'`)
     res.redirect(`/view_site/${req.params.site_id}`)
 })
 
 
 // camera site_link
-router.post('/save_camera/:id',async function(req,res){
+router.post('/save_camera/:id', async function (req, res) {
     var d = req.body
-    var sql= `INSERT INTO camera (site_id, camera_name, camera_ip, camera_link,camera_password) VALUES (?,?,?,?,?)`
-    var result = await exe(sql,[req.params.id,d.camera_name,d.username,d.camera_link,d.password])
-     res.redirect(`/view_site/${req.params.id}`)
+    var sql = `INSERT INTO camera (site_id, camera_name, camera_ip, camera_link,camera_password) VALUES (?,?,?,?,?)`
+    var result = await exe(sql, [req.params.id, d.camera_name, d.username, d.camera_link, d.password])
+    res.redirect(`/view_site/${req.params.id}`)
 })
-router.get('/delete_camera/:id/:site_id',async function(req,res){
+router.get('/delete_camera/:id/:site_id', async function (req, res) {
     var sql = await exe(`DELETE from camera WHERE camera_id = '${req.params.id}'`)
     res.redirect(`/view_site/${req.params.site_id}`)
 })
@@ -296,6 +296,24 @@ router.get('/flat_list', async function (req, res) {
     var sql = `SELECT * FROM flats INNER JOIN site ON flats.site_id = site.site_id WHERE flats.buy='Available'`;
     var flat = await exe(sql);
     res.render('admin/flat_list.ejs', { flat, });
+})
+router.get('/edit_flat/:id', async function (req, res) {
+    var result = await exe(`SELECT * FROM flats WHERE flat_id = ${req.params.id}`)
+    console.log(result)
+    res.render('admin/edit_flat.ejs', { "flat": result[0] })
+})
+router.post('/update_flat/:id', async function (req, res) {
+    var d = req.body;
+    var filename = ""
+    if (req.files) {
+        var filename = new Date().getTime() + req.files.flat_image.name;
+        req.files.flat_image.mv('public/image/flat/' + filename)
+    }
+    var sql = `UPDATE flats  SET flat_name = ?, carpet = ?, buildup = ?, description = ?, type = ?, flat_image = ?
+        WHERE flat_id = ?`;
+    var result = await exe(sql, [d.flat_name, d.carpet, d.buildup, d.description, d.type, filename, req.params.id]);
+    //   res.send(result)
+    res.redirect(`/view_flat/${req.params.id}`)
 })
 
 
@@ -360,11 +378,11 @@ router.post('/flat-sold', async function (req, res) {
 
 
     }
-    const sql = `INSERT INTO flat_sales ( customer_id,sale_date,invoice_no,deadline_date,carpet_sqft,buildup_sqft,sqfeet, rate,basic_amount,note,employee_signature,employee_id,customer_signature,customer_name,stamp_duty_percent,stamp_duty_amount,other_tax_percent,other_tax_amount,gst_percent,gst_amount,cgst_percent,cgst_amount,sgst_percent,sgst_amount,total_amount,discount_percent,discount_amount,grand_total) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`;
-    var values = await exe(sql, [d.customer_id, d.date, d.invoice_no, d.deadline_date, d.carpet, d.buildup, d.sqfeet, d.rate, d.basic_amount, d.note, filename, d.employee_id, filename1, d.customer_name, d.stamp_duty_percent, d.stamp_duty_amount, d.other_tax_percent, d.other_tax_amount, d.gst_percent, d.gst_amount, d.cgst_percent, d.cgst_amount, d.sgst_percent, d.sgst_amount, d.total_amount, d.discount_percent, d.discount_amount, d.grand_total]);
+    const sql = `INSERT INTO flat_sales ( customer_id,flat_id,sale_date,invoice_no,deadline_date,carpet_sqft,buildup_sqft,sqfeet, rate,basic_amount,note,employee_signature,employee_id,customer_signature,customer_name,stamp_duty_percent,stamp_duty_amount,other_tax_percent,other_tax_amount,gst_percent,gst_amount,cgst_percent,cgst_amount,sgst_percent,sgst_amount,total_amount,discount_percent,discount_amount,grand_total) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`;
+    var values = await exe(sql, [d.customer_id, req.params.id, d.date, d.invoice_no, d.deadline_date, d.carpet, d.buildup, d.sqfeet, d.rate, d.basic_amount, d.note, filename, d.employee_id, filename1, d.customer_name, d.stamp_duty_percent, d.stamp_duty_amount, d.other_tax_percent, d.other_tax_amount, d.gst_percent, d.gst_amount, d.cgst_percent, d.cgst_amount, d.sgst_percent, d.sgst_amount, d.total_amount, d.discount_percent, d.discount_amount, d.grand_total]);
 
-    var sql1 = "UPDATE flats SET status='Inavailable' WHERE flat_id=?";
-    var result = await exe()
+    var sql1 = "UPDATE flats SET buy='Sell' WHERE flat_id=?";
+    var result = await exe(sql1, [req.params.id])
     res.redirect('/')
 
 
@@ -372,13 +390,26 @@ router.post('/flat-sold', async function (req, res) {
 })
 router.get('/delete_flat/:id', async function (req, res) {
     var result = await exe(`DELETE FROM flat_sales WHERE sale_id = ${req.params.id}`)
-    var  data = await exe(`DELETE FROM flats WHERE flat_id = ${req.params.id}`)
+    var data = await exe(`DELETE FROM flats WHERE flat_id = ${req.params.id}`)
     res.redirect('/flat_list')
 })
 router.get("/view_flat/:id", async function (req, res) {
     var sql = await exe(`SELECT * FROM flats LEFT JOIN site ON flats.site_id = site.site_id WHERE flats.flat_id  = '${req.params.id}'`)
-    console.log(sql)
-    res.render('admin/view_flat_details.ejs', { 'flats': sql })
+    var result = await exe(`SELECT * FROM specifications WHERE flat_id = ${req.params.id}`)
+    res.render('admin/view_flat_details.ejs', { 'flats': sql, result })
+})
+
+// specification
+router.post('/save_specification/:id', async function (req, res) {
+    var d = req.body;
+    var id = req.params.id
+    var sql = `INSERT INTO specifications(spec_name,spec_details,flat_id)VALUES(?,?,?)`
+    var result = await exe(sql, [d.spc_name, d.spc_details, id])
+    res.redirect(`/view_flat/${id}`)
+})
+router.get('/delete_spec/:id/:flat_id', async function (req, res) {
+    var result = await exe(`DELETE FROM specifications WHERE spec_id =${req.params.id}`)
+    res.redirect(`/view_flat/${req.params.flat_id}`)
 })
 
 
@@ -393,6 +424,10 @@ router.post("/add_customor", async function (req, res) {
     console.log(d)
     res.redirect("/add_customor");
 });
+router.get('/delete_customer/:id', async function (req, res) {
+    var result = await exe(`DELETE FROM customers WHERE id = ${req.params.id}`)
+    res.redirect('/customor_list')
+})
 router.get("/customor_list", async function (req, res) {
     var sql = "SELECT * FROM customers WHERE status='Active'";
     var result = await exe(sql);
@@ -467,6 +502,7 @@ router.post('/save_employee', async function (req, res) {
     var result = await exe(sql, [d.employee_name, d.employee_email, d.employee_mobile, d.employee_address, filename, d.employee_type, d.pan_number, d.aadhar_number, d.employee_password, d.employee_dob, d.employee_position, d.employee_in_time, d.employee_monthly_payment, d.employee_joining_date]);
 
     res.redirect('/add_employee');
+    // res.send(d)
 });
 
 router.get("/edit_employee/:employee_id", async function (req, res) {
@@ -583,19 +619,30 @@ router.post("/save_bill", async function (req, res) {
             await file.mv("public/image/site_image/" + filename);
         }
 
-        var sql = `INSERT INTO bills(expense_by,expense_given_by,vendor_name,date,bill_file,employee_signature) 
-                   VALUES(?,?,?,?,?,?)`;
+        var sql = `INSERT INTO bills (
+              expense_by,
+              expense_given_by,
+              vendor_name,
+              date,
+              bill_file,
+              employee_signature,
+              total
+          ) VALUES (?, ?, ?, ?, ?, ?, ?)`;   // 7 placeholders
 
-        await exe(sql, [
-            d.expense_by,
-            d.expense_given_by,
-            d.vendor_name,
-            d.date,
-            filename,
-            d.employee_signature
-        ]);
+await exe(sql, [
+    d.expense_by,
+    d.expense_given_by,
+    d.vendor_name,
+    d.date,
+    d.bill_file,
+    d.employee_signature,
+    d.total  // जर दिलं नसेल तर 0
+]);
 
-        res.redirect("/admin/new_bill");
+
+       
+
+        res.redirect("/new_bill");
     } catch (err) {
         console.error("Error in /save_bill:", err);
         res.status(500).send("Something went wrong!");
@@ -634,7 +681,7 @@ router.post("/new_enquiry", async function (req, res) {
     var d = req.body;
     var sql = `INSERT INTO enquiries(customer_name,customer_mobile,customer_email,customer_address,inquiry_about,inquiry_status,reminder_date,remark,action)VALUES(?,?,?,?,?,?,?,?,?)`;
     var result = await exe(sql, [d.customer_name, d.customer_mobile, d.customer_email, d.customer_address, d.inquiry_about, d.inquiry_status, d.reminder_date, d.remark, d.action]);
-    res.redirect("/admin/new_enquiry");
+    res.redirect("/add_enquiry");
 });
 router.get('/new_enquiry', async function (req, res) {
 
@@ -1022,11 +1069,11 @@ router.post("/save_vendor", async function (req, res) {
     // console.log(d);
     // res.send("ok");
     var sql = `INSERT INTO vendors(vendor_name,vendor_address,vendor_other_details,vendor_phone,vendor_gst_no,vendor_phone2,vendor_date)VALUES(?,?,?,?,?,?,?)`;
-    var result = await exe(sql, [d.vendor_name, d.vendor_address, d.vendor_other_details, d.vendor_phone, d.vendor_gst_no, d.vendor_phone2, d.vendoe_date]);
+    var result = await exe(sql, [d.vendor_name, d.vendor_address, d.vendor_other_details, d.vendor_phone, d.vendor_gst_no, d.vendor_phone2, d.vendor_date]);
 
-    var sql = `INSERT INTO vendors(vendor_name,vendor_address,vendor_other_details,vendor_phone,vendor_gst_no,vendor_phone2,vendor_date)VALUES(?,?,?,?,?,?,?)`;
-    var result = await exe(sql, [d.vendor_name, d.vendor_address, d.vendor_other_details, d.vendor_phone, d.vendor_gst_no, d.vendor_phone2, d.vendoe_date]);
-    res.redirect("/vendor_list");
+    // var sql = `INSERT INTO vendors(vendor_name,vendor_address,vendor_other_details,vendor_phone,vendor_gst_no,vendor_phone2,vendor_date)VALUES(?,?,?,?,?,?,?)`;
+    // var result = await exe(sql, [d.vendor_name, d.vendor_address, d.vendor_other_details, d.vendor_phone, d.vendor_gst_no, d.vendor_phone2, d.vendoe_date]);
+    res.redirect("/add_vendor");
 });
 router.get("/edit_vendor/:vendor_id", async function (req, res) {
 
@@ -1111,14 +1158,22 @@ router.get("/Processing_inq_list", async function (req, res) {
 
 // payment 
 router.get('/new_payment/:id', async function (req, res) {
-    var sql = `SELECT * FROM flat_sales
-LEFT JOIN flats 
+    var sql = `SELECT * FROM flat_sales LEFT JOIN flats 
     ON flat_sales.flat_id = flats.flat_id
 LEFT JOIN site ON flats.site_id = site.site_id
 LEFT JOIN customers 
     ON flat_sales.customer_id = customers.id`
     var result = await exe(sql)
-    console.log(result)
+    res.render('admin/new_payment.ejs', { result })
+})
+
+router.get('/return_payment/:id', async function (req, res) {
+    var sql = `SELECT * FROM flat_sales LEFT JOIN flats 
+    ON flat_sales.flat_id = flats.flat_id
+LEFT JOIN site ON flats.site_id = site.site_id
+LEFT JOIN customers 
+    ON flat_sales.customer_id = customers.id`
+    var result = await exe(sql)
     res.render('admin/new_payment.ejs', { result })
 })
 router.post("/save_payment_recvied", async function (req, res) {
@@ -1144,7 +1199,7 @@ router.post("/save_payment_recvied", async function (req, res) {
 
         const values = [
             d.customername,
-            d.flat_name,
+            d.flat_id,
             d.grand_total,
             d.description,
             d.receiptNo,
@@ -1159,7 +1214,11 @@ router.post("/save_payment_recvied", async function (req, res) {
         ];
 
         const result = await exe(sql, values);
-        res.redirect('//new_payment/:')
+        var data = await exe(`SELECT * FROM flat_sales WHERE flat_id = ${d.flat_id}`)
+        var total = Number(data[0].grand_total) - Number(d.receivedAmount); // decrease
+        await exe(`UPDATE flat_sales SET paid_amount = ? WHERE flat_id = ?`, [total, d.flat_id]);
+
+        res.redirect(`/new_payment/${d.flat_id}`)
     } catch (err) {
         console.error(err);
         res.status(500).send({ success: false, error: err.message });
@@ -1186,7 +1245,7 @@ router.get("/view_bill/:inquiry_id", async function (req, res) {
 });
 router.get("/delete_inquiry/:inquiry_id", async function (req, res) {
     var result = await exe("DELETE FROM inquiries WHERE inquiry_id=?", [req.params.inquiry_id]);
-    res.redirect("/admin/Processing_inq_list");
+    res.redirect("/Processing_inq_list");
 });
 
 
@@ -1303,6 +1362,11 @@ router.get("/my_balance", async function (req, res) {
     var balance = await exe("SELECT * FROM bank_accounts");
 
     res.render("admin/my balance.ejs", { "balance": balance, })
+});
+router.get("/vendor_payment", async function (req, res) {
+ var vendor = await exe("SELECT * FROM vendors ")
+
+    res.render("admin/vendor_payment.ejs", { "vendor": vendor })
 });
 
 

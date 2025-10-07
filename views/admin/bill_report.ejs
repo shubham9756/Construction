@@ -2,7 +2,8 @@
 <div class="container">
   <div class="row">
     <div class="col-md-12">
-      <h1 class="mt-4">Bill Report</h1>
+     <h1 class="mt-4 bg-dark text-white p-2 rounded">Bill Report</h1>
+
       <table class="table table-bordered mt-4">
         <thead>
           <tr>
@@ -18,20 +19,42 @@
           </tr>
         </thead>
         <tbody>
-          <% expenses.forEach(function(bill,i) { %>
-            <tr>
-              <td><%= bill.id %></td>
-              <td><%= bill.expense_by%></td>
-              <td><%= bill.expense_given_by%></td>
-              <td><%= bill.vendor_name%></td>
-              <td><%= bill.date%></td>
-              <td><%= bill.bill_file%></td>
-              <td><%= bill.employee_signature%></td>
-              <td><%= bill.created_at%></td>
-              <td><%= bill.total%></td>
-            </tr>
-          <% }); %>
-        </tbody>
+  <% expenses.forEach(function(bill,i) { %>
+    <tr>
+      <td><%= bill.id %></td>
+      <td><%= bill.expense_by %></td>
+      <td><%= bill.expense_given_by %></td>
+      <td><%= bill.vendor_name %></td>
+      <td><%= bill.date %></td>
+
+      <!-- Upload Bill (image/pdf) -->
+      <td>
+        <% if(bill.bill_file){ %>
+          <% if(bill.bill_file.endsWith('.pdf')){ %>
+            <a href="/uploads/bills/<%= bill.bill_file %>" target="_blank">View Bill</a>
+          <% } else { %>
+            <img src="/uploads/bills/<%= bill.bill_file %>" width="100">
+          <% } %>
+        <% } else { %>
+          N/A
+        <% } %>
+      </td>
+
+      <!-- Employee Signature -->
+      <td>
+        <% if(bill.employee_signature){ %>
+          <img src="/uploads/signatures/<%= bill.employee_signature %>" width="100">
+        <% } else { %>
+          N/A
+        <% } %>
+      </td>
+
+      <td><%= bill.created_at %></td>
+      <td><%= bill.total %></td>
+    </tr>
+  <% }); %>
+</tbody>
+
   </div>
 </div>
 <%- include("footer.ejs") %>

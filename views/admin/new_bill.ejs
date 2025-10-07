@@ -30,7 +30,7 @@
       cursor: pointer;
     }
     .btn-add {
-      background: #007bff;
+      background: #0a0b0c;
       color: #fff;
       font-weight: bold;
     }
@@ -85,6 +85,7 @@
             <i class="fas fa-signature"></i> Add Signature
             <input type="file" class="form-control mt-2" name="employee_signature">
           </div>
+
         </div>
       </div>
 
@@ -105,7 +106,8 @@
               <td><input type="text" class="form-control" name="product_name[]" placeholder="PRODUCT NAME" required></td>
               <td><input type="number" class="form-control qty" name="quantity[]" value="0" min="0"></td>
               <td><input type="number" class="form-control rate" name="rate[]" value="0" min="0"></td>
-              <td><input type="number" class="form-control total" name="total[]" value="0" readonly></td>
+              <td>          <input type="number" name="total" class="form-control" required>
+</td>
               <td>
                 <button type="button" class="btn btn-sm btn-success addRow">
                   <i class="fas fa-plus"></i>
