@@ -248,8 +248,8 @@ router.post("/update_site/:id", async function (req, res) {
 
 router.post('/save_contact/:id', async function (req, res) {
     var d = req.body;
-    var sql = `INSERT INTO site_contact(contact_name,contact_number,contact_address)VALUES(?,?,?)`
-    var result = await exe(sql, [d.contact_name, d.contact_number, d.contact_address])
+    var sql = `INSERT INTO site_contact(site_id,contact_name,contact_number,contact_address)VALUES(?,?,?,?)`
+    var result = await exe(sql, [req.params.id, d.contact_name, d.contact_number, d.contact_address])
     res.redirect(`/view_site/${req.params.id}`)
 })
 router.get('/delete_contact/:id/:site_id', async function (req, res) {
@@ -345,14 +345,16 @@ LEFT JOIN customers
 })
 router.get('/rent_flat_details/:id', async function (req, res) {
     var id = req.params.id;
-    var sql = `SELECT * FROM flat_sales LEFT JOIN flats ON flat_sales.flat_id = flats.flat_id
-        LEFT JOIN site ON flats.site_id = site.site_id
-        LEFT JOIN customers 
-        ON flat_sales.customer_id = customers.id
-        WHERE flat_sales.sale_id = ?`
+    var sql = ` SELECT 
+    * 
+  FROM flat_sales
+  LEFT JOIN flats ON flat_sales.flat_id = flats.flat_id
+  LEFT JOIN site ON flats.site_id = site.site_id
+  LEFT JOIN customers ON flat_sales.customer_id = customers.id
+  WHERE flat_sales.flat_id = ?`
     var result = await exe(sql, [id]);
 
-    console.log(result);
+    console.log(id,result);
     res.render('admin/flat_details.ejs', { result });
 });
 
@@ -388,18 +390,19 @@ router.get('/sale_flat_bill_details/:id', async function (req, res) {
     res.render('admin/selling_report.ejs', { result, })
 })
 router.get('/flat_details/:id', async function (req, res) {
-    var sql = ` SELECT 
-      flat_sales.*, 
-      flats.flat_name, flats.carpet, flats.buildup, flats.type, flats.flat_image,
-      site.site_name, site.site_location, site.site_manager_name,
-      customers.full_name AS customer_name, customers.mobile, customers.email
-  FROM flat_sales
-  LEFT JOIN flats ON flat_sales.flat_id = flats.flat_id
-  LEFT JOIN site ON flats.site_id = site.site_id
-  LEFT JOIN customers ON flat_sales.customer_id = customers.id
-  WHERE flat_sales.flat_id = ?;
-`
-    var result = await exe(sql, [req.params.id]);
+    var id = req.params.id
+    var sql = `SELECT 
+  flat_sales.*,
+  flats.*,
+  site.*,
+  customers.*
+FROM flat_sales
+LEFT JOIN flats ON flat_sales.flat_id = flats.flat_id
+LEFT JOIN site ON flats.site_id = site.site_id
+LEFT JOIN customers ON flat_sales.customer_id = customers.id
+WHERE flat_sales.flat_id = ?;`
+    var result = await exe(sql, [id]);
+    console.log("result :-", result, "Sql:-", sql,id)
 
     res.render('admin/flat_details.ejs', { result });
 });
@@ -560,7 +563,7 @@ router.post('/save_employee', async function (req, res) {
 router.get("/edit_employee/:employee_id", async function (req, res) {
     var employee = await exe("SELECT * FROM employees WHERE employee_id=?", [req.params.employee_id]);
     var result = await exe("SELECT * FROM employee_types WHERE status='Active'");
-    res.render("admin/edit_employee.ejs", { employee: employee[0],  result });
+    res.render("admin/edit_employee.ejs", { employee: employee[0], result });
 });
 
 router.get("/delete_employee/:employee_id", async function (req, res) {
@@ -677,18 +680,18 @@ router.post("/save_bill", async function (req, res) {
               total
           ) VALUES (?, ?, ?, ?, ?, ?, ?)`;   // 7 placeholders
 
-await exe(sql, [
-    d.expense_by,
-    d.expense_given_by,
-    d.vendor_name,
-    d.date,
-    d.bill_file,
-    d.employee_signature,
-    d.total  // जर दिलं नसेल तर 0
-]);
+        await exe(sql, [
+            d.expense_by,
+            d.expense_given_by,
+            d.vendor_name,
+            d.date,
+            d.bill_file,
+            d.employee_signature,
+            d.total  // जर दिलं नसेल तर 0
+        ]);
 
 
-       
+
 
         res.redirect("/new_bill");
     } catch (err) {
