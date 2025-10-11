@@ -1,11 +1,36 @@
 <%- include('navbar.ejs') %>
 
+<!-- Bootstrap Icons for view/edit icons -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+<style>
+  .back {
+    border-left: 7px solid orange;
+    background: linear-gradient(to right, #290566, #4b3f92, rgb(183, 121, 219));
+  }
+  .btn2 {
+    font-weight: 600;
+    background-color: #6a1b9a;
+  }
+  /* Small icons */
+  .btn i {
+    font-size: 0.85rem !important;
+  }
+  /* Description overflow style */
+  .desc-overflow {
+    max-width: 250px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+</style>
+
 <div class="container-fluid mt-5 pt-4">
   <!-- Header -->
   <div class="card shadow-sm border-0 mb-4">
-    <div class="card-header d-flex justify-content-between align-items-center text-white fw-semibold" style="background-color: #090a0b;">
+    <div class="card-header d-flex justify-content-between align-items-center text-white fw-semibold back">
       <h4 class="mb-0"><i class="bi bi-building me-2"></i>Site List</h4>
-      <a href="/addsite" class="btn btn-light btn-sm fw-semibold">
+      <a href="/addsite" class="btn btn2">
         <i class="bi bi-plus-circle me-1"></i> Add New Site
       </a>
     </div>
@@ -31,14 +56,18 @@
               <% site.forEach((item) => { %>
                 <tr>
                   <td>
-                    <a href="/view_site/<%= item.site_id %>" class="btn btn-sm btn-outline-primary me-1" title="View"><i class="bi bi-eye"></i></a>
-                    <a href="/edit_site/<%= item.site_id %>" class="btn btn-sm btn-outline-warning" title="Edit"><i class="bi bi-pencil"></i></a>
+                    <a href="/view_site/<%= item.site_id %>" class="btn btn-sm btn-outline-primary me-1" title="View">
+                      <i class="bi bi-eye"></i>
+                    </a>
+                    <a href="/edit_site/<%= item.site_id %>" class="btn btn-sm btn-outline-warning" title="Edit">
+                      <i class="bi bi-pencil"></i>
+                    </a>
                   </td>
                   <td><%= item.site_name %></td>
                   <td><%= item.site_location %></td>
                   <td><%= item.site_manager_name %></td>
                   <td><%= new Date(item.site_start_date).toLocaleDateString() %></td>
-                  <td class="text-wrap" style="max-width: 200px;"><%= item.site_description %></td>
+                  <td class="desc-overflow"><%= item.site_description %></td>
                 </tr>
               <% }) %>
             <% } else { %>
@@ -62,17 +91,17 @@
         {
           extend: 'colvis',
           text: '<i class="bi bi-layout-three-columns"></i> Columns',
-          className: 'btn btn-secondary btn-sm'
+          className: 'btn btn-purple btn-sm'
         },
         {
           extend: 'csv',
           text: '<i class="bi bi-filetype-csv"></i> CSV',
-          className: 'btn btn-success btn-sm'
+          className: 'btn btn-purple btn-sm'
         },
         {
           extend: 'print',
           text: '<i class="bi bi-printer"></i> Print',
-          className: 'btn btn-info btn-sm'
+          className: 'btn btn-purple btn-sm'
         }
       ],
       paging: true,
@@ -83,6 +112,20 @@
         search: "_INPUT_",
         searchPlaceholder: "Search site..."
       }
+    });
+
+    // Apply custom styles after DataTable initializes
+    $('.btn-purple').css({
+      'background': 'linear-gradient(to right, #290566, #4b3f92, rgb(183, 121, 219))',
+      'color': 'white',
+      'border': 'none'
+    });
+
+    // Style the search input
+    $('.dataTables_filter input').css({
+      'border': '2px solid black',
+      'border-radius': '4px',
+      'padding': '5px 8px'
     });
   });
 </script>

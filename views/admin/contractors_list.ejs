@@ -1,10 +1,5 @@
 <%-include('navbar.ejs')%>
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Contractor List — Responsive</title>
+
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
       rel="stylesheet"
@@ -103,7 +98,11 @@
         border-radius: 3px;
         border: none;
       }
-
+      .modal-header{
+         background: linear-gradient(to right, #290566, #4b3f92, rgb(183, 121, 219));
+    border-left: 10px solid #f7c800;
+    color: white; 
+      }
       .pill-contracts {
         background: #5a2fb1;
         color: #fff;
@@ -178,8 +177,7 @@
         }
       }
     </style>
-  </head>
-  <body>
+  
     <div class="custom-card">
       <div class="custom-header">
         <div class="left-strip"></div>
@@ -256,7 +254,7 @@
     >
       <div class="modal-dialog modal-lg">
         <div class="modal-content shadow">
-          <div class="modal-header">
+          <div class="modal-header ">
             <h5 class="modal-title fw-bold" id="contractorModalLabel">
               ADD NEW CONTRACTOR
             </h5>
@@ -468,6 +466,5 @@
           });
       })();
     </script>
-  </body>
-</html>
+
 <%-include('footer.ejs')%>

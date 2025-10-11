@@ -15,10 +15,9 @@
     overflow: hidden;
   }
   .vendor-header {
-      background: linear-gradient(to right, #290566, #4b3f92, rgb(183, 121, 219));
-
+    background: linear-gradient(to right, #290566, #4b3f92, rgb(183, 121, 219));
     border-left: 7px solid orange;
-    color: #fff;
+    color: white; /* DARK TEXT */
     font-weight: bold;
     padding: 12px 18px;
     font-size: 17px;
@@ -33,13 +32,14 @@
     font-weight: 600;
     text-transform: uppercase;
     font-size: 13px;
-    color: #333;
+    color: #000; /* DARK TEXT */
   }
   .vendor-table td, .vendor-table th {
     border: 1px solid #e2e2e2;
     vertical-align: middle;
     text-align: left;
     padding: 12px 10px;
+    color: #000; /* DARK TEXT */
     transition: all 0.3s ease;
   }
   /* Hover effect on rows */
@@ -51,7 +51,7 @@
   }
   .no-record {
     text-align: center;
-    color: #666;
+    color: #000; /* DARK TEXT */
     font-weight: 500;
     padding: 20px 0;
   }
@@ -59,46 +59,46 @@
 </head>
 <body>
 
-  <div class="container">
-    <div class="vendor-card">
-      <div class="vendor-header">VENDOR PAYMENTS</div>
-      <div class="table-responsive">
-        <table class="table vendor-table mb-0">
-          <thead>
-            <tr>
-              <th style="width:60px;">SN</th>
-              <th>VENDOR</th>
-              <th>MOBILE</th>
-              <th>ADDRESS</th>
-              <th>PENDING PAYMENT ₹</th>
-            </tr>
-          </thead>
-          <tbody>
-            <% if (vendor.length > 0) { %>
-              <% for(let i=0; i<vendor.length; i++){ %>
-                <tr>
-                  <td><%= i+1 %></td>
-                  <td><%= vendor[i].vendor_name %></td>
-                  <td><%= vendor[i].vendor_phone %></td>
-                  <td><%= vendor[i].vendor_address %></td>
-                  <td>
-                    <% if(vendor[i].pending_payment) { %>
-                      ₹ <%= vendor[i].pending_payment %>
-                    <% } else { %>
-                      ₹ 0
-                    <% } %>
-                  </td>
-                </tr>
-              <% } %>
-            <% } else { %>
+<div class="container">
+  <div class="vendor-card">
+    <div class="vendor-header">VENDOR PAYMENTS</div>
+    <div class="table-responsive">
+      <table class="table vendor-table mb-0">
+        <thead>
+          <tr>
+            <th style="width:60px;">SN</th>
+            <th>VENDOR</th>
+            <th>MOBILE</th>
+            <th>ADDRESS</th>
+            <th>PENDING PAYMENT ₹</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (vendor.length > 0) { %>
+            <% for(let i=0; i<vendor.length; i++){ %>
               <tr>
-                <td colspan="5" class="no-record">NO RECORDS FOUND..</td>
+                <td><%= i+1 %></td>
+                <td><%= vendor[i].vendor_name %></td>
+                <td><%= vendor[i].vendor_phone %></td>
+                <td><%= vendor[i].vendor_address %></td>
+                <td>
+                  <% if(vendor[i].pending_payment) { %>
+                    ₹ <%= vendor[i].pending_payment %>
+                  <% } else { %>
+                    ₹ 0
+                  <% } %>
+                </td>
               </tr>
             <% } %>
-          </tbody>
-        </table>
-      </div>
+          <% } else { %>
+            <tr>
+              <td colspan="5" class="no-record">NO RECORDS FOUND..</td>
+            </tr>
+          <% } %>
+        </tbody>
+      </table>
     </div>
   </div>
+</div>
 
 <%-include('footer.ejs')%>

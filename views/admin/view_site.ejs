@@ -1,11 +1,16 @@
 <%-include('navbar')%>
-
+  <style>
+    .back{
+         background: linear-gradient(to right, #290566, #4b3f92, rgb(183, 121, 219));
+            border-left: 7px solid orange;
+    }
+  </style>
     <div class="container my-5">
 <!-- Bootstrap Icons CDN -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
         <!-- Site Details -->
-        <h6 class="bg-primary text-white fw-bold p-2 mb-2">SITE DETAILS 'NAYANTARA APARTMENT'</h6>
+        <h6 class="back text-white fw-bold p-2 mb-2">SITE DETAILS 'NAYANTARA APARTMENT'</h6>
         <div class="card p-3 mb-3">
             <div class="row">
                 <!-- Left Table -->
@@ -40,7 +45,7 @@
                         <thead class="table-light">
                             <tr>
                                 <th colspan="4">
-                                    <h4 class="fw-bold">SITE CONTACTS</h4>
+                                    <h4 class="fw-bold ">SITE CONTACTS</h4>
                                 </th>
                             </tr>
                         </thead>
@@ -80,7 +85,7 @@
         </div>
 
         <!-- Site Cameras -->
-        <h6 class="bg-primary text-white fw-bold p-2 mb-2">SITE CAMERAS</h6>
+        <h6 class="back text-white fw-bold p-2 mb-2">SITE CAMERAS</h6>
         <div class="card p-3 mb-3">
             <table class="table table-bordered table-sm mb-0">
                 <thead class="table-light">
@@ -119,7 +124,7 @@
         </div>
 
         <!-- Site Images -->
-        <h6 class="bg-primary text-white fw-bold p-2 mb-2">SITE IMAGES</h6>
+        <h6 class="back text-white fw-bold p-2 mb-2">SITE IMAGES</h6>
         <div class="card p-3 mb-3">
             <div class="d-flex gap-2">
                 <img src="/image/site_image/<%-sites[0].site_structure_image%>" width="300px" style="margin-left: 30px;">

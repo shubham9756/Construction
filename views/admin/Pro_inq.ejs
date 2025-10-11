@@ -3,22 +3,33 @@
 <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.5/dist/signature_pad.umd.min.js"></script>
 
 <style>
-/* SAME STYLES (no change) */
+/* SAME STYLES (only requested changes done) */
 body { background: #f8f9fa; font-family: Arial, sans-serif; font-size: 16px; }
 .container { max-width: 1300px; margin-top: 40px; }
-.header { background: linear-gradient(to right, #290566, #4b3f92, rgb(183, 121, 219));
- color: #fff;
-          font-weight: bold; padding: 15px 20px; font-size: 20px; text-transform: uppercase;  border-left: 7px solid orange; }
+
+/* 🔹 Darker Header + All Caps */
+.header { 
+  background: linear-gradient(to right, #1e004d, #3b2d86, rgb(123, 61, 189));
+  color: #fff;
+  font-weight: bold; 
+  padding: 15px 20px; 
+  font-size: 20px; 
+  text-transform: uppercase;  
+  border-left: 7px solid orange; 
+}
+
+/* 🔹 Darker Input Borders */
 label { font-size: 14px; font-weight: bold; text-transform: uppercase; margin-bottom: 5px; }
-.form-control { border-radius: 0; font-size: 16px; padding: 8px; height: 45px; }
+.form-control { border: 2px solid black; border-radius: 0; font-size: 16px; padding: 8px; height: 45px; }
 select.form-control { height: 45px; }
+
 .btn-add, .btn-save, .btn-clear, .btn-remove { font-size: 16px; padding: 8px 20px; font-weight: bold; border-radius: 0; }
-.btn-add { background: orange; color: #fff; margin-top: 10px;color: black; }
-.btn-save { background: orange ; color: #fff; padding: 12px 30px; display: block; margin: 20px auto;color: black; }
+.btn-add { background: #6a1b9a; color: black; margin-top: 10px; }
+.btn-save { background: #6a1b9a; color: black; padding: 12px 30px; display: block; margin: 20px auto; }
 .btn-clear { margin-top: 5px; font-size: 14px; padding: 5px 12px; }
 .btn-remove { background: #444; color: #fff; padding: 5px 12px; }
 .table-responsive { margin-top: 20px; }
-#productTable input { height: 40px; font-size: 16px; }
+#productTable input { height: 40px; font-size: 16px; border: 2px solid black; }
 #productTable th, #productTable td { vertical-align: middle; padding: 12px 8px; text-align: center; font-size: 16px; }
 .text-end h5 { font-size: 18px; font-weight: bold; margin-top: 10px; }
 .signature-box { border: 1px solid #a66be2; text-align: center; padding: 20px; height: auto; border-radius: 5px; }
@@ -28,28 +39,29 @@ canvas { border: 1px solid #ccc; width: 100%; height: 150px; }
 
 <div class="container mt-4">
   <div class="card shadow-lg border-0">
-     <div class="header">Processing Inquiries</div>
+     <div class="header">PROCESSING INQUIRIES</div>
     <div class="card-body">
      
-
       <form action="/save_inquiries" method="POST" enctype="multipart/form-data">
         <div class="row mt-3">
-          <div class="col-md-6 mb-3">
-            <select class="form-control" name="vendor_info" required>
-              <% vendor.forEach(function(v){ %>
-                <option value="<%= v.vendor_id %>|<%= v.vendor_name %>"><%= v.vendor_name %></option>
-              <% }) %>
-            </select>
-          </div>
+        <div class="col-md-6 mb-3">
+  <label>VENDOR NAME</label>
+  <select class="form-control" name="vendor_info" required>
+    <% vendor.forEach(function(v){ %>
+      <option value="<%= v.vendor_id %>|<%= v.vendor_name %>"><%= v.vendor_name %></option>
+    <% }) %>
+  </select>
+</div>
+
           <div class="col-md-3 mb-3">
-            <label>Purchase Order Date</label>
+            <label>PURCHASE ORDER DATE</label>
             <input type="date" class="form-control" name="purchase_date" required>
           </div>
           <div class="col-md-3 mb-3">
-            <label>Purchase Type</label>
+            <label>PURCHASE TYPE</label>
             <select class="form-control" name="purchase_type" required>
-              <option>State</option>
-              <option>Interstate</option>
+              <option>STATE</option>
+              <option>INTERSTATE</option>
             </select>
           </div>
         </div>
@@ -58,15 +70,15 @@ canvas { border: 1px solid #ccc; width: 100%; height: 150px; }
           <table class="table table-bordered align-middle text-center" id="productTable">
             <thead class="table-light">
               <tr>
-                <th>Raw Material</th>
+                <th>RAW MATERIAL</th>
                 <th>QTY</th>
                 <th>UDM</th>
-                <th>Rate</th>
-                <th>Discount</th>
-                <th>Taxable Value</th>
+                <th>RATE</th>
+                <th>DISCOUNT</th>
+                <th>TAXABLE VALUE</th>
                 <th>GST %</th>
-                <th>Total</th>
-                <th>Action</th>
+                <th>TOTAL</th>
+                <th>ACTION</th>
               </tr>
             </thead>
             <tbody>
@@ -85,24 +97,24 @@ canvas { border: 1px solid #ccc; width: 100%; height: 150px; }
           </table>
         </div>
 
-        <button type="button" class="btn btn-add" id="addRow">Add More Product</button>
+        <button type="button" class="btn btn-add" id="addRow">ADD MORE PRODUCT</button>
 
         <div class="text-end mt-2">
-          <h5><b>Grand Total : <span id="grandTotal">0</span></b></h5>
+          <h5><b>GRAND TOTAL : <span id="grandTotal">0</span></b></h5>
         </div>
 
         <div class="row mt-3">
           <div class="col-md-4">
             <div class="signature-box">
-              <h5>Add Signature</h5>
+              <h5>ADD SIGNATURE</h5>
               <canvas id="signature-pad"></canvas>
               <input type="hidden" name="employee_sign" id="employee_sign">
-              <button type="button" class="btn btn-danger btn-clear" id="clear-signature">Clear</button>
+              <button type="button" class="btn btn-danger btn-clear" id="clear-signature">CLEAR</button>
 
               <div class="mt-3">
-                <label>Employee Signature</label>
+                <label>EMPLOYEE SIGNATURE</label>
                 <select class="form-control" name="employee_signature">
-                  <option>Select Employee</option>
+                  <option>SELECT EMPLOYEE</option>
                   <% employee.forEach(function(emp){ %>
                     <option value="<%= emp.employee_name %>"><%= emp.employee_name %></option>
                   <% }) %>
@@ -112,7 +124,7 @@ canvas { border: 1px solid #ccc; width: 100%; height: 150px; }
           </div>
         </div>
 
-        <button type="submit" class="btn btn-save">Save Purchase Bill</button>
+        <button type="submit" class="btn btn-save">SAVE PURCHASE BILL</button>
       </form>
     </div>
   </div>

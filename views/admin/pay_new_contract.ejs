@@ -9,35 +9,38 @@
     background: #fff;
   }
   .form-header {
-    background: linear-gradient(to right, #004aad, #6a82fb);
-    color: #fff;
+    background: linear-gradient(to right, #290566, #4b3f92, rgb(183, 121, 219));
+    border-left: 10px solid #f7c800; 
+    color: white; /* DARK TEXT */
     padding: 8px 15px;
     font-weight: bold;
     font-size: 1rem;
-    border-left: 10px solid #f7c800; 
+    text-transform: uppercase; /* CAPITAL LETTERS */
   }
-
   .left-panel {
     padding: 15px;
     background: #fff;
-    border: 1px solid #bbb;
+    border: 1px solid #000; /* DARK BORDER */
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     margin-bottom: 15px;
   }
-  
   .right-panel {
     padding: 15px;
+    border: 1px solid #000; /* DARK BORDER */
   }
   .form-group label {
     font-weight: 600;
     font-size: 0.9rem;
     margin-bottom: 3px;
+    color: #000; /* DARK TEXT */
+    text-transform: uppercase; /* CAPITAL LETTERS */
   }
   .amount-box {
     padding: 8px 12px;
     border-radius: 4px;
     font-weight: bold;
     font-size: 0.95rem;
+    border: 2px solid #000; /* DARK BORDER */
   }
   .pending-amount {
     background-color: #ffcdd2;
@@ -51,9 +54,16 @@
   .highlight-input {
     background-color: #ffcdd2 !important;
     font-weight: bold;
+    border: 2px solid #000 !important; /* DARK BORDER */
+  }
+  input.form-control,
+  select.form-select,
+  textarea.form-control {
+    border: 2px solid #000 !important; /* DARK BORDER */
+    box-shadow: none !important;
   }
   .btn-save {
-    background-color: #7c4dff;
+    background-color: #6a1b9a;
     color: #fff;
     font-weight: bold;
     padding: 6px 15px;
@@ -64,8 +74,8 @@
     background-color: #5e35d9;
   }
 </style>
-</head>
-<body>
+
+
   <div class="container form-container">
     <div class="form-header">
       PAY TO CONTRACTOR '<%= contractor.contractor_name %>'
@@ -82,21 +92,18 @@
             <label>CONTRACTOR MOBILE</label>
             <input type="number" class="form-control" value="<%= contractor.contractor_mobile %>" readonly>
           </div>
-         <div class="form-group mb-3">
-    <label>TOTAL PENDING AMOUNT</label>
-    <div class="amount-box pending-amount">₹<%-payment.pending_to_pay %></div>
-</div>
-
-<div class="form-group mb-3">
-    <label>TOTAL PAID AMOUNT</label>
-    <div class="amount-box paid-amount">₹<%- payment.paid_amount %></div>
-</div>
-
-<div class="form-group mb-3">
-    <label>TOTAL NEXT DUE AMOUNT</label>
-    <div class="amount-box vendor-amount">₹<%- payment.next_due_amount %></div>
-</div>
-
+          <div class="form-group mb-3">
+            <label>TOTAL PENDING AMOUNT</label>
+            <div class="amount-box pending-amount">₹<%-payment.pending_to_pay %></div>
+          </div>
+          <div class="form-group mb-3">
+            <label>TOTAL PAID AMOUNT</label>
+            <div class="amount-box paid-amount">₹<%- payment.paid_amount %></div>
+          </div>
+          <div class="form-group mb-3">
+            <label>TOTAL NEXT DUE AMOUNT</label>
+            <div class="amount-box vendor-amount">₹<%- payment.next_due_amount %></div>
+          </div>
           <div class="form-group mb-3">
             <label>VENDOR TOTAL PURCHASE AMOUNT</label>
             <div class="amount-box vendor-amount">₹</div>
@@ -119,9 +126,8 @@
       <!-- RIGHT SIDE -->
       <div class="col-md-6">
         <div class="right-panel">
-          <!-- ✅ Form Start -->
           <form action="/save_payment" method="post" class="needs-validation" novalidate>
-             <input type="hidden" name="contractor_id" value="<%= contractor.contractor_id %>">
+            <input type="hidden" name="contractor_id" value="<%= contractor.contractor_id %>">
             
             <!-- Pending to Pay -->
             <div class="row mb-3 align-items-center">
@@ -190,15 +196,12 @@
             <div class="d-flex justify-content-center">
               <button type="submit" class="btn-save me-2">SAVE PAID PAYMENT</button>
             </div>
-          
           </form>
-          <!-- ✅ Form End -->
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ✅ Script yaha add karo (footer include ke upar) -->
   <script>
     document.addEventListener("DOMContentLoaded", function () {
       let pendingInput = document.querySelector("input[name='pending_to_pay']");
@@ -208,14 +211,11 @@
       paidInput.addEventListener("input", function () {
         let pending = parseFloat(pendingInput.value) || 0;
         let paid = parseFloat(paidInput.value) || 0;
-
         let nextDue = pending - paid;
-        if (nextDue < 0) {
-          nextDue = 0;
-        }
+        if (nextDue < 0) nextDue = 0;
         nextDueInput.value = nextDue;
       });
     });
   </script>
 
-  <%-include('footer.ejs')%>
+<%-include('footer.ejs')%>
