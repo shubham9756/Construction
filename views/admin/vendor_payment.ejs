@@ -1,0 +1,104 @@
+<%-include('navbar.ejs')%>
+
+<!-- Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+  body {
+    background: #f9f9fc;
+  }
+  .vendor-card {
+    border: none;
+    margin: 20px 0;
+    background: #fff;
+    /* border-radius: 12px; */
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    overflow: hidden;
+  }
+  .vendor-header {
+      background: linear-gradient(to right, #290566, #4b3f92, rgb(183, 121, 219));
+
+    border-left: 7px solid orange;
+    color: #fff;
+    font-weight: bold;
+    padding: 12px 18px;
+    font-size: 17px;
+    letter-spacing: 0.5px;
+  }
+  .vendor-table {
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .vendor-table th {
+    background: #f3f6fb;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 13px;
+    color: #333;
+  }
+  .vendor-table td, .vendor-table th {
+    border: 1px solid #e2e2e2;
+    vertical-align: middle;
+    text-align: left;
+    padding: 12px 10px;
+    transition: all 0.3s ease;
+  }
+  /* Hover effect on rows */
+  .vendor-table tbody tr:hover {
+    background: #f0f4ff;
+    transform: scale(1.02);
+    box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+    cursor: pointer;
+  }
+  .no-record {
+    text-align: center;
+    color: #666;
+    font-weight: 500;
+    padding: 20px 0;
+  }
+</style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="vendor-card">
+      <div class="vendor-header">VENDOR PAYMENTS</div>
+      <div class="table-responsive">
+        <table class="table vendor-table mb-0">
+          <thead>
+            <tr>
+              <th style="width:60px;">SN</th>
+              <th>VENDOR</th>
+              <th>MOBILE</th>
+              <th>ADDRESS</th>
+              <th>PENDING PAYMENT ₹</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if (vendor.length > 0) { %>
+              <% for(let i=0; i<vendor.length; i++){ %>
+                <tr>
+                  <td><%= i+1 %></td>
+                  <td><%= vendor[i].vendor_name %></td>
+                  <td><%= vendor[i].vendor_phone %></td>
+                  <td><%= vendor[i].vendor_address %></td>
+                  <td>
+                    <% if(vendor[i].pending_payment) { %>
+                      ₹ <%= vendor[i].pending_payment %>
+                    <% } else { %>
+                      ₹ 0
+                    <% } %>
+                  </td>
+                </tr>
+              <% } %>
+            <% } else { %>
+              <tr>
+                <td colspan="5" class="no-record">NO RECORDS FOUND..</td>
+              </tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+<%-include('footer.ejs')%>

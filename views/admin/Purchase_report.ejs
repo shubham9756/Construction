@@ -20,7 +20,8 @@
       box-shadow: 0 4px 12px rgba(0,0,0,0.08);
     }
     .report-header {
-      background: var(--blue-header);
+     background: linear-gradient(to right, #290566, #4b3f92, rgb(183, 121, 219));
+
       color: #fff;
       font-weight: 800;
       padding: 10px 16px;
@@ -31,16 +32,17 @@
       align-items: center;
     }
     .btn-purple {
-      background: var(--purple-btn);
+             background: linear-gradient(90deg, #291634, #7a3eb1);
+
       color: #fff;
       font-weight: 600;
       border: none;
       padding: 6px 16px;
       box-shadow: 0 3px 0 rgba(0,0,0,0.15);
     }
-    .btn-purple:hover {
+    /* .btn-purple:hover {
       background: #6a45b5;
-    }
+    } */
     .search-btn {
       margin-left: 10px;
       padding: 6px 16px;
@@ -65,7 +67,7 @@
 </head>
 <body>
 
-<div class="report-card">
+<div class="report-card p-0">
   <div class="report-header">
     <div>PURCHASE REPORT</div>
     <a href="/purchase_report_product" class="btn btn-purple">Report By Products</a>

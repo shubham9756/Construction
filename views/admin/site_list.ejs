@@ -33,9 +33,7 @@
   </table>
 </div>
 
-<!-- jQuery + DataTables + Buttons -->
-
-
+<!-- DataTables Script -->
 <script>
   $(document).ready(function () {
     $('#siteTable').DataTable({
@@ -44,26 +42,29 @@
         {
           extend: 'colvis',
           text: '<i class="bi bi-layout-three-columns"></i> Columns',
-          className: 'btn btn-secondary btn-sm m-2'
+          className: 'btn btn-secondary btn-sm'
         },
         {
           extend: 'csv',
           text: '<i class="bi bi-filetype-csv"></i> CSV',
-          className: 'btn btn-success btn-sm m-2'
+          className: 'btn btn-success btn-sm'
         },
         {
           extend: 'print',
           text: '<i class="bi bi-printer"></i> Print',
-          className: 'btn btn-info btn-sm m-2'
+          className: 'btn btn-info btn-sm'
         }
       ],
       paging: true,
       searching: true,
       ordering: true,
-      responsive: true
+      responsive: true,
+      language: {
+        search: "_INPUT_",
+        searchPlaceholder: "Search site..."
+      }
     });
   });
 </script>
 
-
-<%-include('footer.ejs')%>
+<%- include('footer.ejs') %>
