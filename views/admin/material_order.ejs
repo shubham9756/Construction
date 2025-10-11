@@ -7,7 +7,13 @@
         }
 
         .card-header {
-            background-color: #303f9f;
+           background: linear-gradient(
+          to right,
+          #290566,
+          #4b3f92,
+          rgb(183, 121, 219)
+        );
+        border-left: 7px solid orange;
             color: white;
             text-align: left;
         }
@@ -18,7 +24,7 @@
     </style>
     <div class="container mt-5">
         <div class="card shadow">
-            <div class="card-header" style="background: #303f9f;">
+            <div class="card-header">
                 <h4 class="mb-0 text-white">ADD NEW RAW MATERIAL / PRODUCT</h4>
             </div>
             <div class="card-body">
@@ -28,7 +34,7 @@
                         <div class="col-md-6 mb-3">
                             <label class="form-label fw-bold">ORDER COMPANY NAME*</label>
                             <input type="text" class="form-control" name="product_name"
-                                placeholder="Enter Raw-Material or Product Name" required>
+                                placeholder="ENTER RAW-MATERIAL OR PRODUCT NAME" required>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label fw-bold">RAW MATERIAL NAME</label>
@@ -45,7 +51,7 @@
                         <div class="col-md-6 mb-3">
                             <label class="form-label fw-bold">UNIT</label>
                             <input type="text" class="form-control" name="unit_weight"
-                                placeholder="Enter Unit / Weight">
+                                placeholder="ENTER UNIT / WEIGHT">
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label fw-bold">CHOOSE UDM*</label>
@@ -62,11 +68,11 @@
                         <div class="col-md-4 mb-3">
                             <label class="form-label fw-bold">₹ PURCHASE AMOUNT / UDM*</label>
                             <input type="number" class="form-control" name="purchase_amount"
-                                placeholder="Enter Purchase Amount" required>
+                                placeholder="ENTER PURCHASE AMOUNT" required>
                         </div>
                         <div class="col-md-4 mb-3">
                             <label class="form-label fw-bold">Address</label>
-                            <textarea  class="form-control input" name="sale_address" placeholder="Enter Order Address" rows="1"
+                            <textarea  class="form-control input" name="sale_address" placeholder="ENTER ORDER ADDRESS" rows="1"
                                 required></textarea>
                         </div>
                         <div class="col-md-4 mb-3">

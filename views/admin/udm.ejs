@@ -10,12 +10,13 @@
         }
 
         .section-header {
-            background: #283593;
+            background: linear-gradient(to right, #290566, #4b3f92, rgb(183, 121, 219));
+            border-left: 7px solid orange;
             /* Dark Blue */
             color: #fff;
             font-weight: bold;
             padding: 8px 12px;
-            border-left: 7px solid gold;
+            /* border-left: 7px solid gold; */
         }
 
         .btn-udm {
@@ -54,16 +55,16 @@
 <br>
         <div class="container">
             <!-- Add New UDM -->
-            <div class="card shadow-sm mb-2">
+            <div class="card shadow-sm mb-4">
                 <div class="section-header">ADD NEW UDM</div>
                 <div class="card-body">
                     <form action="/save_udm" method="post" class="row g-2 align-items-center">
                         <div class="col-md-5 col-9">
-                            <input type="text" class="form-control" name="udm_name" placeholder="Enter New UDM Name"
+                            <input type="text" class="form-control" name="udm_name" placeholder="ENTER NEW UDM NAME"
                                 required>
                         </div>
                         <div class="col-md-5 col-9">
-                            <input type="text" class="form-control" name="udm_added_name" placeholder="Enter UDM Added By"
+                            <input type="text" class="form-control" name="udm_added_name" placeholder="ENTER UDM ADDED BY"
                                 required>
                         </div>
                         <div class="col-md-2 col-3 d-grid">
