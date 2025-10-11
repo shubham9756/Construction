@@ -353,8 +353,7 @@ router.get('/rent_flat_details/:id', async function (req, res) {
   LEFT JOIN customers ON flat_sales.customer_id = customers.id
   WHERE flat_sales.flat_id = ?`
     var result = await exe(sql, [id]);
-
-    console.log(id,result);
+    console.log(id, result);
     res.render('admin/flat_details.ejs', { result });
 });
 
@@ -402,7 +401,7 @@ LEFT JOIN site ON flats.site_id = site.site_id
 LEFT JOIN customers ON flat_sales.customer_id = customers.id
 WHERE flat_sales.flat_id = ?;`
     var result = await exe(sql, [id]);
-    console.log("result :-", result, "Sql:-", sql,id)
+    console.log("result :-", result, "Sql:-", sql, id)
 
     res.render('admin/flat_details.ejs', { result });
 });
@@ -481,6 +480,16 @@ router.post("/add_customor", async function (req, res) {
 });
 router.get('/delete_customer/:id', async function (req, res) {
     var result = await exe(`DELETE FROM customers WHERE id = ${req.params.id}`)
+    res.redirect('/customor_list')
+})
+router.get("/edit_customer/:id", async function (req, res) {
+    var data = await exe('SELECT * FROM customers WHERE id=?', [req.params.id])
+    res.render('admin/edit_custmor.ejs', { 'customer': data[0] })
+})
+router.post("/edit_customer/:id", async function (req, res) {
+    var d = req.body;
+    var sql = `UPDATE customers SET full_name=?, email=?, mobile=?, password=? WHERE id=?`;
+    var result = await exe(sql, [d.full_name, d.email, d.mobile, d.password, req.params.id]);
     res.redirect('/customor_list')
 })
 router.get("/customor_list", async function (req, res) {
