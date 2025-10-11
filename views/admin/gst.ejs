@@ -1,90 +1,146 @@
 <%-include('navbar.ejs')%>
-    <style>
-        .form-control {
-            border: 2px solid black;
-            border-radius: 0px;
-        }
-    </style>
-    <br>
-    <br>
-    <div class="container mt-5">
-        <div class="card shadow-sm">
-            <div class="card-header bg-primary text-white">
-                Add New Material
-            </div>
-            <div class="card-body">
-                <form action="/add-material" method="POST">
-                    <div class="row g-3">
+<style>
+  .form-control {
+    border: 2px solid black;
+    border-radius: 0px;
+  }
 
-                        <!-- Material Name -->
-                        <div class="col-md-4">
-                            <label for="material_name" class="form-label fw-bold">Material Name *</label>
-                            <input type="text" class="form-control" id="material_name" name="material_name"
-                                placeholder="Enter material name" required>
-                        </div>
+  .card-header {
+    text-transform: uppercase;
+    background: linear-gradient(to right, #290566, #4b3f92, rgb(183, 121, 219));
+    border-left: 7px solid orange;
+    color: #fff;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
 
-                        <!-- HSN Code -->
-                        <div class="col-md-4">
-                            <label for="hsn_code" class="form-label fw-bold">HSN Code</label>
-                            <input type="text" class="form-control" id="hsn_code" name="hsn_code"
-                                placeholder="Auto HSN">
-                        </div>
+  .button {
+    background-color: #6a1b9a;
+    color: white;
+  }
 
-                        <!-- GST % -->
-                        <div class="col-md-4">
-                            <label for="gst_rate" class="form-label fw-bold">GST %</label>
-                            <input type="number" class="form-control" id="gst_rate" name="gst_rate"
-                                placeholder="Enter GST %" required>
-                        </div>
+  .button:hover {
+    background-color: #6a1b9a;
+    color: white;
+  }
 
-                        <!-- CGST % -->
-                        <div class="col-md-3">
-                            <label for="cgst_rate" class="form-label fw-bold">CGST %</label>
-                            <input type="number" class="form-control" id="cgst_rate" name="cgst_rate"
-                                placeholder="Auto CGST %" readonly>
-                        </div>
+  .form-label {
+    font-weight: bold;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+  }
+</style>
+<br />
+<br />
+<div class="container mt-5">
+  <div class="card shadow-sm">
+    <div class="card-header text-white">Add New Material</div>
+    <div class="card-body">
+      <form action="/add-material" method="POST">
+        <div class="row g-3">
+          <!-- Material Name -->
+          <div class="col-md-4">
+            <label for="material_name" class="form-label fw-bold"
+              >Material Name *</label
+            >
+            <input
+              type="text"
+              class="form-control"
+              id="material_name"
+              name="material_name"
+              placeholder="ENTER MATERIAL NAME"
+              required
+            />
+          </div>
 
-                        <!-- SGST % -->
-                        <div class="col-md-3">
-                            <label for="sgst_rate" class="form-label fw-bold">SGST %</label>
-                            <input type="number" class="form-control" id="sgst_rate" name="sgst_rate"
-                                placeholder="Auto SGST %" readonly>
-                        </div>
+          <!-- HSN Code -->
+          <div class="col-md-4">
+            <label for="hsn_code" class="form-label fw-bold">HSN Code</label>
+            <input
+              type="text"
+              class="form-control"
+              id="hsn_code"
+              name="hsn_code"
+              placeholder="AUTO HSN"
+            />
+          </div>
 
-                        <!-- IGST % -->
-                        <div class="col-md-3">
-                            <label for="igst_rate" class="form-label fw-bold">IGST %</label>
-                            <input type="number" class="form-control" id="igst_rate" name="igst_rate"
-                                placeholder="Auto IGST %" readonly>
-                        </div>
+          <!-- GST % -->
+          <div class="col-md-4">
+            <label for="gst_rate" class="form-label fw-bold">GST %</label>
+            <input
+              type="number"
+              class="form-control"
+              id="gst_rate"
+              name="gst_rate"
+              placeholder="ENTER GST %"
+              required
+            />
+          </div>
 
-                        <!-- Date -->
+          <!-- CGST % -->
+          <div class="col-md-3">
+            <label for="cgst_rate" class="form-label fw-bold">CGST %</label>
+            <input
+              type="number"
+              class="form-control"
+              id="cgst_rate"
+              name="cgst_rate"
+              placeholder="AUTO CGST %"
+              readonly
+            />
+          </div>
 
+          <!-- SGST % -->
+          <div class="col-md-3">
+            <label for="sgst_rate" class="form-label fw-bold">SGST %</label>
+            <input
+              type="number"
+              class="form-control"
+              id="sgst_rate"
+              name="sgst_rate"
+              placeholder="AUTO SGST %"
+              readonly
+            />
+          </div>
 
-                    </div>
+          <!-- IGST % -->
+          <div class="col-md-3">
+            <label for="igst_rate" class="form-label fw-bold">IGST %</label>
+            <input
+              type="number"
+              class="form-control"
+              id="igst_rate"
+              name="igst_rate"
+              placeholder="AUTO IGST %"
+              readonly
+            />
+          </div>
 
-                    <div class="mt-4 d-flex justify-content-end">
-                        <button type="reset" class="btn btn-danger me-2">Reset</button>
-                        <button type="submit" class="btn btn-primary me-2">Add Material</button>
-                    </div>
-
-                </form>
-            </div>
+          <!-- Date -->
         </div>
+
+        <div class="mt-4 d-flex justify-content-end">
+          <button type="reset" class="btn btn-danger me-2">Reset</button>
+          <button type="submit" class="btn button me-2">Add Material</button>
+        </div>
+      </form>
     </div>
+  </div>
+</div>
 
-    <script>
-        // Auto-calculate CGST & SGST as half of GST
-        const gst = document.getElementById('gst_rate');
-        const cgst = document.getElementById('cgst_rate');
-        const sgst = document.getElementById('sgst_rate');
-        const igst = document.getElementById('igst_rate');
+<script>
+  // Auto-calculate CGST & SGST as half of GST
+  const gst = document.getElementById("gst_rate");
+  const cgst = document.getElementById("cgst_rate");
+  const sgst = document.getElementById("sgst_rate");
+  const igst = document.getElementById("igst_rate");
 
-        gst.addEventListener('input', () => {
-            const gstVal = parseFloat(gst.value) || 0;
-            cgst.value = (gstVal / 2).toFixed(2);
-            sgst.value = (gstVal / 2).toFixed(2);
-            igst.value = gstVal.toFixed(2);
-        });
-    </script>
-    <%-include('footer.ejs')%>
+  gst.addEventListener("input", () => {
+    const gstVal = parseFloat(gst.value) || 0;
+    cgst.value = (gstVal / 2).toFixed(2);
+    sgst.value = (gstVal / 2).toFixed(2);
+    igst.value = gstVal.toFixed(2);
+  });
+</script>
+<%-include('footer.ejs')%>
