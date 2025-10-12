@@ -1,222 +1,94 @@
-<%-include("navbar.ejs")%>
+<%- include("navbar.ejs") %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Maintenance Site List</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
-    .section-header {
-      background: linear-gradient(90deg, #1a3c94, #4a73df);
-      color: #fff;
-      font-weight: bold;
-      font-size: 16px;
-      padding: 8px 15px;
-      margin-bottom: 0;
-      text-transform: uppercase;
+    .card-header {
+      background: linear-gradient(to right, #2c1e8f, #9c4dcc);
+      color: white;
+      font-weight: 600;
+      font-size: 1.3rem;
     }
-    .btn-received {
-      background: #6f42c1 !important;
-      color: #fff !important;
-      font-size: 12px;
-      padding: 3px 8px;
-      border-radius: 4px;
+    table {
+      border-collapse: collapse;
+      width: 100%;
     }
-    .btn-view {
-      background: #f0ad4e !important;
-      color: #fff !important;
-      font-size: 12px;
-      padding: 3px 8px;
-      border-radius: 4px;
-      margin-left: 4px;
+    thead {
+      background-color: #2c1e8f;
+      color: white;
     }
-    .badge-sold {
-      background: green;
-      color: #fff;
-      font-size: 12px;
-      padding: 3px 8px;
-      border-radius: 12px;
-      margin-left: 6px;
+    tbody tr:hover {
+      background-color: #f6f6ff;
     }
-    .hidden {
-      display: none;
+    .btn-edit {
+      background-color: #ffc107;
+      border: none;
+      color: white;
+      border-radius: 6px;
+      padding: 5px 10px;
+    }
+    .btn-delete {
+      background-color: #dc3545;
+      border: none;
+      color: white;
+      border-radius: 6px;
+      padding: 5px 10px;
     }
   </style>
 </head>
-<body class="bg-light p-3">
-
-<!-- 📌 Pending Table -->
-<div id="tableSection" class="card shadow-sm mb-4">
-  <div class="section-header">Pending to Received Maintenance</div>
-  <div class="table-responsive">
-    <table class="table table-bordered mb-0">
-      <thead>
-        <tr>
-          <th>Action</th>
-          <th>SN</th>
-          <th>Customer Name</th>
-          <th>Flat/Shop No.</th>
-          <th>Site</th>
-          <th>Amount</th>
-          <th>Received</th>
-          <th>Date</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>
-            <button class="btn btn-sm btn-received" onclick="showForm()">Received</button>
-            <button class="btn btn-sm btn-view" onclick="showViewForm()">View</button>
-          </td>
-          <td>1</td>
-          <td>MANOJ MORE <span class="badge-sold">SOLD</span></td>
-          <td>TAT2001 (2400/2000 SQFT)</td>
-          <td>NAYANTARA APARTMENT</td>
-          <td>₹ 69,000/-</td>
-          <td>₹ 69,000/-</td>
-          <td>12 AUG 2025</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-</div>
-
-<!-- 📌 Received Form -->
-<div id="receivedForm" class="card shadow-sm hidden">
-  <div class="section-header">
-    RECEIVED MAINTENANCE OF <span class="fw-bold">MANOJ MORE</span>
-    <span class="badge-sold">SOLD</span><br>
-    FLAT/SHOP NO <span class="fw-bold">TAT2001</span>
-  </div>
-
-  <div class="card-body">
-    <form>
-      <div class="row g-3">
-        <div class="col-md-4">
-          <label class="form-label">Maintenance Amount</label>
-          <input type="text" class="form-control" placeholder="Enter amount">
-        </div>
-        <div class="col-md-4">
-          <label class="form-label">Maintenance Date</label>
-          <input type="date" class="form-control">
-        </div>
-        <div class="col-md-4">
-          <label class="form-label">Maintenance Details</label>
-          <input type="text" class="form-control" placeholder="Enter details">
-        </div>
-        <div class="col-md-4">
-          <label class="form-label">Received Maintenance Amount</label>
-          <input type="text" class="form-control" placeholder="Enter received amount">
-        </div>
-        <div class="col-md-4">
-          <label class="form-label">Received Maintenance Date</label>
-          <input type="date" class="form-control">
-        </div>
-        <div class="col-md-4">
-          <label class="form-label">Received Maintenance By</label>
-          <select class="form-select">
-            <option value="" disabled selected>Select Payment Mode</option>
-            <option>Cash</option>
-            <option>UPI</option>
-            <option>Bank Transfer</option>
-            <option>Cheque</option>
-            <option>NEFT/RTGS</option>
-            <option>Other</option>
-          </select>
-        </div>
+<body>
+  <div class="container mt-5 mb-5">
+    <div class="card shadow-lg border-0">
+      <div class="card-header">
+        🧾 Pending Maintenance List
       </div>
-    </form>
-  </div>
-
-  <div class="card-footer d-flex justify-content-between">
-    <button class="btn text-white" style="background:#ff2f92;" onclick="backToTable()">
-      SAVE & PLACE AGAIN IN PENDING MAINTENANCE
-    </button>
-    <button class="btn text-white" style="background:#6f42c1;" onclick="saveTransaction()">
-      SAVE & PLACE IN COMPLETED MAINTENANCE
-    </button>
-  </div>
-</div>
-
-<!-- 📌 View Form -->
-<div id="viewForm" class="card shadow-sm hidden">
-  <div class="section-header">
-    MAINTENANCE DETAILS OF <span class="fw-bold">MANOJ MORE</span>
-    <span class="badge-sold">SOLD</span><br>
-    FLAT/SHOP NO <span class="fw-bold">TAT2001</span>
-  </div>
-
-  <div class="card-body">
-    <div class="row g-3 mb-3">
-      <div class="col-md-4">
-        <label class="form-label">Maintenance Amount</label>
-        <input type="text" class="form-control" >
-      </div>
-      <div class="col-md-4">
-        <label class="form-label">Maintenance Date</label>
-        <input type="date" class="form-control" >
-      </div>
-      <div class="col-md-4">
-        <label class="form-label">Maintenance Details</label>
-        <input type="text" class="form-control" >
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-bordered align-middle text-center">
+            <thead>
+              <tr>
+                <th>Sr. No</th>
+                <th>Site Name</th>
+                <th>Location</th>
+                <th>Status</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (result.length > 0) { %>
+                <% result.forEach((site, index) => { %>
+                  <tr>
+                    <td><%= index + 1 %></td>
+                    <td><%= site.site_name %></td>
+                    <td><%= site.location %></td>
+                    <td>
+                      <% if (site.status === "Completed") { %>
+                        <span class="badge bg-success">Completed</span>
+                      <% } else if (site.status === "In Progress") { %>
+                        <span class="badge bg-warning text-dark">In Progress</span>
+                      <% } else { %>
+                        <span class="badge bg-secondary"><%= site.status %></span>
+                      <% } %>
+                    </td>
+                    <td><%= site.description %></td>
+                    
+                  </tr>
+                <% }) %>
+              <% } else { %>
+                <tr>
+                  <td colspan="6" class="text-muted">No Maintenance result Found</td>
+                </tr>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
-
-    <div class="section-header">Transactions</div>
-    <div class="table-responsive">
-      <table class="table table-bordered mb-0">
-        <thead>
-          <tr>
-            <th>SN</th>
-            <th>Received Amount</th>
-            <th>Received Date</th>
-            <th>Received By</th>
-            <th>After Transaction</th>
-          </tr>
-        </thead>
-        <tbody id="transactionTable">
-          <tr>
-            <td>1</td>
-            <td>69000</td>
-            <td>12 SEP 2025</td>
-            <td>UPI</td>
-            <td>Pending</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div class="mt-3 d-flex justify-content-between">
-      <button class="btn btn-dark" onclick="openAddTransaction()">Add Transaction</button>
-      <button class="btn text-white" style="background:#6f42c1;">Shift to Complete Maintenance</button>
-    </div>
   </div>
-</div>
-
-<script>
-  function showForm() {
-    document.getElementById("tableSection").classList.add("hidden");
-    document.getElementById("viewForm").classList.add("hidden");
-    document.getElementById("receivedForm").classList.remove("hidden");
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-  function backToTable() {
-    document.getElementById("receivedForm").classList.add("hidden");
-    document.getElementById("viewForm").classList.add("hidden");
-    document.getElementById("tableSection").classList.remove("hidden");
-  }
-  function showViewForm() {
-    document.getElementById("tableSection").classList.add("hidden");
-    document.getElementById("receivedForm").classList.add("hidden");
-    document.getElementById("viewForm").classList.remove("hidden");
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-  function openAddTransaction() {
-    document.getElementById("viewForm").classList.add("hidden");
-    document.getElementById("receivedForm").classList.remove("hidden");
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-  function saveTransaction() {
-    alert("Transaction Saved! (इथे नंतर backend add करू शकतो)");
-    backToTable();
-  }
-</script>
-
-
-<%-include("footer.ejs")%>
+</body>
+</html>
+<%- include("footer.ejs") %>

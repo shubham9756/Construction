@@ -1060,14 +1060,27 @@ router.get("/delete_labour/:labour_id", async function (req, res) {
     res.redirect("/labours/" + contractorId);
 
 });
+router.get("/closed_inquiries", async function (req, res) {
 
+    var enquiry = await exe("SELECT * FROM enquiries WHERE inquiry_status='closed'");
+    res.render("admin/closed_inquiries", { "enquiry": enquiry, });
+    // res.send({"enquiry":enquiry});
+});
 
 // maintance
+router.get("/add_maintenance",async function (req, res) {
+    res.render("admin/add_maintenance.ejs",{});
+});
+router.post("/add_maintenance", async function (req, res) {
+    var d = req.body;
+    var sql = `INSERT INTO add_maintenance(site_name,location,status,description)VALUES(?,?,?,?)`;
+    var result = await exe(sql, [d.site_name, d.location, d.status, d.description]);
+    res.redirect("/add_maintenance");
+});
+
 router.get("/new_maintenance", async function (req, res) {
-
-    var sites = await exe("SELECT * FROM site");
-
-    res.render("admin/new_maintenance.ejs", { sites, flats: [], });
+    var result = await exe("SELECT * fROM add_maintenance WHERE status='new'");
+    res.render("admin/new_maintenance.ejs", { result, });
 });
 router.get("/check_maintenance/:site_id", async function (req, res) {
 
@@ -1083,12 +1096,13 @@ router.get("/check_maintenance/:site_id", async function (req, res) {
 });
 router.get("/pending_maintenance", async function (req, res) {
 
-    // var flats = await exe("SELECT * FROM flats WHERE status='Available'");
-    res.render("admin/pending_maintenance.ejs", {});
+    var result = await exe("SELECT * FROM add_maintenance WHERE status='pending'");
+    res.render("admin/pending_maintenance.ejs", {result});
 });
 router.get("/completed_maintenance", async function (req, res) {
+    var result = await exe("SELECT * FROM add_maintenance WHERE status='completed'");
 
-    res.render("admin/completed_maintenance.ejs", {});
+    res.render("admin/completed_maintenance.ejs", {result});
 });
 
 
