@@ -1,138 +1,87 @@
-<%-include('navbar.ejs')%>
+<%- include("navbar.ejs") %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sale Bill Report</title>
-
-  <!-- Bootstrap -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <title>Maintenance Site List</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
   <style>
-    body { background:#f5f6fa; }
-    .header-bar {
-      background:#1e3a8a;
-      color:#fff;
-      padding:12px 16px;
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      border-radius:4px 4px 0 0;
-      position:relative;
+    .card-header {
+      background: linear-gradient(to right, #2c1e8f, #9c4dcc);
+      color: white;
+      font-weight: 600;
+      font-size: 1.3rem;
     }
-    .header-bar::before {
-      content:"";
-      position:absolute;
-      left:0;
-      top:0;
-      bottom:0;
-      width:6px;
-      background:#fbbf24;
+    table {
+      border-collapse: collapse;
+      width: 100%;
     }
-    .header-bar h5 {
-      margin:0;
-      padding-left:12px;
-      font-weight:bold;
-      letter-spacing:0.5px;
+    thead {
+      background-color: #2c1e8f;
+      color: white;
     }
-    .btn-adv {
-      background:linear-gradient(180deg,#a855f7,#6d28d9);
-      border:none;
-      font-weight:600;
-      color:#fff;
-      box-shadow:0 2px 6px rgba(0,0,0,0.2);
+    tbody tr:hover {
+      background-color: #f6f6ff;
     }
-    .search-form {
-      background:#fff;
-      border:1px solid #ddd;
-      border-top:none;
-      padding:16px;
-      display:none;
+    .btn-edit {
+      background-color: #ffc107;
+      border: none;
+      color: white;
+      border-radius: 6px;
+      padding: 5px 10px;
     }
-    .table thead {
-      background:#f1f5f9;
-    }
-    .no-data {
-      color:red;
-      font-weight:bold;
-      text-align:center;
-      padding:20px 0;
+    .btn-delete {
+      background-color: #dc3545;
+      border: none;
+      color: white;
+      border-radius: 6px;
+      padding: 5px 10px;
     }
   </style>
 </head>
 <body>
-
-<div class="container my-4">
-  <div class="card shadow-sm">
-
-    <!-- HEADER -->
-    <div class="header-bar">
-      <h5>SALE BILL REPORT</h5>
-      <button class="btn btn-sm btn-adv px-3" onclick="toggleSearch()">ADV. SEARCH</button>
-    </div>
-
-    <!-- ADV. SEARCH FORM -->
-    <div id="advSearchForm" class="search-form">
-      <div class="row g-3 align-items-end">
-        <div class="col-md-3">
-          <label class="form-label fw-bold">FROM</label>
-          <input type="date" class="form-control" >
-        </div>
-        <div class="col-md-3">
-          <label class="form-label fw-bold">TO</label>
-          <input type="date" class="form-control">
-        </div>
-        <div class="col-md-3">
-          <label class="form-label fw-bold">SELECT CUSTOMER</label>
-          <select class="form-select">
-            <option>All</option>
-            <option>Customer A</option>
-            <option>Customer B</option>
-          </select>
-        </div>
-        <div class="col-md-3 text-end">
-          <button class="btn btn-adv px-4">SEARCH</button>
+  <div class="container mt-5 mb-5">
+    <div class="card shadow-lg border-0">
+      <div class="card-header">
+        🧾Payment Received List
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-bordered align-middle text-center">
+            <thead>
+              <tr>
+                <th>Sr. No</th>
+               
+                <th>Description</th>
+                <th>Payment Date</th>
+                <th>Payment Type</th>
+                <th>Receive Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (result.length > 0) { %>
+                <% result.forEach((site, index) => { %>
+                  <tr>
+                    <td><%= index + 1 %></td>
+                    
+                    <td><%= site.description %></td>
+                    <td><%= site.payment_date ? site.payment_date.toLocaleDateString() : "-" %></td>
+                      <td><%= site.payment_type || "-" %></td>
+                    <td><%= site.received_amount ? "₹" + site.received_amount.toLocaleString() : "-" %></td>
+                  </tr>
+                <% }) %>
+              <% } else { %>
+                <tr>
+                  <td colspan="9" class="text-muted">No Maintenance result Found</td>
+                </tr>
+              <% } %>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
-
-    <!-- TABLE -->
-    <div class="table-responsive">
-      <table class="table table-bordered table-striped text-center align-middle mb-0">
-        <thead>
-          <tr>
-            <th>SALE NO</th>
-            <th>CUSTOMER</th>
-            <th>SALE DATE</th>
-            <th>QTY</th>
-            <th>TOTAL</th>
-            <th>GST</th>
-            <th>TOTAL AMT</th>
-            <th>EXTRA CHARGES</th>
-            <th>GRAND TOTAL</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td colspan="9" class="no-data">NO RECORDS FOUND..</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
   </div>
-</div>
-
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-  function toggleSearch() {
-    const form = document.getElementById("advSearchForm");
-    form.style.display = (form.style.display === "none" || form.style.display === "") ? "block" : "none";
-  }
-</script>
 </body>
 </html>
-
-<%-include('footer.ejs')%>
+<%- include("footer.ejs") %>

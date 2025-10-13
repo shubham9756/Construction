@@ -785,20 +785,25 @@ router.get("/delete_processing/:id", async (req, res) => {
 
 // stock
 router.get("/issue_stock", async function (req, res) {
+    var result = await exe("SELECT * FROM materials ");
 
-    res.render("admin/issue_stock", {});
+
+    res.render("admin/issue_stock.ejs", {result});
 });
 router.get("/issue_report", async function (req, res) {
+    var result = await exe("SELECT * FROM bills ");
 
-    res.render("admin/issue_report", {});
+    res.render("admin/issue_report", {result});
 });
 router.get("/sale_stock", async function (req, res) {
+    var result = await exe("SELECT * FROM flat_sales ");
 
-    res.render("admin/sale_stock", {});
+    res.render("admin/sale_stock", {"result":result});
 });
 router.get("/sale_report", async function (req, res) {
+    var result = await exe("SELECT * FROM payment_received ");
 
-    res.render("admin/sale_report", {});
+    res.render("admin/sale_report", {result});
 });
 
 

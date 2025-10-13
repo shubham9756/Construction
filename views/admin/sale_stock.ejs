@@ -1,499 +1,95 @@
-<%-include('navbar.ejs')%>
+<%- include("navbar.ejs") %>
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Sale Raw Material Bill</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"
-      rel="stylesheet"
-    />
-    <style>
-      body {
-        background: #f4f6fb;
-        padding: 20px;
-      }
-      .bill-container {
-        background: #fff;
-        border: 1px solid #ccc;
-        padding: 20px;
-        border-radius: 6px;
-        margin: auto;
-        max-width: 1200px;
-      }
-       .header-bar {
-      background:#1e3a8a;
-      color:#fff;
-      padding:12px 16px;
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      border-radius:4px 4px 0 0;
-      position:relative;
-    }
-    .header-bar::before {
-      content:"";
-      position:absolute;
-      left:0;
-      top:0;
-      bottom:0;
-      width:6px;
-      background:#fbbf24;
-    }
-    .header-bar h5 {
-      margin:0;
-      padding-left:12px;
-      font-weight:bold;
-      letter-spacing:0.5px;
-    }
-      .form-label {
-        font-size: 12px;
-        font-weight: 600;
-        margin-bottom: 2px;
-      }
-      .form-control,
-      .form-select {
-        border: 1px solid #000;
-        font-size: 13px;
-        height: 30px;
-        padding: 2px 6px;
-        border-radius: 0 !important;
-      }
-      table.table {
-        border-collapse: collapse !important;
-        margin-bottom: 0;
-        width: 100%;
-      }
-      table.table th,
-      table.table td {
-        font-size: 12px;
-        padding: 3px;
-        border: 1px solid #ccc !important;
-        vertical-align: middle;
-      }
-      .btn-pink {
-        background: #ff4081;
-        color: white;
-        font-size: 12px;
-        padding: 4px 10px;
-        border-radius: 0;
-        margin: 5px 0;
-        font-weight: 600;
-      }
-      .btn-pink:hover {
-        background: #e91e63;
-        color: white;
-      }
-      .signature-box {
-        border: 1px solid;
-        height: 90px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-size: 14px;
-        font-weight: 600;
-        border-radius: 0;
-      }
-     .signature-box:hover  {
-    background-color: #7e57c2;
-    }
+<head>
+  <meta charset="UTF-8">
+  <title>Maintenance Site List</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    .signature-box:hover h3 {
-    color: white;
-}
-
-      .footer-label {
-        text-align: center;
-        margin-top: 3px;
-        font-size: 12px;
-        font-weight: bold;
-      }
-      .save-btn {
-        background: #9575cd;
-        color: white;
-        font-weight: bold;
-        width: 100%;
-        max-width: 220px;
-        border-radius: 0;
-        font-size: 13px;
-      }
-      .save-btn:hover {
-        background: #7e57c2;
-        color: white;
-      }
-      textarea {
-        font-size: 13px;
-        border: 1px solid #000;
-      }
-      .table-total-row td {
-        font-weight: bold;
-        background: #f9f9f9;
-      }
-      @media (max-width: 992px) {
-        .bill-container {
-          padding: 15px;
-        }
-        .header-bar {
-          flex-direction: column;
-          align-items: flex-start;
-        }
-        .row > .col-md-6,
-        .row > .col-md-4 {
-          flex: 1 1 100%;
-        }
-      }
-      @media (max-width: 576px) {
-        body {
-          padding: 10px;
-        }
-        .form-control,
-        .form-select {
-          font-size: 12px;
-          height: 28px;
-        }
-        .save-btn {
-          font-size: 12px;
-        }
-        table.table th,
-        table.table td {
-          font-size: 11px;
-          padding: 2px;
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <div class="bill-container">
-      <div class="header-bar">
-        <div>
-          SALE RAW MATERIAL
-          <select class="form-select d-inline-block w-auto ms-1">
-            <option value="">STATE</option>
-            <option value="in">IN STATE</option>
-            <option value="out">OUT OF STATE</option>
-          </select>
-        </div>
-        <div>SALE BILL NO <span class="fw-bold">RNIN25-2</span></div>
+  <style>
+    .card-header {
+      background: linear-gradient(to right, #2c1e8f, #9c4dcc);
+      color: white;
+      font-weight: 600;
+      font-size: 1.3rem;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+    thead {
+      background-color: #2c1e8f;
+      color: white;
+    }
+    tbody tr:hover {
+      background-color: #f6f6ff;
+    }
+    .btn-edit {
+      background-color: #ffc107;
+      border: none;
+      color: white;
+      border-radius: 6px;
+      padding: 5px 10px;
+    }
+    .btn-delete {
+      background-color: #dc3545;
+      border: none;
+      color: white;
+      border-radius: 6px;
+      padding: 5px 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container mt-5 mb-5">
+    <div class="card shadow-lg border-0">
+      <div class="card-header">
+        🧾 Pending Maintenance List
       </div>
-
-      <div class="p-3">
-        <div class="row g-2">
-          <div class="col-md-4">
-            <label class="form-label">CUSTOMER NAME</label>
-            <input type="text" class="form-control" />
-          </div>
-          <div class="col-md-4">
-            <label class="form-label">CUSTOMER MOBILE</label>
-            <input type="text" class="form-control" />
-          </div>
-          <div class="col-md-4">
-            <label class="form-label">BILL DATE</label>
-            <input type="date" id="billDate" class="form-control" />
-          </div>
-        </div>
-
-        <div class="table-responsive mt-3">
-          <table class="table text-center">
-            <thead style="background: #f9f9f9">
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-bordered align-middle text-center">
+            <thead>
               <tr>
-                <th>RAW MATERIAL</th>
-                <th>QTY</th>
-                <th>UDM</th>
-                <th>RATE</th>
-                <th>DISCOUNT</th>
-                <th>TAXABLE VALUE</th>
-                <th>GST %</th>
-                <th>TOTAL</th>
-                <th style="width: 35px"></th>
+                <th>Sr. No</th>
+                <th>Status</th>
+                <th>Invoice No</th>
+                <th>Note</th>
+                <th>Carpet Sqft</th>
+                <th>Rate</th>
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>
-                  <select class="form-select raw-material">
-                    <option value="">--Select--</option>
-                    <option value="bricks">Bricks</option>
-                    <option value="steel">Steel</option>
-                  </select>
-                </td>
-                <td>
-                  <input type="number" class="form-control qty" value="1" />
-                </td>
-                <td><input type="text" class="form-control udm" /></td>
-                <td><input type="number" class="form-control rate" /></td>
-                <td>
-                  <input
-                    type="number"
-                    class="form-control discount"
-                    value="0"
-                  />
-                </td>
-                <td><input type="number" class="form-control taxable" /></td>
-                <td><input type="number" class="form-control gst" /></td>
-                <td><input type="number" class="form-control total" /></td>
-                <td>
-                  <button
-                    class="btn btn-sm btn-secondary"
-                    onclick="alert('Minimum One Product Needed In Bill')"
-                  >
-                    <i class="bi bi-x"></i>
-                  </button>
-                </td>
-              </tr>
-              <tr class="table-total-row">
-                <td colspan="2" class="text-start">
-                  <button class="btn btn-pink">Add More Product</button>
-                </td>
-                <td colspan="5" class="text-end">TOTAL :</td>
-                <td id="tableTotal">₹ 0.00 /-</td>
-                <td></td>
-              </tr>
+              <% if (result.length > 0) { %>
+                <% result.forEach((site, index) => { %>
+                  <tr>
+                    <td><%= index + 1 %></td>
+                    <td>
+                      <% if (site.status === "Completed") { %>
+                        <span class="badge bg-success">Completed</span>
+                      <% } else if (site.status === "In Progress") { %>
+                        <span class="badge bg-warning text-dark">In Progress</span>
+                      <% } else { %>
+                        <span class="badge bg-secondary"><%= site.status %></span>
+                      <% } %>
+                    </td>
+                    <td><%= site.invoice_no || "-" %></td>
+                    <td><%= site.note || "-" %></td>
+                    <td><%= site.carpet_sqft || "-" %></td>
+                    <td><%= site.rate ? "₹" + site.rate.toLocaleString() : "-" %></td>
+                  </tr>
+                <% }) %>
+              <% } else { %>
+                <tr>
+                  <td colspan="9" class="text-muted">No Maintenance result Found</td>
+                </tr>
+              <% } %>
             </tbody>
           </table>
         </div>
-
-        <div class="row mt-3">
-          <div class="col-md-6 mb-3">
-            <table class="table table-bordered">
-              <tr>
-                <th class="text-start">E-WAY BILL NUMBER</th>
-              </tr>
-              <tr>
-                <td>
-                  <input
-                    type="text"
-                    class="form-control"
-                    placeholder="E-WAY BILL NUMBER"
-                  />
-                </td>
-              </tr>
-              <tr>
-                <th class="text-start">PAYMENT RECEIVED BY</th>
-              </tr>
-              <tr>
-                <td>
-                  <div class="input-group">
-                    <select class="form-select">
-                      <option>UPI</option>
-                      <option>Cash</option>
-                      <option>Card</option>
-                      <option>Bank Transfer</option>
-                    </select>
-                    <input
-                      type="text"
-                      class="form-control"
-                      placeholder="TRANSACTION ID"
-                    />
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <th class="text-start">NOTE:</th>
-              </tr>
-              <tr>
-                <td><textarea class="form-control" rows="5"></textarea></td>
-              </tr>
-            </table>
-          </div>
-
-          <div class="col-md-6 mb-3">
-            <table class="table table-bordered">
-              <tr>
-                <th class="text-end">TOTAL</th>
-                <td>
-                  <input
-                    type="text"
-                    id="finalTotal"
-                    class="form-control text-end"
-                    value="0.00"
-                  />
-                </td>
-              </tr>
-              <tr>
-                <th class="text-end">EXTRA CHARGES</th>
-                <td>
-                  <input
-                    type="text"
-                    id="extraCharges"
-                    class="form-control text-end"
-                    value="0.00"
-                  />
-                </td>
-              </tr>
-              <tr>
-                <th class="text-end">GRAND TOTAL</th>
-                <td>
-                  <input
-                    type="text"
-                    id="grandTotal"
-                    class="form-control text-end"
-                    value="0.00"
-                  />
-                </td>
-              </tr>
-              <tr>
-                <th class="text-end">RECEIVED AMOUNT</th>
-                <td>
-                  <input
-                    type="text"
-                    id="receivedAmount"
-                    class="form-control text-end"
-                    value="0.00"
-                  />
-                </td>
-              </tr>
-              <tr>
-                <th class="text-end">DUE AMOUNT</th>
-                <td>
-                  <input
-                    type="text"
-                    id="dueAmount"
-                    class="form-control text-end"
-                    value="0.00"
-                  />
-                </td>
-              </tr>
-            </table>
-          </div>
-        </div>
-
-        <div class="row mt-4 justify-content-end gap-3">
-          <div class="col-md-3 text-center">
-            <div class="signature-box" style="color: #7e57c2">
-              <h3>Add Signature</h3>
-            </div>
-            <div class="footer-label">CUSTOMER SIGNATURE</div>
-          </div>
-          <div class="col-md-3 text-center">
-            <div class="signature-box" style="color: #7e57c2">
-              <h3>Add Signature</h3>
-            </div>
-            <div class="footer-label">EMPLOYEE SIGNATURE</div>
-          </div>
-        </div>
-
-        <div class="text-center mt-4">
-          <button class="btn save-btn">SAVE SALE BILL</button>
-        </div>
       </div>
     </div>
-
-    <script>
-      document.getElementById("billDate").value = new Date()
-        .toISOString()
-        .split("T")[0];
-
-      const tableBody = document.querySelector("table tbody");
-      const addProductBtn = document.querySelector(".btn-pink");
-      const extraCharges = document.getElementById("extraCharges");
-      const receivedAmount = document.getElementById("receivedAmount");
-
-      function calculateTableTotal() {
-        let total = 0;
-        tableBody.querySelectorAll("tr").forEach((row) => {
-          const tInput = row.querySelector(".total");
-          if (tInput) total += parseFloat(tInput.value) || 0;
-        });
-        document.getElementById("tableTotal").textContent =
-          "₹ " + total.toLocaleString() + " /-";
-        document.getElementById("finalTotal").value = total.toFixed(2);
-        const extra = parseFloat(extraCharges.value) || 0;
-        const grand = total + extra;
-        document.getElementById("grandTotal").value = grand.toFixed(2);
-        const received = parseFloat(receivedAmount.value) || 0;
-        document.getElementById("dueAmount").value = (grand - received).toFixed(
-          2
-        );
-      }
-
-      function recalcRow(row) {
-        const qty = parseFloat(row.querySelector(".qty")?.value) || 0;
-        const rate = parseFloat(row.querySelector(".rate")?.value) || 0;
-        const discount = parseFloat(row.querySelector(".discount")?.value) || 0;
-        const gst = parseFloat(row.querySelector(".gst")?.value) || 0;
-
-        const taxable = qty * rate - discount;
-        const total = taxable + (taxable * gst) / 100;
-
-        row.querySelector(".taxable").value = taxable.toFixed(2);
-        row.querySelector(".total").value = total.toFixed(2);
-        calculateTableTotal();
-      }
-
-      function attachRowEvents(row) {
-        row
-          .querySelectorAll(".qty, .rate, .discount, .gst")
-          .forEach((input) => {
-            input.addEventListener("input", () => recalcRow(row));
-          });
-
-        row
-          .querySelector(".raw-material")
-          ?.addEventListener("change", function () {
-            const material = this.value;
-            const udmInput = row.querySelector(".udm");
-            const rateInput = row.querySelector(".rate");
-            const gstInput = row.querySelector(".gst");
-
-            if (material === "bricks") {
-              udmInput.value = "15000 PCS";
-              rateInput.value = 50000;
-              gstInput.value = 18;
-            } else if (material === "steel") {
-              udmInput.value = "1000 KG";
-              rateInput.value = 80000;
-              gstInput.value = 18;
-            } else {
-              udmInput.value = "";
-              rateInput.value = "";
-              gstInput.value = "";
-            }
-
-            recalcRow(row);
-          });
-
-        row.querySelector(".remove-row")?.addEventListener("click", () => {
-          row.remove();
-          calculateTableTotal();
-        });
-      }
-
-      // First row events
-      attachRowEvents(tableBody.querySelector("tr"));
-
-      // Add new product row
-      addProductBtn.addEventListener("click", () => {
-        const row = document.createElement("tr");
-        row.innerHTML = `
-    <td>
-      <select class="form-select raw-material">
-        <option value="">--Select--</option>
-        <option value="bricks">Bricks</option>
-        <option value="steel">Steel</option>
-      </select>
-    </td>
-    <td><input type="number" class="form-control qty" value="1"></td>
-    <td><input type="text" class="form-control udm"></td>
-    <td><input type="number" class="form-control rate"></td>
-    <td><input type="number" class="form-control discount" value="0"></td>
-    <td><input type="number" class="form-control taxable"></td>
-    <td><input type="number" class="form-control gst"></td>
-    <td><input type="number" class="form-control total"></td>
-    <td><button class="btn btn-sm btn-secondary remove-row"><i class="bi bi-x"></i></button></td>
-  `;
-        tableBody.insertBefore(row, document.querySelector(".table-total-row"));
-        attachRowEvents(row);
-      });
-
-      extraCharges.addEventListener("input", calculateTableTotal);
-      receivedAmount.addEventListener("input", calculateTableTotal);
-    </script>
-  </body>
+  </div>
+</body>
 </html>
-
-<%-include('footer.ejs')%>
+<%- include("footer.ejs") %>
