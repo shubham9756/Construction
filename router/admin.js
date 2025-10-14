@@ -86,7 +86,6 @@ router.get("/home", checkLogin, async function (req, res) {
             "SELECT IFNULL(SUM(current_balance),0) AS sum FROM bank_accounts"
         );
 
-
         const paymentData = await exe("SELECT * FROM payment_received");
         const [totalAmount = { total: 0 }] = await exe(
             "SELECT IFNULL(SUM(grand_total),0) AS total FROM payment_received"
@@ -98,7 +97,6 @@ router.get("/home", checkLogin, async function (req, res) {
             "SELECT IFNULL(SUM(new_due_amount),0) AS total FROM payment_received"
         );
 
-        // Inside your /home route
         const [availableFlats = { total: 0 }] = await exe(
             "SELECT COUNT(*) AS total FROM flats WHERE type='Sell' AND buy='Available'"
         );
@@ -109,13 +107,14 @@ router.get("/home", checkLogin, async function (req, res) {
             "SELECT COUNT(*) AS total FROM flats WHERE type='Rent' AND buy='Available'"
         );
 
-        // Inside /home route
         const enquiryAlerts = await exe(
             "SELECT * FROM enquiries WHERE reminder_date <= CURDATE() ORDER BY reminder_date ASC"
         );
 
+        // ✅ Added: Maintenance data from add_maintenance table
+        const maintenanceAlerts = await exe("SELECT * FROM add_maintenance ORDER BY created_at DESC");
 
-        // ✅ Render dashboard
+        // ✅ Render page with maintenance data
         res.render("admin/home.ejs", {
             user,
             presentEmp: presentEmp.total,
@@ -130,7 +129,8 @@ router.get("/home", checkLogin, async function (req, res) {
             availableFlats: availableFlats.total,
             soldFlats: soldFlats.total,
             rentedFlats: rentedFlats.total,
-            enquiryAlerts
+            enquiryAlerts,
+            maintenanceAlerts // 👈 new variable for maintenance card
         });
 
     } catch (err) {
@@ -138,6 +138,7 @@ router.get("/home", checkLogin, async function (req, res) {
         res.status(500).send("Error loading dashboard");
     }
 });
+
 
 // profile
 router.get("/profile", async function (req, res) {
