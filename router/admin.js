@@ -318,6 +318,30 @@ router.post('/update_flat/:id', async function (req, res) {
 })
 
 
+// sell Management
+
+router.get('/add_selling_flat', async function (req, res) {
+
+    var sql = `SELECT * FROM flats INNER JOIN site ON flats.site_id = site.site_id WHERE flats.type='Rent' AND flats.buy='Available'`;
+    var flat = await exe(sql);
+    res.render('admin/rent_flat.ejs', { flat: flat, });
+})
+router.get('/selling_flat_list', async function (req, res) {
+    var sql = `SELECT * FROM flats INNER JOIN site ON flats.site_id = site.site_id WHERE flats.buy ='Sell' AND flats.type ='Sell';`;
+    var flat = await exe(sql);
+    res.render('admin/selling_flat_list.ejs', { flat: flat, });
+})
+router.get('/selling_flat_report', async function (req, res) {
+    var sql = `SELECT * FROM flat_sales
+LEFT JOIN flats 
+    ON flat_sales.flat_id = flats.flat_id
+LEFT JOIN site ON flats.site_id = site.site_id
+LEFT JOIN customers 
+    ON flat_sales.customer_id = customers.id`
+    var result = await exe(sql)
+    res.render('admin/selling_flat_report.ejs', { result })
+
+})
 // Rent Management
 router.get('/add_rent_flat', async function (req, res) {
 
@@ -329,6 +353,7 @@ router.get('/rent_flat_list', async function (req, res) {
 
     var sql = `SELECT * FROM flats INNER JOIN site ON flats.site_id = site.site_id WHERE flats.buy ='Sell' AND flats.type ='Rent';`;
     var flat = await exe(sql);
+    res.render('admin/rent_flat_list.ejs', { flat: flat, });
 })
 router.get('/rent_flat_details/:id', async function (req, res) {
     var id = req.params.id;
